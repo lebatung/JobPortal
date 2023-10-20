@@ -1,0 +1,36 @@
+.admin-dashboard {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .sidebar {
+    width: 200px;
+    background-color: #001529;
+    color: #fff;
+  }
+  
+  .content {
+    background-color:#f0f1f7;
+    flex: auto;
+    padding: 15px;
+  }
+  .header{
+    background-color: #fff;
+    border: 1px solid transparent;
+    box-shadow: -8px 12px 18px 0 rgba(25,42,70,.13);
+  }
+  .sub-content{
+    border: 1px solid transparent;
+    box-shadow: -8px 12px 18px 0 rgba(25,42,70,.13);
+  }
+  .ant-btn-danger{
+    background-color: rgb(219, 50, 50);
+    color: #fff;
+  }
+
+  .sidebar-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Đảm bảo container chiếm toàn bộ chiều cao của cha (thường là body hoặc một phần tử khác) */
+  }
+  

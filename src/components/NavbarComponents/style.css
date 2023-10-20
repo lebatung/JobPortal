@@ -1,0 +1,12 @@
+.hoverLoginDropdownBtn:hover{
+    border: 5px solid #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.hoverLoginButton:hover{
+    border-radius: 10px;
+    background-color: lightgray;
+}
+.hoverNavBarItem:hover{
+    color: lightyellow;
+}
