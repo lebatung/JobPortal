@@ -80,6 +80,8 @@ export default function ViewBlog(props) {
     alignItems: 'center',
   };
 
+
+  
   return (
     <>
       <Layout style={{ padding: "0px" }}>
