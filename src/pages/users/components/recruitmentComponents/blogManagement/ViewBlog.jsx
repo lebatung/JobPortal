@@ -79,9 +79,6 @@ export default function ViewBlog(props) {
     display: 'flex',
     alignItems: 'center',
   };
-
-
-  
   return (
     <>
       <Layout style={{ padding: "0px" }}>
@@ -232,7 +229,7 @@ export default function ViewBlog(props) {
                 <Col span={24}>
                   <Card>
                     <Paragraph>
-                      // Đặt thông tin về các công việc tương tự ở đây.
+                      20/10/23
                     </Paragraph>
                   </Card>
                 </Col>
