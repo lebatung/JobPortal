@@ -35,6 +35,6 @@ export const DASHBOARD_SIDEBAR_LINKS = [
     key: "blogs",
     icon: <UserOutlined />,
     label: "Tin tuyển dụng",
-    to: "/adminDashboard/users",
+    to: "/adminDashboard/blogs",
   },
 ];

@@ -122,7 +122,7 @@ const AddCategory = () => {
         onOk={form.submit} // Sử dụng form.submit để gửi form
         onCancel={() => setIsCreateModalVisible(false)}
       >
-        Are you sure you want to {"Create"} this user's account?
+        Are you sure you want to {"Create"} this category?
       </Modal>
     </>
   );

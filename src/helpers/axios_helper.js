@@ -262,5 +262,22 @@ export const loadBlogById = async (id) => {
   }
 };
 
+export const loadPendingBlogs = async () => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/blogs/getPendingBlogs`,
+      { headers }
+    );
+    console.log("loadPendingBlogs:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadPendingBlogs:", error);
+    throw error;
+  }
+};
 
 

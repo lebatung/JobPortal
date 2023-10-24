@@ -13,12 +13,12 @@ import {
   AuditOutlined,
   DeploymentUnitOutlined,
 } from "@ant-design/icons";
-import { useAuth } from "../../../../../contexts/AuthContext";
+import { useAuth } from "../../../../contexts/AuthContext";
 
 import {
   loadPersonalDetailByUsername,
   loadBlogById,
-} from "../../../../../helpers/axios_helper";
+} from "../../../../helpers/axios_helper";
 
 const { Header, Content, Sider } = Layout;
 const { Title, Paragraph } = Typography;
@@ -115,7 +115,7 @@ export default function ViewBlog(props) {
             <Col span={20}>
               <Card>
                 <Paragraph>
-                  <strong>{blog.title}</strong> 
+                  <strong>{blog.title}</strong>
                 </Paragraph>
                 <Paragraph>
                   <strong>Công ty:</strong> {personalDetail.name}
@@ -165,7 +165,7 @@ export default function ViewBlog(props) {
                   <Col span={12}>
                     <Paragraph>
                       <AuditOutlined style={{ marginRight: 4 }} />
-                      <strong style={{ marginRight: 4 }}>Chức vụ:</strong> 
+                      <strong style={{ marginRight: 4 }}>Chức vụ:</strong>
                       {blog.position}
                     </Paragraph>
                   </Col>
@@ -207,8 +207,11 @@ export default function ViewBlog(props) {
               </Card>
               <Card title="Mô tả công việc">
                 <Paragraph>
-                {blog.detail}
+                  {blog.detail.split('\n').map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
+                  ))}
                 </Paragraph>
+
               </Card>
             </Col>
             <Col span={8}>
@@ -217,15 +220,15 @@ export default function ViewBlog(props) {
                   <Card>
                     <Paragraph style={paragraphStyleHeading}>Thông tin công ty</Paragraph>
                     <Paragraph>
-                      <EnvironmentOutlined style={{ marginRight: 4 }} />           
+                      <EnvironmentOutlined style={{ marginRight: 4 }} />
                       {personalDetail.address}
                     </Paragraph>
                     <Paragraph>
-                      <PhoneOutlined  style={{ marginRight: 4 }} />           
+                      <PhoneOutlined style={{ marginRight: 4 }} />
                       {personalDetail.phoneNumber}
                     </Paragraph>
                     <Paragraph>
-                      <GlobalOutlined style={{ marginRight: 4 }} />           
+                      <GlobalOutlined style={{ marginRight: 4 }} />
                       <a>{personalDetail.linkWebsite} </a>
                     </Paragraph>
                   </Card>

@@ -64,6 +64,7 @@ export default function AddBlog() {
     salaryMin: "",
     salaryMax: "",
     workingTime: "",
+    education:"",
     quantity: "",
     position: "",
     exp: "",
@@ -82,6 +83,7 @@ export default function AddBlog() {
     salaryMin,
     salaryMax,
     workingTime,
+    education,
     quantity,
     position,
     exp,
@@ -139,6 +141,7 @@ export default function AddBlog() {
       salaryMin,
       salaryMax,
       workingTime,
+      education,
       quantity,
       position,
       exp,
@@ -273,7 +276,30 @@ export default function AddBlog() {
                   </Form.Item>
                 </div>
               </Descriptions.Item>
-
+              <Descriptions.Item label="Education">
+                {
+                  <div
+                    style={{
+                      alignItems: "center",
+                    }}
+                  >
+                    <Form.Item
+                      label="Yêu cầu chuyên môn"
+                      name="education"
+                      rules={[
+                        { required: true, message: "Vui lòng yêu cầu chuyên môn" },
+                      ]}
+                      validateTrigger="onBlur"
+                    >
+                      <Input
+                        value={education}
+                        name="education"
+                        onChange={(e) => onInputChange(e)}
+                      />
+                    </Form.Item>
+                  </div>
+                }
+              </Descriptions.Item>          
               <Descriptions.Item label="Working times">
                 {
                   <div

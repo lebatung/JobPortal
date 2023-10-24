@@ -25,6 +25,8 @@ import ViewCategory from "./pages/admin/components/categoriesComponents/ViewCate
 import EditCategory from "./pages/admin/components/categoriesComponents/EditCategory";
 import AddCategory from "./pages/admin/components/categoriesComponents/AddCategory";
 
+import AdminBlogsManagement from "./pages/admin/components/blogComponents/BlogManagement";
+
 // RECRUITMENT DASHBOARD
 import RecruitmentDashboard from "./pages/users/RecruitmentDashboard";
 
@@ -65,16 +67,21 @@ function App() {
                 />
               }
             >
-              <Route path="/adminDashboard/users" element={<UserManagement />}/>
+              <Route path="/adminDashboard/users" element={<UserManagement />}>
                 <Route path="/adminDashboard/users/viewUserDetail/:id" element={<ViewUserDetail />}/>
                 <Route path="/adminDashboard/users/edit-user-detail/:id" element={<EditUserDetail />}/>
                 <Route path="/adminDashboard/users/add-user" element={<AddUser />}/>
-              <Route/>
+              </Route>
               
-              <Route path="/adminDashboard/categories" element={<CategoriesManagement />}/>
+              <Route path="/adminDashboard/categories" element={<CategoriesManagement />}>
                 <Route path="/adminDashboard/categories/viewCategory/:id" element={<ViewCategory />}/>
                 <Route path="/adminDashboard/categories/edit-category/:id" element={<EditCategory />}/>
                 <Route path="/adminDashboard/categories/add-category" element={<AddCategory />}/>
+              </Route>
+              <Route path="/adminDashboard/blogs" element={<AdminBlogsManagement />}>
+                
+              </Route>
+              
             </Route>
 
             <Route 
