@@ -9,13 +9,12 @@ import {
   Card,
   DatePicker,
   Modal,
-  Image,
   Descriptions,
-  Tag,
 } from "antd";
 
 import {
   request,
+  loadUserByUsername,
   loadPersonalDetailByUsername,
   loadBlogById,
 } from "../../../../../helpers/axios_helper";
@@ -33,6 +32,11 @@ const EditBlog = (props) => {
   const { username } = useAuth();
   const [form] = Form.useForm();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+
+  const [user, setUser] = useState({
+    id: "",
+    personalDetailId: "",
+  });
   const [personalDetail, setPersonalDetail] = useState({
     avatar: "",
     name: "",
@@ -50,7 +54,7 @@ const EditBlog = (props) => {
   const [blog, setBlog] = useState({
     title: "",
     detail: "",
-    deadLine: null,
+    deadLine: "2024-01-01",
     salaryMin: "",
     salaryMax: "",
     workingTime: "",
@@ -91,6 +95,16 @@ const EditBlog = (props) => {
   const { id } = useParams();
 
   useEffect(() => {
+
+    loadUserByUsername(username)
+    .then((data) => {
+      setUser(data);
+      //console.log(data);  
+    })
+    .catch((error) => {
+      console.error("Error loading categories:", error);
+    });
+
     loadPersonalDetailByUsername(username)
       .then((data) => {
         setPersonalDetail(data);
@@ -113,10 +127,8 @@ const EditBlog = (props) => {
     form
       .validateFields()
       .then(() => {
-        // Đảm bảo dayOfBirth là một chuỗi với định dạng "YYYY-MM-DD"
-        const formattedDeadLine =
-          deadLine !== null ? deadLine.format("YYYY-MM-DD") : null;
-
+        //Đảm bảo dayOfBirth là một chuỗi với định dạng "YYYY-MM-DD"
+        const formattedDeadLine = deadLine !== null ? moment(deadLine).format("YYYY-MM-DD") : "2024-01-01";
         const formData = {
           title,
           detail,
@@ -131,23 +143,24 @@ const EditBlog = (props) => {
           gender,
           locationId: personalDetail.location.id,
           categoryId: personalDetail.category.id,
+          userId: user.id,
         };
 
-        // request(
-        //   "PUT",
-        //   `/api/personal-details/update/${personalDetail.id}`,
-        //   formData
-        // )
-        //   .then((response) => {
-        //     toast.success("Cập nhật thành công");
-        //     console.log("response:", response.data);
-        //     setIsEditModalVisible(false);
-        //   })
-        //   .catch((error) => {
-        //     console.error("Cập nhật thất bại:", error);
-        //     toast.error("Cập nhật thất bại");
-        //     setIsEditModalVisible(false);
-        //   });
+        request(
+          "PUT",
+          `/api/blogs/update/${blog.id}`,
+          formData
+        )
+          .then((response) => {
+            toast.success("Cập nhật thành công");
+            console.log("response:", response.data);
+            setIsEditModalVisible(false);
+          })
+          .catch((error) => {
+            console.error("Cập nhật thất bại:", error);
+            toast.error("Cập nhật thất bại");
+            setIsEditModalVisible(false);
+          });
 
         console.log("Thông tin chỉnh sửa:", formData);
       })
@@ -220,7 +233,7 @@ const EditBlog = (props) => {
               <Descriptions.Item label="Deadline">
                 <div style={{ alignItems: "center" }}>
                   <Form.Item
-                    label="Thời hạn ứng tuyển(YYYY/MM/DD)"
+                    label="Thời hạn ứng tuyển"
                     rules={[
                       {
                         required: true,
@@ -230,13 +243,13 @@ const EditBlog = (props) => {
                   >
                     <DatePicker
                       value={deadLine !== null ? moment(deadLine) : null}
-                      onChange={(date) =>
+                      onChange={(date) => 
                         setBlog({
                           ...blog,
                           deadLine: date,
                         })
                       }
-                      placeholder="Ngày/tháng/năm sinh"
+                      placeholder="hạn ứng tuyển"
                     />
                   </Form.Item>
                 </div>
@@ -250,7 +263,7 @@ const EditBlog = (props) => {
                   >
                     <Form.Item
                       label="Yêu cầu chuyên môn"
-                      name="education"
+                      
                       rules={[
                         {
                           required: true,
@@ -448,7 +461,7 @@ const EditBlog = (props) => {
         onOk={onFinish}
         onCancel={() => setIsEditModalVisible(false)}
       >
-        Are you sure you want to {"Edit"} this user's account details?
+        Are you sure you want to {"Edit"} this blog?
       </Modal>
     </>
   );

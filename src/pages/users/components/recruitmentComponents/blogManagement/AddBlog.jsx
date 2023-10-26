@@ -149,20 +149,20 @@ export default function AddBlog() {
       locationId: personalDetail.location.id,
       categoryId: personalDetail.category.id,
       userId: user.id,
-      enable: 2, // 0: Active, 1: Inactive, 2: Pending
+      enable: 2, // 0: Active, 1: Inactive, 2: Pending, 3: Rejected
     };
 
-    // request("POST", `/api/users/create`, formData)
-    //   .then((response) => {
-    //     toast.success("Thêm người dùng thành công");
-    //     console.log("response:", response.data);
-    //     setIsCreateModalVisible(false);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Thêm người dùng thất bại:", error);
-    //     toast.error("Thêm người dùng thất bại");
-    //     setIsCreateModalVisible(false);
-    //   });
+    request("POST", `/api/blogs/create`, formData)
+      .then((response) => {
+        toast.success("Thêm tin tuyển dụng thành công.");
+        console.log("response:", response.data);
+        setIsCreateModalVisible(false);
+      })
+      .catch((error) => {
+        console.error("Thêm tin tuyển dụng thất bại:", error);
+        toast.error("Thêm tin tuyển dụng thất bại");
+        setIsCreateModalVisible(false);
+      });
 
     console.log("Thông tin tin tuyển dụng:", formData);
   };

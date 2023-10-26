@@ -79,10 +79,10 @@ export default function ViewBlog(props) {
   }, [selectedBlogId, username]);
 
   const paragraphStyleHeading = {
-    fontSize: '20px',
-    fontWeight: 'bold',
-    display: 'flex',
-    alignItems: 'center',
+    fontSize: "20px",
+    fontWeight: "bold",
+    display: "flex",
+    alignItems: "center",
   };
   return (
     <>
@@ -115,7 +115,7 @@ export default function ViewBlog(props) {
             <Col span={20}>
               <Card>
                 <Paragraph>
-                  <strong>{blog.title}</strong> 
+                  <strong>{blog.title}</strong>
                 </Paragraph>
                 <Paragraph>
                   <strong>Công ty:</strong> {personalDetail.name}
@@ -124,7 +124,8 @@ export default function ViewBlog(props) {
                   <strong>Địa chỉ:</strong> {personalDetail.address}
                 </Paragraph>
                 <Paragraph>
-                  <strong>Mức lương: </strong>{blog.salaryMin} - {blog.salaryMax} Triệu đồng {" "} | {" "}
+                  <strong>Mức lương: </strong>
+                  {blog.salaryMin} - {blog.salaryMax} Triệu đồng |{" "}
                   <strong>Hạn nộp hồ sơ:</strong> {blog.deadLine}
                 </Paragraph>
               </Card>
@@ -165,7 +166,7 @@ export default function ViewBlog(props) {
                   <Col span={12}>
                     <Paragraph>
                       <AuditOutlined style={{ marginRight: 4 }} />
-                      <strong style={{ marginRight: 4 }}>Chức vụ:</strong> 
+                      <strong style={{ marginRight: 4 }}>Chức vụ:</strong>
                       {blog.position}
                     </Paragraph>
                   </Col>
@@ -207,7 +208,9 @@ export default function ViewBlog(props) {
               </Card>
               <Card title="Mô tả công việc">
                 <Paragraph>
-                {blog.detail}
+                  {blog.detail.split("\n").map((paragraph, index) => (
+                    <p key={index}>{paragraph}</p>
+                  ))}
                 </Paragraph>
               </Card>
             </Col>
@@ -215,26 +218,26 @@ export default function ViewBlog(props) {
               <Row gutter={24}>
                 <Col span={24}>
                   <Card>
-                    <Paragraph style={paragraphStyleHeading}>Thông tin công ty</Paragraph>
+                    <Paragraph style={paragraphStyleHeading}>
+                      Thông tin công ty
+                    </Paragraph>
                     <Paragraph>
-                      <EnvironmentOutlined style={{ marginRight: 4 }} />           
+                      <EnvironmentOutlined style={{ marginRight: 4 }} />
                       {personalDetail.address}
                     </Paragraph>
                     <Paragraph>
-                      <PhoneOutlined  style={{ marginRight: 4 }} />           
+                      <PhoneOutlined style={{ marginRight: 4 }} />
                       {personalDetail.phoneNumber}
                     </Paragraph>
                     <Paragraph>
-                      <GlobalOutlined style={{ marginRight: 4 }} />           
+                      <GlobalOutlined style={{ marginRight: 4 }} />
                       <a>{personalDetail.linkWebsite} </a>
                     </Paragraph>
                   </Card>
                 </Col>
                 <Col span={24}>
                   <Card>
-                    <Paragraph>
-                      20/10/23
-                    </Paragraph>
+                    <Paragraph>20/10/23</Paragraph>
                   </Card>
                 </Col>
               </Row>

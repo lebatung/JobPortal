@@ -46,7 +46,7 @@ const EditUserDetail = (props) => {
     location: "",
     category: "",
     address: "",
-    dayOfBirth: null,
+    dayOfBirth: "1911-01-01",
     phoneNumber: "",
     taxCode: "",
     linkWebsite: "",
@@ -105,7 +105,7 @@ const EditUserDetail = (props) => {
       .catch((error) => {
         console.error("Error loading Personal Detail By User Id:", error);
       });
-  }, [selectedUserId]);
+  }, [selectedUserId, isEditModalVisible]);
 
   const onFinish = () => {
     form
@@ -113,15 +113,17 @@ const EditUserDetail = (props) => {
       .then(() => {
         // Đảm bảo dayOfBirth là một chuỗi với định dạng "YYYY-MM-DD"
         const formattedDayOfBirth =
-          dayOfBirth !== null ? dayOfBirth.format("YYYY-MM-DD") : null;
+          dayOfBirth !== null
+            ? moment(dayOfBirth).format("YYYY-MM-DD")
+            : "1911-01-01";
 
         const formData = {
           avatar,
           name,
           email,
           gender,
-          locationId,
-          categoryId,
+          locationId: personalDetail.location.id,
+          categoryId: personalDetail.category.id,
           address,
           dayOfBirth: formattedDayOfBirth,
           phoneNumber,
@@ -202,7 +204,6 @@ const EditUserDetail = (props) => {
                       rules={[
                         { required: true, message: "Vui lòng nhập họ và tên" },
                       ]}
-                      validateTrigger="onBlur"
                     >
                       <Input
                         value={name}
@@ -271,18 +272,24 @@ const EditUserDetail = (props) => {
                       ]}
                     >
                       <Select
-                        value={locationId}
-                        onChange={(value) =>
-                          setPersonalDetail({
-                            ...personalDetail,
-                            locationId: value,
-                          })
-                        }
-                        placeholder="Chọn địa điểm"
+                        value={personalDetail.location.name} 
+                        onChange={(value) => {
+                          const selectedLocation = locations.find(
+                            (location) => location.name === value
+                          );
+                          if (selectedLocation) {
+                            setPersonalDetail({
+                              ...personalDetail,
+                              location: selectedLocation, 
+                            });
+                          }
+                          
+                        }}
+                        placeholder=""
                       >
-                        {locations.map((locations) => (
-                          <Option key={locations.id} value={locations.id}>
-                            {locations.name}
+                        {locations.map((location) => (
+                          <Option key={location.id} value={location.name}>
+                            {location.name}
                           </Option>
                         ))}
                       </Select>
@@ -307,18 +314,23 @@ const EditUserDetail = (props) => {
                       ]}
                     >
                       <Select
-                        value={categoryId}
-                        onChange={(value) =>
-                          setPersonalDetail({
-                            ...personalDetail,
-                            categoryId: value,
-                          })
-                        }
-                        placeholder="Chọn ngành nghề"
+                        value={personalDetail.category.name}
+                        onChange={(value) => {
+                          const selectedCategory = categories.find(
+                            (category) => category.name === value
+                          );
+                          if (selectedCategory) {
+                            setPersonalDetail({
+                              ...personalDetail,
+                              category: selectedCategory,
+                            });
+                          }
+                        }}
+                        placeholder=""
                       >
-                        {categories.map((categories) => (
-                          <Option key={categories.id} value={categories.id}>
-                            {categories.name}
+                        {categories.map((category) => (
+                          <Option key={category.id} value={category.name}>
+                            {category.name}
                           </Option>
                         ))}
                       </Select>

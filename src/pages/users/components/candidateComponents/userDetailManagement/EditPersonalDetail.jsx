@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import moment from "moment";
 import {
   Form,
   Input,
@@ -9,6 +9,8 @@ import {
   Modal,
   Image,
   Descriptions,
+  DatePicker,
+  Space,
 } from "antd";
 
 import {
@@ -17,6 +19,8 @@ import {
   loadLocations,
   loadPersonalDetailById,
 } from "../../../../../helpers/axios_helper";
+
+import datePicker from "../../../../../helpers/DatePickerAntd";
 
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
@@ -38,6 +42,7 @@ export default function EditPersonalDetail(props) {
     avatar: "",
     name: "",
     email: "",
+    dayOfBirth: "1970-01-01",
     gender: "",
     location: "",
     category: "",
@@ -51,19 +56,14 @@ export default function EditPersonalDetail(props) {
     avatar,
     name,
     email,
+    dayOfBirth,
     gender,
     locationId,
     categoryId,
     address,
     phoneNumber,
-    taxCode,
-    linkWebsite,
   } = personalDetail;
 
-  const navigate = useNavigate();
-  const handleGoBack = () => {
-    navigate(-1);
-  };
   const onInputChange = (e) => {
     setPersonalDetail({ ...personalDetail, [e.target.name]: e.target.value });
   };
@@ -72,8 +72,6 @@ export default function EditPersonalDetail(props) {
     console.log(personalDetail.id);
     setIsEditModalVisible(true);
   };
-
-  const { id } = useParams();
 
   useEffect(() => {
     loadCategories()
@@ -96,27 +94,41 @@ export default function EditPersonalDetail(props) {
     loadPersonalDetailById(selectedPersonalDetailId)
       .then((data) => {
         setPersonalDetail(data);
+        console.log(data);
       })
       .catch((error) => {
         console.error("Error loading categories:", error);
       });
-  }, [selectedPersonalDetailId]);
+  }, [selectedPersonalDetailId, isEditModalVisible]);
+
+  const [selectedDay, setSelectedDay] = useState(
+    personalDetail.dayOfBirth !== null
+      ? moment(personalDetail.dayOfBirth)
+      : null
+  );
+  const onChange = (value, dateString) => {
+    console.log("Selected Time: ", value);
+    console.log("Formatted Selected Time: ", dateString);
+  };
+  const onOk = (value) => {
+    console.log("onOk: ", value);
+  };
 
   const onFinish = () => {
     form
       .validateFields()
       .then(() => {
+        const formattedDayOfBirth = personalDetail.dayOfBirth !== null ? moment(personalDetail.dayOfBirth).format("YYYY-MM-DD") : "1970-01-01";
         const formData = {
           avatar,
           name,
           email,
+          dayOfBirth: formattedDayOfBirth,
           gender,
           locationId: personalDetail.location.id,
           categoryId: personalDetail.category.id,
           address,
           phoneNumber,
-          taxCode,
-          linkWebsite,
         };
 
         request(
@@ -143,8 +155,6 @@ export default function EditPersonalDetail(props) {
         setIsEditModalVisible(false);
       });
   };
-
-  const selectedCategoryName = personalDetail.category.name;
 
   return (
     <>
@@ -182,7 +192,7 @@ export default function EditPersonalDetail(props) {
                   </>
                 }
               </Descriptions.Item>
-              <Descriptions.Item label="Tên nhà tuyển dụng">
+              <Descriptions.Item label="Tên ứng viên">
                 {
                   <div
                     style={{
@@ -194,7 +204,6 @@ export default function EditPersonalDetail(props) {
                       rules={[
                         { required: true, message: "Vui lòng nhập họ và tên" },
                       ]}
-                      validateTrigger="onBlur"
                     >
                       <Input
                         value={name}
@@ -205,6 +214,7 @@ export default function EditPersonalDetail(props) {
                   </div>
                 }
               </Descriptions.Item>
+          
               <Descriptions.Item label="Email">
                 {
                   <div
@@ -218,6 +228,54 @@ export default function EditPersonalDetail(props) {
                         name="email"
                         onChange={(e) => onInputChange(e)}
                       />
+                    </Form.Item>
+                  </div>
+                }
+              </Descriptions.Item>
+              <Descriptions.Item label="Day of birth">
+                <div style={{ alignItems: "center" }}>
+                  <Form.Item
+                    label="Ngày sinh"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn ngày sinh",
+                      },
+                    ]}
+                  >
+                    <DatePicker
+                      defaultValue={personalDetail.dayOfBirth !== null ? moment(personalDetail.dayOfBirth) : null}
+                      onChange={(date) => 
+                        setPersonalDetail({
+                          ...personalDetail,
+                          dayOfBirth: date,
+                        })
+                      }
+                      placeholder="ngày sinh"
+                    />
+                  </Form.Item>
+                </div>
+              </Descriptions.Item>
+              <Descriptions.Item label="Giới tính">
+                {
+                  <div
+                    style={{
+                      alignItems: "center",
+                    }}
+                  >
+                    <Form.Item label="Giới tính">
+                      <Select
+                        value={gender}
+                        onChange={(value) =>
+                          setPersonalDetail({
+                            ...personalDetail,
+                            gender: value,
+                          })
+                        }
+                      >
+                        <Option value={0}>Nam</Option>
+                        <Option value={1}>Nữ</Option>
+                      </Select>
                     </Form.Item>
                   </div>
                 }
@@ -287,23 +345,6 @@ export default function EditPersonalDetail(props) {
                 }
               </Descriptions.Item>
 
-              <Descriptions.Item label="Mã số thuế">
-                {
-                  <div
-                    style={{
-                      alignItems: "center",
-                    }}
-                  >
-                    <Form.Item label="Mã số thuế">
-                      <Input
-                        value={taxCode}
-                        name="taxCode"
-                        onChange={(e) => onInputChange(e)}
-                      />
-                    </Form.Item>
-                  </div>
-                }
-              </Descriptions.Item>
               <Descriptions.Item label="Nhóm ngành, nghề">
                 {
                   <div
@@ -321,7 +362,7 @@ export default function EditPersonalDetail(props) {
                       ]}
                     >
                       <Select
-                        value={personalDetail.category.name} 
+                        value={personalDetail.category.name}
                         onChange={(value) => {
                           const selectedCategory = categories.find(
                             (category) => category.name === value
@@ -329,7 +370,7 @@ export default function EditPersonalDetail(props) {
                           if (selectedCategory) {
                             setPersonalDetail({
                               ...personalDetail,
-                              category: selectedCategory, 
+                              category: selectedCategory,
                             });
                           }
                         }}
@@ -362,7 +403,7 @@ export default function EditPersonalDetail(props) {
                       ]}
                     >
                       <Select
-                        value={personalDetail.location.name} 
+                        value={personalDetail.location.name}
                         onChange={(value) => {
                           const selectedLocation = locations.find(
                             (location) => location.name === value
@@ -370,10 +411,9 @@ export default function EditPersonalDetail(props) {
                           if (selectedLocation) {
                             setPersonalDetail({
                               ...personalDetail,
-                              location: selectedLocation, 
+                              location: selectedLocation,
                             });
                           }
-                          
                         }}
                         placeholder=""
                       >
@@ -383,24 +423,6 @@ export default function EditPersonalDetail(props) {
                           </Option>
                         ))}
                       </Select>
-                    </Form.Item>
-                  </div>
-                }
-              </Descriptions.Item>
-
-              <Descriptions.Item label="Website">
-                {
-                  <div
-                    style={{
-                      alignItems: "center",
-                    }}
-                  >
-                    <Form.Item label="Link Website">
-                      <Input
-                        value={linkWebsite}
-                        name="linkWebsite"
-                        onChange={(e) => onInputChange(e)}
-                      />
                     </Form.Item>
                   </div>
                 }

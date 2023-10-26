@@ -23,7 +23,6 @@ function BlogsManagement() {
   });
 
   const [isEnableModalVisible, setIsEnableModalVisible] = useState(false);
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
@@ -31,23 +30,6 @@ function BlogsManagement() {
   const [selectedBlogId, setSelectedBlogId] = useState(null);
   const [selectedBlogEnable, setSelectedBlogEnable] = useState(null);
 
-  const handleDeleteClick = (record) => {
-    // Xử lý logic xóa blog
-    setSelectedBlogEnable(record.id);
-    setIsDeleteModalVisible(true);
-
-  };
-
-  const handleDelete = () => {
-    console.log("Deleted!");
-    setIsDeleteModalVisible(false);
-  };
-
-  const handleEditClick = (record) => {
-    // Xử lý logic chỉnh sửa blog
-    setSelectedBlogId(record.id);
-    setIsEditModalVisible(true);
-  };
 
   const handleViewClick = (record) => {
     // Xử lý logic xem blog
@@ -111,17 +93,7 @@ function BlogsManagement() {
       key: "actions",
       render: (text, record) => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleEditClick(record)}>
-            Edit
-          </Button>
-
-          <Button
-            className="ant-btn-danger"
-            onClick={() => handleDeleteClick(record)}
-          >
-            Delete
-          </Button>
-
+          
           <Button onClick={() => handleViewClick(record)}>View</Button>
           {record.enable === 0 || record.enable === 1 ? (
             <Button
@@ -159,7 +131,7 @@ function BlogsManagement() {
       .catch((error) => {
         console.error("Error loading loadPendingBlogs:", error);
       });
-  }, [username]);
+  }, [username, isCreateModalVisible]);
 
   return (
     <>
@@ -173,10 +145,7 @@ function BlogsManagement() {
         }}
       >
         <SearchComponents onSearch={performSearch} />
-        <Button type="primary" onClick={() => handleCreateClick()}>
-          Thêm tin tuyển dụng
-          {/* <Link to={"/adminDashboard/users/add-user"}>Add New User</Link> */}
-        </Button>
+        
       </div>
       <hr />
       <div className="App">
@@ -201,23 +170,7 @@ function BlogsManagement() {
         )}
       </Modal>
       
-      <Modal
-        title={selectedBlogEnable === 1 ? "Confirm Disable" : "Confirm Enable"}
-        visible={isEnableModalVisible}
-        onOk={handleEnable}
-        onCancel={() => setIsEnableModalVisible(false)}
-      >
-        Are you sure you want to{" "}
-        {selectedBlogEnable === 1 ? "disable" : "enable"} this user's account?
-      </Modal>
-      <Modal
-        title={"Confirm Deleting"}
-        visible={isDeleteModalVisible}
-        onOk={handleDelete}
-        onCancel={() => setIsDeleteModalVisible(false)}
-      >
-        Are you sure you want to {"delete"} this user's account?
-      </Modal>
+    
     </>
   );
 }

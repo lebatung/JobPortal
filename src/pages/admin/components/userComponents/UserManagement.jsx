@@ -42,7 +42,7 @@ function UserManagement() {
       .catch((error) => {
         console.error("Error loading users:", error);
       });
-  }, [isActiveModalVisible, isDeleteModalVisible, isCreateModalVisible]);
+  }, [isActiveModalVisible, isDeleteModalVisible, isCreateModalVisible, isEditModalVisible]);
 
   const columns = [
     {

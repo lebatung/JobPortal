@@ -38,6 +38,7 @@ import BlogsManagement from "./pages/users/components/recruitmentComponents/blog
 
 // CANDIDATE DASHBOARD
 import CandidateDashboard from "./pages/users/CandidateDashboard";
+import CandidateDetailManagement from "./pages/users/components/candidateComponents/userDetailManagement/UserDetailManagement"
 
 //FORBIDDEN PAGE
 import ForbiddenPage from "./errorpages/ForbiddenPage";
@@ -99,8 +100,16 @@ function App() {
 
             </Route>
 
-            <Route path="/candidateDashboard" element={<AdminDashBoard />}>
-              <Route />
+            <Route 
+            path="/candidateDashboard" 
+              element={
+                <ProtectedRoute
+                  element={<CandidateDashboard />}
+                  roles={['ROLE_CANDIDATE']} 
+                />
+              }
+            >
+              <Route path="/candidateDashboard/personalDetail" element={<CandidateDetailManagement/>}></Route>
             </Route>
 
             <Route path="/forbiddenPage" element={<ForbiddenPage />} />

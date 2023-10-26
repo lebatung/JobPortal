@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Space, Modal } from "antd";
-
+import axios from "axios";
 import {
   loadBlogsByUserId,
   loadUserByUsername,
@@ -28,6 +28,7 @@ function BlogsManagement() {
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
+
 
   const [selectedBlogId, setSelectedBlogId] = useState(null);
   const [selectedBlogEnable, setSelectedBlogEnable] = useState(null);
@@ -59,13 +60,39 @@ function BlogsManagement() {
   const handleEnableClick = (record) => {
     // Xử lý logic kích hoạt blog
     setSelectedBlogId(record.id);
+    setSelectedBlogEnable(record.enable);
     setIsEnableModalVisible(true);
   };
 
   const handleEnable = () => {
-    console.log("Disable/Enable!");
-    setIsEnableModalVisible(false);
-  }
+    if (selectedBlogId !== null && selectedBlogId !== null) {
+      const blogEnableDTO = {
+        id: selectedBlogId,
+        enable: selectedBlogEnable === 1 ? 0 : 1,
+      };
+
+      //console.log("blogEnableDTO:", blogEnableDTO);
+
+      axios
+        .put(`/api/blogs/enable`, blogEnableDTO)
+        .then((response) => {
+          console.log(
+            `${
+              selectedBlogEnable === 1 ? "Disabled" : "Enabled"
+            } blog with ID ${selectedBlogId}`
+          );
+          setIsEnableModalVisible(false);
+        })
+        .catch((error) => {
+          console.error("Error disabling/enabling blog:", error);
+          setIsEnableModalVisible(false);
+        });
+    } else {
+      console.error(
+        "Record is invalid or does not contain an ID or active value."
+      );
+    }
+  };
   const handleCreateClick = () => {
     setIsCreateModalVisible(true);
     
@@ -80,8 +107,8 @@ function BlogsManagement() {
   };
   const renderEnableColumn = (enable) => {
     const statusMap = {
-      0: { text: "Active", color: "green" },
-      1: { text: "Inactive", color: "red" },
+      0: { text: "Enable", color: "green" },
+      1: { text: "Disable", color: "red" },
       2: { text: "Pending", color: "blue" },
       3: { text: "Rejected", color: "orange" },
     };
@@ -112,18 +139,24 @@ function BlogsManagement() {
       key: "actions",
       render: (text, record) => (
         <Space size="middle">
-          <Button type="primary" onClick={() => handleEditClick(record)}>
-            Edit
-          </Button>
-
+          <Button onClick={() => handleViewClick(record)}>View</Button>
           <Button
             className="ant-btn-danger"
             onClick={() => handleDeleteClick(record)}
           >
             Delete
           </Button>
-
-          <Button onClick={() => handleViewClick(record)}>View</Button>
+          {record.enable === 0 || record.enable === 1 ? (
+            <Button
+              onClick={() => handleEditClick(record)}
+              className={
+                "ant-btn-primary"
+              }
+            >
+              {"Edit"}
+            </Button>
+          ) : null}
+    
           {record.enable === 0 || record.enable === 1 ? (
             <Button
               onClick={() => handleEnableClick(record)}
@@ -160,7 +193,7 @@ function BlogsManagement() {
       .catch((error) => {
         console.error("Error loading users:", error);
       });
-  }, [user.id, username]);
+  }, [user.id, username, isEnableModalVisible]);
 
   return (
     <>
@@ -240,7 +273,7 @@ function BlogsManagement() {
         onCancel={() => setIsEnableModalVisible(false)}
       >
         Are you sure you want to{" "}
-        {selectedBlogEnable === 1 ? "disable" : "enable"} this user's account?
+        {selectedBlogEnable === 1 ? "disable" : "enable"} this blog?
       </Modal>
       <Modal
         title={"Confirm Deleting"}
