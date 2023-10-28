@@ -15,15 +15,16 @@ function SearchComponents({ onSearch }) {
     }
   };
   return (
-    <div>
+    <div style={{ display: "flex", alignItems: "center" }}>
       <Input
         type="text"
         placeholder="Tìm kiếm..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         onKeyPress={handleKeyPress}
+        style={{ marginRight: "10px" }}
       />
-      <Button onClick={handleSearch}>Tìm kiếm</Button>
+      <Button type='primary' onClick={handleSearch}>Tìm kiếm</Button>
     </div>
   );
 }

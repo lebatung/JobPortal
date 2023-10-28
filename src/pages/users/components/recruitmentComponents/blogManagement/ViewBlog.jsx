@@ -27,6 +27,10 @@ export default function ViewBlog(props) {
   const selectedBlogId = props.selectedBlogId;
   const { username } = useAuth();
 
+  function formatDateString(originalDate) {
+    const parts = originalDate.split("-");
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
   const [personalDetail, setPersonalDetail] = useState({
     avatar: "",
     name: "",
@@ -126,7 +130,7 @@ export default function ViewBlog(props) {
                 <Paragraph>
                   <strong>Mức lương: </strong>
                   {blog.salaryMin} - {blog.salaryMax} Triệu đồng |{" "}
-                  <strong>Hạn nộp hồ sơ:</strong> {blog.deadLine}
+                  <strong>Hạn nộp hồ sơ:</strong> {formatDateString(blog.deadLine)}
                 </Paragraph>
               </Card>
             </Col>

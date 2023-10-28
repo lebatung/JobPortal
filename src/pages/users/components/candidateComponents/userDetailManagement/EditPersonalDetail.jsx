@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import moment from "moment";
+// import DatePicker from 'react-datepicker';
+// import 'react-datepicker/dist/react-datepicker.module.css';
 import {
   Form,
   Input,
@@ -19,8 +21,6 @@ import {
   loadLocations,
   loadPersonalDetailById,
 } from "../../../../../helpers/axios_helper";
-
-import datePicker from "../../../../../helpers/DatePickerAntd";
 
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
@@ -42,7 +42,7 @@ export default function EditPersonalDetail(props) {
     avatar: "",
     name: "",
     email: "",
-    dayOfBirth: "1970-01-01",
+    dayOfBirth: "1999-01-01",
     gender: "",
     location: "",
     category: "",
@@ -73,6 +73,11 @@ export default function EditPersonalDetail(props) {
     setIsEditModalVisible(true);
   };
 
+  const handleDateChange = (date) => {
+    setSelectedDay(date);
+    console.log("selectedDay: ", selectedDay);
+  };
+
   useEffect(() => {
     loadCategories()
       .then((data) => {
@@ -94,31 +99,22 @@ export default function EditPersonalDetail(props) {
     loadPersonalDetailById(selectedPersonalDetailId)
       .then((data) => {
         setPersonalDetail(data);
-        console.log(data);
+        // if (personalDetail.dayOfBirth) {
+        //   setSelectedDay(moment(personalDetail.dayOfBirth));
+        // }
+        // console.log(data.dayOfBirth);
       })
       .catch((error) => {
         console.error("Error loading categories:", error);
       });
-  }, [selectedPersonalDetailId, isEditModalVisible]);
+  }, [selectedPersonalDetailId]);
 
-  const [selectedDay, setSelectedDay] = useState(
-    personalDetail.dayOfBirth !== null
-      ? moment(personalDetail.dayOfBirth)
-      : null
-  );
-  const onChange = (value, dateString) => {
-    console.log("Selected Time: ", value);
-    console.log("Formatted Selected Time: ", dateString);
-  };
-  const onOk = (value) => {
-    console.log("onOk: ", value);
-  };
-
+  const [selectedDay, setSelectedDay] = useState( personalDetail.dayOfBirth ? moment(personalDetail.dayOfBirth) : null );
   const onFinish = () => {
     form
       .validateFields()
       .then(() => {
-        const formattedDayOfBirth = personalDetail.dayOfBirth !== null ? moment(personalDetail.dayOfBirth).format("YYYY-MM-DD") : "1970-01-01";
+        const formattedDayOfBirth = selectedDay ? selectedDay.format("YYYY-MM-DD") : null;
         const formData = {
           avatar,
           name,
@@ -130,7 +126,7 @@ export default function EditPersonalDetail(props) {
           address,
           phoneNumber,
         };
-
+        console.log("formData", formData);
         request(
           "PUT",
           `/api/personal-details/update/${personalDetail.id}`,
@@ -214,7 +210,7 @@ export default function EditPersonalDetail(props) {
                   </div>
                 }
               </Descriptions.Item>
-          
+
               <Descriptions.Item label="Email">
                 {
                   <div
@@ -244,14 +240,11 @@ export default function EditPersonalDetail(props) {
                     ]}
                   >
                     <DatePicker
-                      defaultValue={personalDetail.dayOfBirth !== null ? moment(personalDetail.dayOfBirth) : null}
-                      onChange={(date) => 
-                        setPersonalDetail({
-                          ...personalDetail,
-                          dayOfBirth: date,
-                        })
-                      }
-                      placeholder="ngày sinh"
+                      value={selectedDay}
+                      onChange={(values) => {
+                        setSelectedDay(values);
+                      }}
+                      placeholder=""
                     />
                   </Form.Item>
                 </div>

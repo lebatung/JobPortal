@@ -1,6 +1,8 @@
 import React from "react";
+
 import Jobs from "./NavbarComponents/Jobs";
 import LoginDropDown from "./NavbarComponents/LoginDropDown";
+
 import { Image } from "antd";
 import { Link } from "react-router-dom";
 
@@ -21,6 +23,8 @@ export default function Navbar() {
       position: "relative",
       justifyContent: "center",
       alignContent: "center",
+      textDecoration: "none",
+      
     },
     rightNavBarItemContainer: {
       display: "flex",
@@ -37,6 +41,7 @@ export default function Navbar() {
       listStyle: "none",
       padding: "0px 20px",
       cursor: "pointer",
+    
     },
   };
 
@@ -55,9 +60,13 @@ export default function Navbar() {
         <li style={navBar.navBarItems}>
           <Jobs />
         </li>
-        <li style={navBar.navBarItems}>Công ty</li>
-        <li style={navBar.navBarItems}>
-          <Link to={"/myJobs"}>Việc làm của tôi</Link>
+
+        <li style={{ ...navBar.navBarItems, color: "white", textDecoration: "none" }} >
+          <Link to={"/companies"} style={{ textDecoration: "none", color: "white" }}>Công ty</Link>
+        </li>
+
+        <li style={{ ...navBar.navBarItems, color: "white", textDecoration: "none" }}>
+          <Link to={"/myJobs"} style={{ textDecoration: "none", color: "white" }}>Việc làm của tôi</Link>
         </li>
       </ul>
 

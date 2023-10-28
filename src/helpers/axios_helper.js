@@ -86,7 +86,7 @@ export const loadBlogs = async () => {
       headers = { Authorization: `Bearer ${getAuthToken()}` };
     }
     const response = await axios.get(
-      `http://localhost:8080/api/blogsfindByUsername/listAllBlogs`,
+      `http://localhost:8080/api/blogs/findByUsername/listAllBlogs`,
       { headers }
     );
     console.log("loadBlogs:", response.data);
@@ -96,6 +96,43 @@ export const loadBlogs = async () => {
     throw error;
   }
 };
+
+export const loadAllBlogs = async () => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/blogs/listAllBlogs`,
+      { headers }
+    );
+    console.log("loadBlogs:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadBlogs:", error);
+    throw error;
+  }
+};
+
+export const loadAllRecruitments = async () => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/users/getRecruitment`,
+      { headers }
+    );
+    console.log("loadBlogs:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadBlogs:", error);
+    throw error;
+  }
+};
+
 
 export const loadPersonalDetail = async (id) => {
   

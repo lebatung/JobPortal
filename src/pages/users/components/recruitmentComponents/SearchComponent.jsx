@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Button, Input } from "antd";
 
 function SearchComponents({ onSearch }) {
@@ -9,21 +9,24 @@ function SearchComponents({ onSearch }) {
     onSearch(searchTerm);
   };
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       // Nếu người dùng nhấn phím "Enter", thực hiện tìm kiếm
       handleSearch();
     }
   };
   return (
-    <div>
+    <div style={{ display: "flex", alignItems: "center" }}>
       <Input
         type="text"
         placeholder="Tìm kiếm..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         onKeyPress={handleKeyPress}
+        style={{ marginRight: "10px" }}
       />
-      <Button onClick={handleSearch}>Tìm kiếm</Button>
+      <Button onClick={handleSearch} type="primary">
+        Tìm kiếm
+      </Button>
     </div>
   );
 }

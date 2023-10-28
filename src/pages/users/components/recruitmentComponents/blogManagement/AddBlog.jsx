@@ -17,7 +17,6 @@ import {
 
 import {
   request,
-  loadBlogs,
   loadPersonalDetailByUsername,
   loadUserByUsername,
 } from "../../../../../helpers/axios_helper";

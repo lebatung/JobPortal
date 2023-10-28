@@ -46,7 +46,7 @@ const EditUserDetail = (props) => {
     location: "",
     category: "",
     address: "",
-    dayOfBirth: "1911-01-01",
+    dayOfBirth: "1999-01-01",
     phoneNumber: "",
     taxCode: "",
     linkWebsite: "",
@@ -107,15 +107,14 @@ const EditUserDetail = (props) => {
       });
   }, [selectedUserId, isEditModalVisible]);
 
+  const [selectedDay, setSelectedDay] = useState( personalDetail.dayOfBirth ? moment(personalDetail.dayOfBirth) : null );
+
   const onFinish = () => {
     form
       .validateFields()
       .then(() => {
         // Đảm bảo dayOfBirth là một chuỗi với định dạng "YYYY-MM-DD"
-        const formattedDayOfBirth =
-          dayOfBirth !== null
-            ? moment(dayOfBirth).format("YYYY-MM-DD")
-            : "1911-01-01";
+        const formattedDayOfBirth = selectedDay ? selectedDay.format("YYYY-MM-DD") : null;
 
         const formData = {
           avatar,
@@ -370,15 +369,12 @@ const EditUserDetail = (props) => {
                   }}
                 >
                   <Form.Item label="Ngày sinh">
-                    <DatePicker
-                      value={dayOfBirth !== null ? moment(dayOfBirth) : null}
-                      onChange={(date) =>
-                        setPersonalDetail({
-                          ...personalDetail,
-                          dayOfBirth: date,
-                        })
-                      }
-                      placeholder="Ngày/tháng/năm sinh"
+                  <DatePicker
+                      value={selectedDay}
+                      onChange={(values) => {
+                        setSelectedDay(values);
+                      }}
+                      placeholder=""
                     />
                   </Form.Item>
                 </div>

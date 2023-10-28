@@ -183,7 +183,10 @@ function UserManagement() {
     <ToastContainer />
       <div
         style={{
-          marginBottom: 16,
+          marginBottom: 10,
+          marginTop: 10,
+          marginLeft: 5,
+          marginRight: 5,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",

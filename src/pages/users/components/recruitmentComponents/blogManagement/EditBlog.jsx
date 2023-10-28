@@ -54,7 +54,7 @@ const EditBlog = (props) => {
   const [blog, setBlog] = useState({
     title: "",
     detail: "",
-    deadLine: "2024-01-01",
+    deadLine: "2023-12-31",
     salaryMin: "",
     salaryMax: "",
     workingTime: "",
@@ -92,6 +92,11 @@ const EditBlog = (props) => {
     setIsEditModalVisible(true);
   };
 
+  function formatDateString(originalDate) {
+    const parts = originalDate.split("-");
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+
   const { id } = useParams();
 
   useEffect(() => {
@@ -123,12 +128,14 @@ const EditBlog = (props) => {
       });
   }, [selectedBlogId, username]);
 
+  const [selectedDay, setSelectedDay] = useState( blog.deadLine ? moment(blog.deadLine) : null );
+
   const onFinish = () => {
     form
       .validateFields()
       .then(() => {
-        //Đảm bảo dayOfBirth là một chuỗi với định dạng "YYYY-MM-DD"
-        const formattedDeadLine = deadLine !== null ? moment(deadLine).format("YYYY-MM-DD") : "2024-01-01";
+        
+        const formattedDeadLine = selectedDay ? selectedDay.format("YYYY-MM-DD") : null;
         const formData = {
           title,
           detail,
@@ -242,14 +249,11 @@ const EditBlog = (props) => {
                     ]}
                   >
                     <DatePicker
-                      value={deadLine !== null ? moment(deadLine) : null}
-                      onChange={(date) => 
-                        setBlog({
-                          ...blog,
-                          deadLine: date,
-                        })
-                      }
-                      placeholder="hạn ứng tuyển"
+                      value={selectedDay}
+                      onChange={(values) => {
+                        setSelectedDay(values);
+                      }}
+                      placeholder=""
                     />
                   </Form.Item>
                 </div>

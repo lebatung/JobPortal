@@ -200,15 +200,19 @@ function BlogsManagement() {
       <ToastContainer />
       <div
         style={{
-          marginBottom: 16,
+          marginBottom: 10,
+          marginTop: 10,
+          marginLeft: 5,
+          marginRight: 5,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          
         }}
       >
         <SearchComponents onSearch={performSearch} />
         <Button type="primary" onClick={() => handleCreateClick()}>
-          Thêm tin tuyển dụng
+          Đăng tin tuyển dụng
           {/* <Link to={"/adminDashboard/users/add-user"}>Add New User</Link> */}
         </Button>
       </div>

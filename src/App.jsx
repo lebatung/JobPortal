@@ -11,6 +11,7 @@ import ProtectedRoute from "./protected/ProtectedRoute";
 
 //NAVIGATION BAR
 import MyJobsCpn from "./components/NavbarComponents/MyJobs/MyJobsCpn";
+import Companies from "./components/NavbarComponents/companies/Companies";
 
 // ADMIN DASHBOARD
 import AdminDashBoard from "./pages/admin/AdminDashboard";
@@ -29,16 +30,16 @@ import AdminBlogsManagement from "./pages/admin/components/blogComponents/BlogMa
 
 // RECRUITMENT DASHBOARD
 import RecruitmentDashboard from "./pages/users/RecruitmentDashboard";
-
 import UserDetailManagement from "./pages/users/components/recruitmentComponents/userDetailManagement/UserDetailManagement";
-
 import CandidatesManagement from "./pages/users/components/recruitmentComponents/candidateManagement/CandidatesManagement";
-
 import BlogsManagement from "./pages/users/components/recruitmentComponents/blogManagement/BlogsManagement";
 
 // CANDIDATE DASHBOARD
 import CandidateDashboard from "./pages/users/CandidateDashboard";
-import CandidateDetailManagement from "./pages/users/components/candidateComponents/userDetailManagement/UserDetailManagement"
+import CandidateDetailManagement from "./pages/users/components/candidateComponents/userDetailManagement/UserDetailManagement";
+import BlogsApplied from "./pages/users/components/candidateComponents/blogsAppliedManagement/BlogsAppliedManagement";
+import Cvs from "./pages/users/components/candidateComponents/cvsManagement/CvsManagement";
+import Favorites from "./pages/users/components/candidateComponents/favoritesManagement/FavoritesManagement";
 
 //FORBIDDEN PAGE
 import ForbiddenPage from "./errorpages/ForbiddenPage";
@@ -54,6 +55,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />}>
               <Route path="/myJobs" element={<MyJobsCpn />} />
+              <Route path="/companies" element={<Companies />} />
             </Route>
 
             <Route exact path="/login" element={<Login />} />
@@ -110,6 +112,9 @@ function App() {
               }
             >
               <Route path="/candidateDashboard/personalDetail" element={<CandidateDetailManagement/>}></Route>
+              <Route path="/candidateDashboard/cvs" element={<Cvs/>}></Route>
+              <Route path="/candidateDashboard/applied" element={<BlogsApplied/>}></Route>
+              <Route path="/candidateDashboard/favorites" element={<Favorites/>}></Route>
             </Route>
 
             <Route path="/forbiddenPage" element={<ForbiddenPage />} />
