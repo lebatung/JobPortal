@@ -3,9 +3,9 @@ import React from 'react';
 
 const footerStyle = {
     backgroundColor: '#f0f0f0',
+
     padding: '20px',
     textAlign: 'center',
-    position: 'absolute',
     bottom: '0',
     width: '100%',
 }

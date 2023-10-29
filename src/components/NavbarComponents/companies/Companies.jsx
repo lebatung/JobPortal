@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, Row, Col, Image, Select } from "antd";
 import styled from "styled-components";
 import {
@@ -24,6 +25,7 @@ export default function Companies() {
     loadAllRecruitments()
       .then((data) => {
         setCompanies(data);
+        console.log(data);
       })
       .catch((error) => {
         console.error("Error loading locations:", error);
@@ -37,18 +39,32 @@ export default function Companies() {
       });
   }, []);
 
-  const exContainer = {
-    margin: "20px",
+  const Container = {
+    margin: "0 auto",
     backgroundColor: "#ffffff",
-    width: "80%",
+
+    padding: "5px",
   };
   const selectContainerStyle = {
     display: "flex",
-    position: "absolute",
-    right: 0,
+    margin: "14px",
+    justifyContent: "flex-end",
+  };
+  const companyCardContainer = {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    
+  };
+
+  const containerWrapper = {
+    backgroundColor: "#f5f5f5f5",
   };
   const HoverableCard = styled(Card)`
+    flex: 1;
     transition: background-color 0.3s;
+    cursor: pointer;
+    margin: 8px;
     &:hover {
       background-color: #f0f0f0;
     }
@@ -66,51 +82,61 @@ export default function Companies() {
 
   return (
     <>
-      <div style={exContainer}>
-        {/* Dropdown filter cho category */}
-        <Select
-          defaultValue="all"
-          onChange={(value) => setSelectedCategory(value)}
-         
-        >
-          <Option value="all">Tất cả</Option>
-          {/* Thêm các category khác vào đây */}
-        </Select>
-        <Row gutter={[16, 16]}>
-          {companies.map((company) => (
-            <Col key={company.id} xs={24} sm={12} md={8} lg={8}>
-              <HoverableCard>
-                <Row gutter={16}>
-                  <Col span={8}>
-                    <Image
-                      style={{ width: "100%" }}
-                      src={`http://localhost:8080/api/files/${company.avatar}`}
-                      alt={company.name}
-                    />
-                  </Col>
-                  <Col span={16}>
-                    <Card.Meta
-                      title={company.name}
-                      description={
-                        <div style={{ textAlign: "left" }}>
-                          <p>
-                            <ApiOutlined /> {company.category.name}
-                          </p>
-                          <p>
-                            <EnvironmentOutlined /> {company.location.name}
-                          </p>
-                          <p>
-                            <WalletOutlined /> {company.blogs.length} Công việc
-                          </p>
-                        </div>
-                      }
-                    />
-                  </Col>
-                </Row>
-              </HoverableCard>
-            </Col>
-          ))}
-        </Row>
+      <div style={containerWrapper}>
+        <div style={Container}>
+          <div style={selectContainerStyle}>
+            {/* Dropdown filter cho category */}
+            <Select
+              defaultValue="all"
+              onChange={(value) => setSelectedCategory(value)}
+            >
+              <Option value="all">Tất cả lĩnh vực, ngành nghề</Option>
+              {/* Thêm các category khác vào đây */}
+            </Select>
+          </div>
+          <div style={companyCardContainer}>
+            <Row gutter={[16, 16]}>
+              {companies.map((company) => (
+                <Col key={company.id} xs={24} sm={12} md={8} lg={8}>
+                  <Link to={`/companies/${company.slug}`}>
+                    {" "}
+                    <HoverableCard>
+                      <Row gutter={16}>
+                        <Col span={8}>
+                          <Image
+                            style={{ width: "100%" }}
+                            src={`http://localhost:8080/api/files/${company.avatar}`}
+                            alt={company.name}
+                          />
+                        </Col>
+                        <Col span={16}>
+                          <Card.Meta
+                            title={company.name}
+                            description={
+                              <div style={{ textAlign: "left" }}>
+                                <p>
+                                  <ApiOutlined /> {company.category.name}
+                                </p>
+                                <p>
+                                  <EnvironmentOutlined />{" "}
+                                  {company.location.name}
+                                </p>
+                                <p>
+                                  <WalletOutlined /> {company.blogs.length} Công
+                                  việc
+                                </p>
+                              </div>
+                            }
+                          />
+                        </Col>
+                      </Row>
+                    </HoverableCard>
+                  </Link>
+                </Col>
+              ))}
+            </Row>
+          </div>
+        </div>
       </div>
     </>
   );

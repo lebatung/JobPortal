@@ -14,7 +14,7 @@ export default function AdminDashboard() {
           <div className="header">
             <Header />
           </div>
-          <div className="sub-content"> 
+          <div className="sub-content">
             <Outlet />
           </div>
         </div>

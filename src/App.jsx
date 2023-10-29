@@ -9,9 +9,12 @@ import Register from "./pages/users/Registration";
 // PROTECTED ROUTE
 import ProtectedRoute from "./protected/ProtectedRoute";
 
-//NAVIGATION BAR
+// NAVIGATION BAR
 import MyJobsCpn from "./components/NavbarComponents/MyJobs/MyJobsCpn";
 import Companies from "./components/NavbarComponents/companies/Companies";
+
+// COMPANIES - NAVIGATION BAR
+import ViewCompanyDetail from "./components/NavbarComponents/companies/ViewCompanyDetail";
 
 // ADMIN DASHBOARD
 import AdminDashBoard from "./pages/admin/AdminDashboard";
@@ -55,11 +58,14 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />}>
               <Route path="/myJobs" element={<MyJobsCpn />} />
-              <Route path="/companies" element={<Companies />} />
+              <Route path="/companies" element={<Companies />} /> 
+              <Route path="/companies/:slug" element={<ViewCompanyDetail/>} />
             </Route>
 
             <Route exact path="/login" element={<Login />} />
-            <Route exact path="/register" element={<Register />} />
+            <Route exact path="/register" element={<Register />} >
+              
+            </Route>
 
             <Route
               path="/adminDashboard"

@@ -317,4 +317,22 @@ export const loadPendingBlogs = async () => {
   }
 };
 
+export const loadCompanyNBlogs = async (slug) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/personal-details/getCompanyDetailIncludeBlogs/${slug}`,
+      { headers }
+    );
+    console.log("loadCompanyNBlogs:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadCompanyNBlogs:", error);
+    throw error;
+  }
+};
+
 
