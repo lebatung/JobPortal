@@ -10,25 +10,39 @@ import {
   Layout,
   Image,
   Button,
+  Modal,
 } from "antd";
-import { loadCompanyNBlogs } from "../../../helpers/axios_helper";
+import {
+  request,
+  loadCompanyNBlogs,
+  loadPersonalDetailByUsername,
+  loadFavoriteBlogsByPersonalDetailId,
+} from "../../../helpers/axios_helper";
 import {
   ArrowRightOutlined,
   BarcodeOutlined,
   EnvironmentOutlined,
   FieldTimeOutlined,
   GlobalOutlined,
+  HeartFilled,
   HeartOutlined,
   LoadingOutlined,
   MailFilled,
   MailOutlined,
   MenuOutlined,
+  MessageOutlined,
   MoneyCollectOutlined,
   PhoneOutlined,
   SendOutlined,
   WalletOutlined,
 } from "@ant-design/icons";
+
+import { useAuth } from "../../../contexts/AuthContext";
+
+import ViewBlog from "./ViewBlog";
 import styled from "styled-components";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const { Header, Content, Sider } = Layout;
 const { Title, Paragraph } = Typography;
@@ -36,9 +50,36 @@ const { Title, Paragraph } = Typography;
 export default function ViewCompanyDetail() {
   const [companyDetail, setCompanyDetail] = useState([]);
   const [blogs, setBlogs] = useState([]);
+
   const [loading, setLoading] = useState(true);
+  const [floading, setFloading] = useState(false);
+
+  const [personalDetailId, setPersonalDetailId] = useState("");
+  const [favoriteBlogsList, setFavoriteBlogsList] = useState([]);
+
+  const { isAuthenticated, username } = useAuth();
+
+  const [selectedBlogId, setSelectedBlogId] = useState(null);
+  const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+
+  function formatDateString(originalDate) {
+    const parts = originalDate.split("-");
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+
+  const loadFavoriteBlogs = () => {
+    loadFavoriteBlogsByPersonalDetailId(personalDetailId)
+      .then((data) => {
+        setFavoriteBlogsList(data);
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error loading favoriteBlogsList:", error);
+      });
+  };
 
   const { slug } = useParams();
+
   useEffect(() => {
     loadCompanyNBlogs(slug)
       .then((data) => {
@@ -51,7 +92,34 @@ export default function ViewCompanyDetail() {
       .catch((error) => {
         console.error("Error loading loadCompanyNBlogs:", error);
       });
-  }, []);
+    if (username) {
+      loadPersonalDetailByUsername(username)
+        .then((data) => {
+          setPersonalDetailId(data.id);
+          console.log(data.id);
+        })
+        .catch((error) => {
+          console.error("Error loading loadPersonalDetailByUsername:", error);
+        });
+    }
+  }, [username]);
+
+  useEffect(() => {
+    console.log("personaldetailID", personalDetailId);
+    if (personalDetailId) {
+      loadFavoriteBlogsByPersonalDetailId(personalDetailId)
+        .then((data) => {
+          setFavoriteBlogsList(data);
+          //console.log(data);
+        })
+        .catch((error) => {
+          console.error(
+            "Error loading loadFavoriteBlogsByPersonalDetailId:",
+            error
+          );
+        });
+    }
+  }, [personalDetailId]);
 
   const Container = {
     margin: "0 auto",
@@ -89,8 +157,75 @@ export default function ViewCompanyDetail() {
       background-color: #f0f0f0;
     }
   `;
+
+  const handleViewClick = (blogId) => {
+    if (floading) {
+      return;
+    }
+    setSelectedBlogId(blogId);
+    //console.log(selectedBlogId);
+    setIsViewModalVisible(true);
+  };
+
+  const handleUnFavoriteClick = (favoriteId) => {
+    request("DELETE", `http://localhost:8080/api/favorites/${favoriteId}`)
+      .then((response) => {
+        console.log("Removed", favoriteId);
+        loadFavoriteBlogs();
+      })
+      .catch((error) => {
+        console.error("Error removal favorite:", error);
+      });
+  };
+
+  const handleFavoriteClick = (blogId) => {
+    if (isAuthenticated) {
+      const dto = {
+        personalDetailId: personalDetailId,
+        blogId,
+      };
+      setFloading(true);
+      request("POST", "http://localhost:8080/api/favorites/create", dto)
+        .then((response) => {
+          loadFavoriteBlogs();
+          setFloading(false);
+          // if (response.status === 200) {
+          //   setFavoriteBlogsList([...favoriteBlogsList, dto]);
+          // } else {
+          //   console.log("Error setFavoriteBlogsList");
+          // }
+        })
+        .catch((error) => {
+          console.log("Error setFavoriteBlogsList on Catch");
+        });
+    } else {
+      toast.error("Bạn cần đăng nhập để sử dụng chức năng này!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
+    }
+  };
+
+  const handleApplyClick = () => {
+    if (isAuthenticated) {
+      alert("hehe");
+    } else {
+      toast.error("Bạn cần đăng nhập để sử dụng chức năng này!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
+    }
+  };
+
+  const sendMessageButton = {
+    marginBottom: "10px",
+    fontSize: "16px",
+    padding: "0px 27px",
+  };
   return (
     <>
+      {" "}
+      <ToastContainer />
       <div style={containerWrapper}>
         <div style={Container}>
           <div style={companyDetailContainer}>
@@ -100,7 +235,7 @@ export default function ViewCompanyDetail() {
               <Layout style={{ padding: "0px" }}>
                 <Content>
                   <Row align="stretch" gutter={[12, 2]}>
-                    <Col span={16} gutter={16}>
+                    <Col span={18} gutter={16}>
                       <Row align="stretch">
                         <Col span={4}>
                           <Card
@@ -127,38 +262,63 @@ export default function ViewCompanyDetail() {
                         </Col>
                         <Col span={20}>
                           <Card>
-                            <Paragraph style={headingStyle}>
-                              {companyDetail.name}
-                            </Paragraph>
+                            <div
+                              style={{
+                                display: "grid",
+                                gridTemplateColumns: "3fr 1fr", // Chia thành 2 cột có độ rộng bằng nhau
+                                gridGap: "10px",
+                              }}
+                            >
+                              <div>
+                                <Paragraph style={headingStyle}>
+                                  {companyDetail.name}
+                                </Paragraph>
 
-                            <Paragraph>
-                              <EnvironmentOutlined
-                                style={{ color: "#001253", marginRight: 6 }}
-                              />
-                              <strong
-                                style={{ color: "#001253", marginRight: 6 }}
+                                <Paragraph>
+                                  <EnvironmentOutlined
+                                    style={{ color: "#001253", marginRight: 6 }}
+                                  />
+                                  <strong
+                                    style={{ color: "#001253", marginRight: 6 }}
+                                  >
+                                    Địa chỉ:
+                                  </strong>{" "}
+                                  {companyDetail.address}
+                                </Paragraph>
+                                <Paragraph>
+                                  <WalletOutlined
+                                    style={{ color: "#001253", marginRight: 6 }}
+                                  />
+                                  <strong
+                                    style={{ color: "#001253", marginRight: 6 }}
+                                  >
+                                    Tin tuyển dụng:
+                                  </strong>
+                                  {companyDetail.blogs.length}
+                                </Paragraph>
+                              </div>
+
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "flex-end",
+                                  padding: "10px",
+                                }}
                               >
-                                Địa chỉ:
-                              </strong>{" "}
-                              {companyDetail.address}
-                            </Paragraph>
-                            <Paragraph>
-                              <WalletOutlined
-                                style={{ color: "#001253", marginRight: 6 }}
-                              />
-                              <strong
-                                style={{ color: "#001253", marginRight: 6 }}
-                              >
-                                Tin tuyển dụng:
-                              </strong>
-                              {companyDetail.blogs.length}
-                            </Paragraph>
+                                <Button size="large" style={sendMessageButton}>
+                                  <MessageOutlined />
+                                  Nhắn tin
+                                </Button>
+                              </div>
+                            </div>
                           </Card>
                         </Col>
                       </Row>
-                      <Card 
-                      title="Công việc đang tuyển dụng"
-                      style={{marginTop: "12px"}}
+
+                      <Card
+                        title="Công việc đang tuyển dụng"
+                        style={{ marginTop: "12px" }}
                       >
                         <Row align="stretch" style={{ marginTop: "12px" }}>
                           {companyDetail.blogs.map((blog) => (
@@ -169,6 +329,7 @@ export default function ViewCompanyDetail() {
                                     {blog.title}
                                   </span>
                                 }
+                                onClick={() => handleViewClick(blog.id)}
                               >
                                 <Row gutter={16}>
                                   <Col span={8}>
@@ -191,7 +352,7 @@ export default function ViewCompanyDetail() {
                                           marginRight: "4",
                                         }}
                                       />{" "}
-                                      {blog.deadLine}
+                                      {formatDateString(blog.deadLine)}
                                     </div>
                                   </Col>
                                   <Col span={8}>
@@ -215,14 +376,55 @@ export default function ViewCompanyDetail() {
                                   }}
                                 >
                                   <Col style={{ marginTop: 15 }}>
-                                    <Button style={{ marginRight: 8 }}>
+                                    <Button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleApplyClick();
+                                      }}
+                                      style={{
+                                        marginRight: 8,
+                                        backgroundColor: "#ff914d",
+                                        color: "#fff",
+                                      }}
+                                    >
                                       <ArrowRightOutlined />
                                       Ứng tuyển
                                     </Button>
-                                    <Button style={{ marginRight: 8 }}>
-                                      <HeartOutlined />
-                                      Lưu tin
-                                    </Button>
+                                    {favoriteBlogsList.some(
+                                      (favorite) => favorite.blogId === blog.id
+                                    ) ? (
+                                      <Button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          const favoriteItem =
+                                            favoriteBlogsList.find(
+                                              (fav) => fav.blogId === blog.id
+                                            );
+                                          if (favoriteItem) {
+                                            const favoriteId = favoriteItem.id;
+                                            handleUnFavoriteClick(favoriteId);
+                                          }
+                                        }}
+                                        style={{
+                                          marginRight: 8,
+                                          color: "#ff1800",
+                                        }}
+                                      >
+                                        <HeartFilled />
+                                        Đã lưu tin
+                                      </Button>
+                                    ) : (
+                                      <Button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleFavoriteClick(blog.id);
+                                        }}
+                                        style={{ marginRight: 8 }}
+                                      >
+                                        <HeartOutlined />
+                                        Lưu tin
+                                      </Button>
+                                    )}
                                   </Col>
                                 </Row>
                               </HoverableCard>
@@ -231,7 +433,7 @@ export default function ViewCompanyDetail() {
                         </Row>
                       </Card>
                     </Col>
-                    <Col span={8}>
+                    <Col span={6}>
                       <Row gutter={24}>
                         <Col span={24}>
                           <Card style={{ alignItems: "left" }}>
@@ -337,6 +539,28 @@ export default function ViewCompanyDetail() {
           </div>{" "}
         </div>
       </div>
+      <Modal
+        title="Tin Tuyển Dụng"
+        visible={isViewModalVisible}
+        onCancel={() => setIsViewModalVisible(false)}
+        width={1200}
+        footer={[
+          <Button key="back" onClick={() => setIsViewModalVisible(false)}>
+            Close
+          </Button>,
+        ]}
+      >
+        {selectedBlogId && (
+          <ViewBlog
+            companyDetail={companyDetail}
+            selectedBlogId={selectedBlogId}
+            favoriteBlogsList={favoriteBlogsList}
+            handleViewClick={handleViewClick}
+            handleFavoriteClick ={handleFavoriteClick}
+            handleUnFavoriteClick={handleUnFavoriteClick}
+          />
+        )}
+      </Modal>
     </>
   );
 }

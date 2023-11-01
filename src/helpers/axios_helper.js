@@ -335,4 +335,41 @@ export const loadCompanyNBlogs = async (slug) => {
   }
 };
 
+export const loadRelatedBlogs = async (categoryId) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/blogs/getRelatedBlogs/${categoryId}`,
+      { headers }
+    );
+    console.log("loadRelatedBlogs:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadRelatedBlogs:", error);
+    throw error;
+  }
+};
+
+export const loadFavoriteBlogsByPersonalDetailId = async (personalDetailId) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/favorites/listAllFavoritesByPersonalDetailId/${personalDetailId}`,
+      { headers }
+    );
+    console.log("loadFavoriteBlogsByPersonalDetailId:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadFavoriteBlogsByPersonalDetailId:", error);
+    throw error;
+  }
+};
+
+
 
