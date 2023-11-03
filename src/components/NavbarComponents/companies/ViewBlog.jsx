@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import { Layout, Typography, Card, Row, Col, Image, Button } from "antd";
+import { Layout, Typography, Card, Row, Col, Image, Button, Modal } from "antd";
 import {
   EnvironmentOutlined,
   CrownOutlined,
@@ -26,6 +26,8 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import Apply from "./Apply";
+
 import {
   request,
   loadPersonalDetailByUsername,
@@ -39,22 +41,22 @@ const { Header, Content, Sider } = Layout;
 const { Title, Paragraph } = Typography;
 
 export default function ViewBlog(props) {
-  console.log(props);
+  //console.log(props);
   const { isAuthenticated, username } = useAuth();
 
   const handleViewClick = props.handleViewClick;
+  const selectedBlogId = props.selectedBlogId; 
 
-  //const [selectedBlogId, setSelectedBlogId] = useState(props.selectedBlogId);
-  const selectedBlogId = props.selectedBlogId;  
   const [loading, setLoading] = useState();
 
   const companyDetail = props.companyDetail;
-  // const [favoriteBlogsList, setFavoriteBlogsList] = useState([
-  //   props.favoriteBlogsList,
-  // ]);
   const handleFavoriteClick = props.handleFavoriteClick;
   const handleUnFavoriteClick = props.handleUnFavoriteClick;
   const favoriteBlogsList = props.favoriteBlogsList;
+
+  const [isApplyModalVisible, setIsApplyModalVisible] = useState(false);
+  const [appliedBlogId, setAppliedBlogId] = useState("");
+
   function formatDateString(originalDate) {
     const parts = originalDate.split("-");
     return `${parts[2]}-${parts[1]}-${parts[0]}`;
@@ -165,9 +167,11 @@ export default function ViewBlog(props) {
     }
   `;
 
-  const handleApplyClick = () => {
+  const handleApplyClick = (blogId) => {
     if (isAuthenticated) {
-      alert("hehe");
+      setAppliedBlogId(blogId);
+      setIsApplyModalVisible(true);
+      //console.log(blogId);
     } else {
       toast.error("Bạn cần đăng nhập để sử dụng chức năng này!", {
         position: "top-center",
@@ -258,7 +262,7 @@ export default function ViewBlog(props) {
                       size="large"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleApplyClick();
+                        handleApplyClick(blog.id);
                       }}
                       style={appliedButton}
                     >
@@ -283,7 +287,7 @@ export default function ViewBlog(props) {
                           color: "#ff1800",
                           marginBottom: "10px",
                           fontSize: "16px",
-                          padding: "0px 33px",
+                          padding: "0px 23px",
                         }}
                       >
                         <HeartFilled />
@@ -395,6 +399,18 @@ export default function ViewBlog(props) {
                   {blog.detail.split("\n").map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
                   ))}
+                </Paragraph>
+              </Card>
+              <Card
+                title={
+                  <span style={{ color: "#002347" }}>Yêu cầu hồ sơ ứng tuyển</span>
+                }
+              >
+                <Paragraph>
+                  - Sơ yếu lí lịch (CV)
+                </Paragraph>
+                <Paragraph>
+                  - Các bằng cấp liên quan
                 </Paragraph>
               </Card>
             </Col>
@@ -537,6 +553,23 @@ export default function ViewBlog(props) {
           </Row>
         </Content>
       </Layout>
+      <Modal
+        title="Ứng tuyển công việc"
+        style={{ color: '#ff914d', fontSize: '20px' }}
+        visible={isApplyModalVisible}
+        onCancel={() => setIsApplyModalVisible(false)}
+        footer={[
+          <Button key="back" onClick={() => setIsApplyModalVisible(false)}>
+            Close
+          </Button>,
+        ]}
+      >
+        {selectedBlogId && (
+          <Apply
+              appliedBlogId={appliedBlogId}
+          />
+        )}
+      </Modal>
     </>
   );
 }

@@ -376,7 +376,7 @@ export default function ViewCompanyDetail() {
                                   }}
                                 >
                                   <Col style={{ marginTop: 15 }}>
-                                    <Button
+                                    {/* <Button
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         handleApplyClick();
@@ -389,7 +389,7 @@ export default function ViewCompanyDetail() {
                                     >
                                       <ArrowRightOutlined />
                                       Ứng tuyển
-                                    </Button>
+                                    </Button> */}
                                     {favoriteBlogsList.some(
                                       (favorite) => favorite.blogId === blog.id
                                     ) ? (

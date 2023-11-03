@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
+
+
 export const getAuthToken = () => {
   return window.localStorage.getItem("auth_token");
 };
@@ -367,6 +369,24 @@ export const loadFavoriteBlogsByPersonalDetailId = async (personalDetailId) => {
     return response.data;
   } catch (error) {
     console.error("Error loading loadFavoriteBlogsByPersonalDetailId:", error);
+    throw error;
+  }
+};
+
+export const loadFavoriteBlogsDTOByPersonalDetailId = async (personalDetailId) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/favorites/listFavoriteBlogsByPersonalDetailId/${personalDetailId}`,
+      { headers }
+    );
+    console.log("loadFavoriteBlogsDTOByPersonalDetailId:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadFavoriteBlogsDTOByPersonalDetailId:", error);
     throw error;
   }
 };
