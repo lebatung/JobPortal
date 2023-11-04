@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import {
     request
 } from "../../../helpers/axios_helper";
+import { useAuth } from "../../../contexts/AuthContext";
 const { Paragraph } = Typography;
 
 export default function Apply(props) {
@@ -21,6 +22,7 @@ export default function Apply(props) {
     setFiles(selectedFiles);
   };
 
+  const {username} = useAuth();
   const handleUpload = async () => {
     if (files.length === 0) {
       console.log("Vui lòng chọn ít nhất một tệp.");
@@ -42,6 +44,7 @@ export default function Apply(props) {
 
       // Tạo requestData dựa trên giá trị mới nhất của filesData
       const requestData = {
+        userApplied: username,
         blogId: appliedBlogId,
         cvId: null,
         filesData: response.data,

@@ -27,10 +27,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import {
-
   loadPersonalDetailByUsername,
   loadBlogById,
-  loadRelatedBlogs,
   loadPersonalDetail,
 } from"../../../../../helpers/axios_helper";
 import styled from "styled-components";
@@ -40,18 +38,14 @@ const { Header, Content, Sider } = Layout;
 const { Title, Paragraph } = Typography;
 
 export default function ViewBlog(props) {
-  //console.log(props);
+  console.log(props);
   const { isAuthenticated, username } = useAuth();
 
   const handleViewClick = props.handleViewClick;
   const selectedBlogId = props.selectedBlogId; 
-  const blogOwner = props.blogOwner;
+  const blogOwnerDetail = props.blogOwnerDetail;
 
   const [loading, setLoading] = useState();
-
-  const handleFavoriteClick = props.handleFavoriteClick;
-  const handleUnFavoriteClick = props.handleUnFavoriteClick;
-  const favoriteBlogsList = props.favoriteBlogsList;
 
   const [isApplyModalVisible, setIsApplyModalVisible] = useState(false);
   const [appliedBlogId, setAppliedBlogId] = useState("");
@@ -60,10 +54,6 @@ export default function ViewBlog(props) {
     const parts = originalDate.split("-");
     return `${parts[2]}-${parts[1]}-${parts[0]}`;
   }
-
-  const [relatedBlogs, setRelatedBlogs] = useState([]);
-  const [blogOwnerDetail, setBlogOwnerDetail] = useState("");
-
   const [personalDetail, setPersonalDetail] = useState({
     avatar: "",
     name: "",
@@ -109,13 +99,6 @@ export default function ViewBlog(props) {
     loadBlogById(selectedBlogId)
       .then((data) => {
         setBlog(data);
-      })
-      .catch((error) => {
-        console.error("Error loading users:", error);
-      });
-    loadPersonalDetail(blogOwner)
-      .then((data) => {
-        setBlogOwnerDetail(data);
       })
       .catch((error) => {
         console.error("Error loading users:", error);

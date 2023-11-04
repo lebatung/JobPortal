@@ -17,14 +17,15 @@ import { toast } from "react-toastify";
 export default function FavoritesManagement() {
   const { username } = useAuth();
   const [blogOwner, setBlogOwner] = useState(""); 
+  const [blogOwnerDetail, setBlogOwnerDetail] = useState([]);
   const [personalDetailId, setPersonalDetailId] = useState("");
   const [favoriteBlogsList, setFavoriteBlogsList] = useState([]);
   const [floading, setFloading] = useState(false);
 
   const [isFavConfirmModalVisible, setIsFavConfirmModalVisible] = useState(false);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+  const [isBlogOwnerDetailLoaded, setIsBlogOwnerDetailLoaded] = useState(false);
   const [selectedBlogId, setSelectedBlogId] = useState(null);
-  const [companyDetail, setCompanyDetail] = useState([]);
 
   const [selectedFavoriteId, setSelectedFavoriteId] = useState("");
 
@@ -41,6 +42,7 @@ export default function FavoritesManagement() {
   };
 
   useEffect(() => {
+
     
     if (username) {
       loadPersonalDetailByUsername(username)
@@ -53,19 +55,9 @@ export default function FavoritesManagement() {
         });
     }
   }, [username]);
+
   useEffect(() => {
     console.log("personaldetailID", personalDetailId);
-    // loadPersonalDetail(personalDetailId)
-    //     .then((data) => {
-    //       setFavoriteBlogsList(data);
-    //       console.log(data);
-    //     })
-    //     .catch((error) => {
-    //       console.error(
-    //         "Error loading loadPersonalDetail:",
-    //         error
-    //       );
-    //     });
     if (personalDetailId) {
       loadFavoriteBlogsDTOByPersonalDetailId(personalDetailId)
         .then((data) => {
@@ -81,6 +73,21 @@ export default function FavoritesManagement() {
     }
   }, [personalDetailId]);
 
+  useEffect(() => {
+
+    console.log("blogOwner", blogOwner);
+    if(blogOwner){
+      loadPersonalDetail(blogOwner)
+      .then((data) => {
+        setBlogOwnerDetail(data);
+        setIsBlogOwnerDetailLoaded(true);
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error loading loadPersonalDetail:", error);
+      });
+    }
+  }, [blogOwner]);
 
   const handleViewClick = (blog) => {
     if (floading) {
@@ -177,7 +184,7 @@ export default function FavoritesManagement() {
       </Modal>
       <Modal
         title="Tin Tuyển Dụng"
-        visible={isViewModalVisible}
+        visible={isViewModalVisible && isBlogOwnerDetailLoaded}
         onCancel={() => setIsViewModalVisible(false)}
         width={1200}
         footer={[
@@ -189,10 +196,9 @@ export default function FavoritesManagement() {
         {selectedBlogId && (
           <ViewBlog
             selectedBlogId={selectedBlogId}
-            blogOwner={blogOwner}
+            blogOwnerDetail={blogOwnerDetail}
             favoriteBlogsList={favoriteBlogsList}
             handleViewClick={handleViewClick}
-            handleUnFavoriteClick={handleUnFavoriteClick}
           />
         )}
       </Modal>

@@ -391,5 +391,23 @@ export const loadFavoriteBlogsDTOByPersonalDetailId = async (personalDetailId) =
   }
 };
 
+export const loadAppliesByBlogId = async (blogId) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/apply/listAppliesByBlog/${blogId}`,
+      { headers }
+    );
+    console.log("loadAppliesByBlogId:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadAppliesByBlogId:", error);
+    throw error;
+  }
+};
+
 
 
