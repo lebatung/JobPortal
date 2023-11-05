@@ -1,12 +1,14 @@
 .admin-dashboard {
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
+    max-height: auto;
   }
   
   .sidebar {
     width: 200px;
     background-color: #001529;
     color: #fff;
+    max-height: auto;
   }
   
   .content {
@@ -31,6 +33,6 @@
   .sidebar-container {
     display: flex;
     flex-direction: column;
-    height: 100%; /* Đảm bảo container chiếm toàn bộ chiều cao của cha (thường là body hoặc một phần tử khác) */
+
   }
   

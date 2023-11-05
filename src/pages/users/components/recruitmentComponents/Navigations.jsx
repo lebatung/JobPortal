@@ -4,6 +4,7 @@ import {
   UserOutlined,
   AppstoreAddOutlined,
   HomeOutlined,
+  MessageOutlined,
 } from "@ant-design/icons";
 
 export const DASHBOARD_SIDEBAR_LINKS = [
@@ -36,5 +37,11 @@ export const DASHBOARD_SIDEBAR_LINKS = [
     icon: <UserOutlined />,
     label: "Người ứng tuyển",
     to: "/recruitmentDashboard/candidates",
+  },
+  {
+    key: "chats",
+    icon: <MessageOutlined />,
+    label: "Tin nhắn",
+    to: "/recruitmentDashboard/messages",
   },
 ];

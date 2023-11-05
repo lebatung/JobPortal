@@ -36,6 +36,7 @@ import RecruitmentDashboard from "./pages/users/RecruitmentDashboard";
 import UserDetailManagement from "./pages/users/components/recruitmentComponents/userDetailManagement/UserDetailManagement";
 import CandidatesManagement from "./pages/users/components/recruitmentComponents/candidateManagement/CandidatesManagement";
 import BlogsManagement from "./pages/users/components/recruitmentComponents/blogManagement/BlogsManagement";
+import MessagesManagement from "./pages/users/components/recruitmentComponents/messagesManagement/MessagesManagement";
 
 // CANDIDATE DASHBOARD
 import CandidateDashboard from "./pages/users/CandidateDashboard";
@@ -105,6 +106,7 @@ function App() {
               <Route path="/recruitmentDashboard/personalDetail" element={<UserDetailManagement />}></Route>
               <Route path="/recruitmentDashboard/blogs" element={<BlogsManagement />}></Route>
               <Route path="/recruitmentDashboard/candidates" element={<CandidatesManagement />}></Route>
+              <Route path="/recruitmentDashboard/messages" element={<MessagesManagement />}></Route>
 
             </Route>
 

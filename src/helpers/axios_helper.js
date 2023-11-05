@@ -409,5 +409,23 @@ export const loadAppliesByBlogId = async (blogId) => {
   }
 };
 
+export const loadConversationByUserId = async (UserId) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/conversations/byUserId/${UserId}`,
+      { headers }
+    );
+    console.log("loadConversationByUserId:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadConversationByUserId:", error);
+    throw error;
+  }
+};
+
 
 

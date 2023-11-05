@@ -104,7 +104,7 @@ export default function Companies() {
                       <Row gutter={16}>
                         <Col span={8}>
                           <Image
-                            style={{ width: "100%" }}
+                            style={{ width: "80%" }}
                             src={`http://localhost:8080/api/files/${company.avatar}`}
                             alt={company.name}
                           />

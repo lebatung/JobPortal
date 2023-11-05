@@ -4,6 +4,7 @@ import Sidebar from "../users/components/candidateComponents/Sidebar";
 import Header from "../users/components/candidateComponents/Header";
 import { Outlet } from "react-router-dom";
 export default function CandidateDashboard() {
+
   return (
     <>
       <div className="admin-dashboard">

@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Document, Page } from "react-pdf";
-import { pdfjs } from "react-pdf";
 
 import SearchComponent from "../SearchComponent";
-import { Button, Collapse, Modal, Space, Table, Tag } from "antd";
+import {
+  Button,
+  Col,
+  Collapse,
+  Descriptions,
+  Input,
+  Modal,
+  Row,
+  Select,
+  Space,
+  Table,
+  Tag,
+} from "antd";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
@@ -15,6 +26,7 @@ import {
 } from "../../../../../helpers/axios_helper";
 import { CaretRightOutlined } from "@ant-design/icons";
 
+const { Option } = Select;
 const { Panel } = Collapse;
 export default function CandidatesManagement() {
   const { username } = useAuth();
@@ -28,6 +40,10 @@ export default function CandidatesManagement() {
   const [loading, setLoading] = useState(false);
   const [pdfSrc, setPdfSrc] = useState(null);
   const [selectedApplyId, setSelectedApplyId] = useState("");
+
+  const [selectedOption, setSelectedOption] = useState("");
+  const [messageTitle, setMessageTitle] = useState("");
+  const [messageContent, setMessageContent] = useState("");
   const [user, setUser] = useState({
     id: "",
     personalDetailId: "",
@@ -64,7 +80,6 @@ export default function CandidatesManagement() {
   };
 
   const handleExpand = (record) => {
-
     const currentExpandedRowKeys = blogExpandedRowKeys[record.id] || [];
     if (!currentExpandedRowKeys.includes(record.id)) {
       currentExpandedRowKeys.push(record.id);
@@ -112,6 +127,7 @@ export default function CandidatesManagement() {
   const handleCloseModal = () => {
     setVisible(false);
     setPdfSrc(null);
+    setIsProcessVisible(false);
   };
 
   useEffect(() => {
@@ -140,7 +156,7 @@ export default function CandidatesManagement() {
             ...prevData,
             [blog.id]: data,
           }));
-          
+
           setAppliesCount((prevCount) => ({
             ...prevCount,
             [blog.id]: data.length,
@@ -160,10 +176,46 @@ export default function CandidatesManagement() {
     setPageNumber(1);
   }
 
-  const handleProcess = (record) =>{
+  const handleProcess = (record) => {
     console.log(record.id);
-    setSelectedApplyId(record.id)
+    setSelectedApplyId(record.id);
     setIsProcessVisible(true);
+  };
+
+  const handleConfirm = () => {
+    // console.log("selectedApplyId", selectedApplyId);
+    // console.log("selectedOption",selectedOption);
+    // console.log("messageTitle",messageTitle);
+    // console.log("messageContent",messageContent);
+    // Tạo form data chứa selectedApplyId và selectedOption
+    const formDataApply = {
+      id: selectedApplyId,
+      status: selectedOption,
+    };
+    console.log(formDataApply);
+
+    const formDataMessage = {
+      userId: user.id,
+      conversationName: messageTitle,
+      messageContent: messageContent,
+    };
+    console.log(formDataMessage);
+
+    request("put","http://localhost:8080/api/apply/changeStatus",formDataApply)
+      .then((response) => {
+        const formDataMessage = new FormData();
+        formDataMessage.append("userId", user.id);
+        formDataMessage.append("conversationName", messageTitle);
+        formDataMessage.append("messageContent", messageContent);
+
+        return request("post", "http://localhost:8080/api/messages/create", formDataMessage);
+      })
+      .then((response) => {
+        toast.success("Phản hồi đến người dùng thành công!");
+      })
+      .catch((error) => {
+        toast.error("Phản hồi thất bại!");
+      });
   };
   return (
     <>
@@ -267,7 +319,10 @@ export default function CandidatesManagement() {
                         dataIndex: "process",
                         key: "process",
                         render: (text, record) => (
-                          <Button type="primary" onClick={() => handleProcess(record)}>
+                          <Button
+                            type="primary"
+                            onClick={() => handleProcess(record)}
+                          >
                             Xử lí
                           </Button>
                         ),
@@ -299,18 +354,65 @@ export default function CandidatesManagement() {
         )}
       </Modal>
       <Modal
+        title="Phản hồi người ứng tuyển"
         visible={isProcessvisible}
         onCancel={handleCloseModal}
         footer={[
-          <div style={{  display: "flex", justifyContent: "space-between",}}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Button key="back" onClick={() => setIsProcessVisible(false)}>
-            Close
-          </Button>
-          </div>
-          
+              Close
+            </Button>
+            <div>
+              <Button key="confirm" type="primary" onClick={handleConfirm}>
+                Confirm
+              </Button>
+            </div>
+          </div>,
         ]}
       >
-        hihi
+        <Row gutter={[16, 16]}>
+          <Col span={24}>
+            <Descriptions title="Select Option" column={1}>
+              <Descriptions.Item
+                label="Trạng thái ứng tuyển"
+                labelStyle={{ color: "black" }}
+              >
+                <Select
+                  value={selectedOption}
+                  style={{ width: "100%" }}
+                  onChange={(value) => setSelectedOption(value)}
+                >
+                  <Option value={1}>Interviewing</Option>
+                  <Option value={2}>Rejected</Option>
+                </Select>
+              </Descriptions.Item>
+            </Descriptions>
+            <Descriptions title="Message" column={1}>
+              <Descriptions.Item
+                label="Tiêu đề"
+                labelStyle={{ color: "black" }}
+                labelCol={{ span: 8 }}
+              >
+                <Input
+                  placeholder="Message Title"
+                  value={messageTitle}
+                  onChange={(e) => setMessageTitle(e.target.value)}
+                />
+              </Descriptions.Item>
+              <Descriptions.Item
+                label="Nội dung"
+                labelStyle={{ color: "black" }}
+                labelCol={{ span: 8 }}
+              >
+                <Input.TextArea
+                  placeholder="Message Content"
+                  value={messageContent}
+                  onChange={(e) => setMessageContent(e.target.value)}
+                />
+              </Descriptions.Item>
+            </Descriptions>
+          </Col>
+        </Row>
       </Modal>
     </>
   );
