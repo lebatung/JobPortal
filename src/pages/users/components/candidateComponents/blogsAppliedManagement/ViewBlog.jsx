@@ -1,17 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import {
-  Layout,
-  Typography,
-  Card,
-  Row,
-  Col,
-  Image,
-  Button,
-  Modal,
-  Descriptions,
-  Input,
-} from "antd";
+import { Layout, Typography, Card, Row, Col, Image, Button, Modal } from "antd";
 import {
   EnvironmentOutlined,
   CrownOutlined,
@@ -32,59 +21,38 @@ import {
   FieldTimeOutlined,
   HeartFilled,
 } from "@ant-design/icons";
-import { useAuth } from "../../../contexts/AuthContext";
-
-import SendMessage from "./SendMessage";
+import { useAuth } from "../../../../../contexts/AuthContext";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import Apply from "./Apply";
-
 import {
-  request,
   loadPersonalDetailByUsername,
-  loadFavoriteBlogsByPersonalDetailId,
   loadBlogById,
-  loadRelatedBlogs,
-  loadUserByUsername,
-  loadUser
-} from "../../../helpers/axios_helper";
+  loadPersonalDetail,
+} from"../../../../../helpers/axios_helper";
 import styled from "styled-components";
 
 const { Header, Content, Sider } = Layout;
 const { Title, Paragraph } = Typography;
 
 export default function ViewBlog(props) {
-  //console.log(props);
+  console.log(props);
   const { isAuthenticated, username } = useAuth();
 
   const handleViewClick = props.handleViewClick;
-  const selectedBlogId = props.selectedBlogId;
+  const selectedBlogId = props.selectedBlogId; 
+  const blogOwnerDetail = props.blogOwnerDetail;
 
   const [loading, setLoading] = useState();
 
-  const companyDetail = props.companyDetail;
-  const handleFavoriteClick = props.handleFavoriteClick;
-  const handleUnFavoriteClick = props.handleUnFavoriteClick;
-  const favoriteBlogsList = props.favoriteBlogsList;
-
-  const [messageTitle, setMessageTitle] = useState("");
-  const [messageContent, setMessageContent] = useState("");
-
   const [isApplyModalVisible, setIsApplyModalVisible] = useState(false);
-  const [isSendMessageModalVisible, setIsSendMessageModalVisible] = useState(false);
-  const [user, setUser] = useState({
-    id: "",
-  });
   const [appliedBlogId, setAppliedBlogId] = useState("");
 
   function formatDateString(originalDate) {
     const parts = originalDate.split("-");
     return `${parts[2]}-${parts[1]}-${parts[0]}`;
   }
-
-  const [relatedBlogs, setRelatedBlogs] = useState([]);
   const [personalDetail, setPersonalDetail] = useState({
     avatar: "",
     name: "",
@@ -134,21 +102,7 @@ export default function ViewBlog(props) {
       .catch((error) => {
         console.error("Error loading users:", error);
       });
-    loadRelatedBlogs(companyDetail.category.id)
-      .then((data) => {
-        setRelatedBlogs(data);
-      })
-      .catch((error) => {
-        console.error("Error loading users:", error);
-      });
-    loadUserByUsername(username)
-      .then((data) => {
-        setUser(data);
-      })
-      .catch((error) => {
-        console.error("Error loading categories:", error);
-      });
-  }, [selectedBlogId, username, user.id]);
+  }, [selectedBlogId, username]);
 
   const headingStyle = {
     fontWeight: "Bold",
@@ -208,43 +162,6 @@ export default function ViewBlog(props) {
       });
     }
   };
-  const handleSendMessage = () => {
-    if (isAuthenticated) {
-      setIsSendMessageModalVisible(true);
-    } else {
-      toast.error("Bạn cần đăng nhập để sử dụng chức năng này!", {
-        position: "top-center",
-        autoClose: 2000,
-      });
-    }
-  };
-  const handleConfirm = () => {
-    // console.log("selectedApplyId", selectedApplyId);
-    // console.log("selectedOption",selectedOption);
-    // console.log("messageTitle",messageTitle);
-    // console.log("messageContent",messageContent);
-    // Tạo form data chứa selectedApplyId và selectedOption
-
-    const formDataMessage = {
-      userId: user.id,
-      recipientId: blog.userId,
-      conversationName: messageTitle,
-      messageContent: messageContent,
-    };
-    console.log(formDataMessage);
-
-    request(
-      "post",
-      "http://localhost:8080/api/messages/create",
-      formDataMessage
-    )
-      .then((response) => {
-        toast.success("Gửi tin nhắn thành công!");
-      })
-      .catch((error) => {
-        toast.error("Gửi tin nhắn thất bại!");
-      });
-  };
 
   const handleClickRelatedBlog = (relatedBlogId) => {
     // setSelectedBlogId(relatedBlogId);
@@ -274,7 +191,7 @@ export default function ViewBlog(props) {
                   }}
                   width={100}
                   height={100}
-                  src={`http://localhost:8080/api/files/${companyDetail.avatar}`}
+                  src={`http://localhost:8080/api/files/${blogOwnerDetail.avatar}`}
                   alt="Avatar"
                 />
               </Card>
@@ -296,13 +213,13 @@ export default function ViewBlog(props) {
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Công ty:
                       </strong>{" "}
-                      {companyDetail.name}
+                      {blogOwnerDetail.name}
                     </Paragraph>
                     <Paragraph>
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Địa chỉ:
                       </strong>{" "}
-                      {companyDetail.address}
+                      {blogOwnerDetail.address}
                     </Paragraph>
                     <Paragraph>
                       <strong style={{ color: "#001253", marginRight: 6 }}>
@@ -316,76 +233,7 @@ export default function ViewBlog(props) {
                     </Paragraph>
                   </div>
 
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-end",
-                      padding: "10px",
-                    }}
-                  >
-                    <Button
-                      size="large"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleApplyClick(blog.id);
-                      }}
-                      style={appliedButton}
-                    >
-                      <ArrowRightOutlined />
-                      Ứng tuyển
-                    </Button>
-                    {favoriteBlogsList.some(
-                      (favorite) => favorite.blogId === blog.id
-                    ) ? (
-                      <Button
-                        onClick={(e) => {
-                          const favoriteItem = favoriteBlogsList.find(
-                            (fav) => fav.blogId === blog.id
-                          );
-                          if (favoriteItem) {
-                            const favoriteId = favoriteItem.id;
-                            handleUnFavoriteClick(favoriteId);
-                          }
-                        }}
-                        size="large"
-                        style={{
-                          color: "#ff1800",
-                          marginBottom: "10px",
-                          fontSize: "16px",
-                          padding: "0px 23px",
-                        }}
-                      >
-                        <HeartFilled />
-                        Đã lưu tin
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={(e) => {
-                          handleFavoriteClick(blog.id);
-                        }}
-                        size="large"
-                        style={{
-                          marginBottom: "10px",
-                          fontSize: "16px",
-                          padding: "0px 33px",
-                        }}
-                      >
-                        <HeartOutlined />
-                        Lưu tin
-                      </Button>
-                    )}
-                    <Button
-                      size="large"
-                      style={sendMessageButton}
-                      onClick={(e) => {
-                        handleSendMessage();
-                      }}
-                    >
-                      <MessageOutlined />
-                      Nhắn tin
-                    </Button>
-                  </div>
+                  
                 </div>
               </Card>
             </Col>
@@ -475,13 +323,15 @@ export default function ViewBlog(props) {
               </Card>
               <Card
                 title={
-                  <span style={{ color: "#002347" }}>
-                    Yêu cầu hồ sơ ứng tuyển
-                  </span>
+                  <span style={{ color: "#002347" }}>Yêu cầu hồ sơ ứng tuyển</span>
                 }
               >
-                <Paragraph>- Sơ yếu lí lịch (CV)</Paragraph>
-                <Paragraph>- Các bằng cấp liên quan</Paragraph>
+                <Paragraph>
+                  - Sơ yếu lí lịch (CV)
+                </Paragraph>
+                <Paragraph>
+                  - Các bằng cấp liên quan
+                </Paragraph>
               </Card>
             </Col>
             <Col span={8}>
@@ -500,7 +350,7 @@ export default function ViewBlog(props) {
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Nhóm ngành, nghề:
                       </strong>{" "}
-                      {companyDetail.category.name}
+                      {blogOwnerDetail.category.name}
                     </Paragraph>
                     <Paragraph>
                       <EnvironmentOutlined
@@ -509,7 +359,7 @@ export default function ViewBlog(props) {
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Địa điểm:
                       </strong>{" "}
-                      {companyDetail.location.name}
+                      {blogOwnerDetail.location.name}
                     </Paragraph>
                     <Paragraph>
                       <BarcodeOutlined
@@ -518,7 +368,7 @@ export default function ViewBlog(props) {
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Mã số thuế:
                       </strong>{" "}
-                      {companyDetail.taxCode}
+                      {blogOwnerDetail.taxCode}
                     </Paragraph>
                   </Card>
                 </Col>
@@ -536,7 +386,7 @@ export default function ViewBlog(props) {
                       <EnvironmentOutlined
                         style={{ color: "#001253", marginRight: 6 }}
                       />
-                      {companyDetail.address}
+                      {blogOwnerDetail.address}
                     </Paragraph>
                     <strong style={{ color: "#001253", marginRight: 6 }}>
                       Website:
@@ -545,7 +395,7 @@ export default function ViewBlog(props) {
                       <GlobalOutlined
                         style={{ color: "#001253", marginRight: 6 }}
                       />
-                      <a>{companyDetail.linkWebsite} </a>
+                      <a>{blogOwnerDetail.linkWebsite} </a>
                     </Paragraph>
                     <strong style={{ color: "#001253", marginRight: 6 }}>
                       Số điện thoại liên hệ:
@@ -554,7 +404,7 @@ export default function ViewBlog(props) {
                       <PhoneOutlined
                         style={{ color: "#001253", marginRight: 6 }}
                       />
-                      <a>{companyDetail.phoneNumber}</a>
+                      <a>{blogOwnerDetail.phoneNumber}</a>
                     </Paragraph>
                     <strong style={{ color: "#001253", marginRight: 6 }}>
                       Email:
@@ -563,61 +413,8 @@ export default function ViewBlog(props) {
                       <MailFilled
                         style={{ color: "#001253", marginRight: 6 }}
                       />
-                      <a>{companyDetail.email}</a>
+                      <a>{blogOwnerDetail.email}</a>
                     </Paragraph>
-                  </Card>
-                </Col>
-                <Col span={24}>
-                  <Card>
-                    {" "}
-                    <Paragraph style={paragraphStyleHeading}>
-                      <span style={{ color: "#002347" }}>
-                        Công việc tương tự
-                      </span>
-                    </Paragraph>
-                    <Row align="stretch" style={{ marginTop: "12px" }}>
-                      {relatedBlogs.map((relatedBlog) => (
-                        <Col gutter={16} span={24} key={relatedBlog.id}>
-                          <HoverableCard
-                            title={
-                              <span style={{ color: "#003366" }}>
-                                {relatedBlog.title}
-                              </span>
-                            }
-                            onClick={() =>
-                              handleClickRelatedBlog(relatedBlog.id)
-                            }
-                          >
-                            <Row gutter={16}>
-                              <Col span={12}>
-                                <div>
-                                  <MoneyCollectOutlined
-                                    style={{
-                                      color: "#E14D2A",
-                                      marginRight: "4",
-                                    }}
-                                  />{" "}
-                                  {relatedBlog.salaryMin} -{" "}
-                                  {relatedBlog.salaryMax} Triệu đồng
-                                </div>
-                              </Col>
-
-                              <Col span={12}>
-                                <div>
-                                  <EnvironmentOutlined
-                                    style={{
-                                      color: "#E14D2A",
-                                      marginRight: "4",
-                                    }}
-                                  />{" "}
-                                  {relatedBlog.location.name}
-                                </div>
-                              </Col>
-                            </Row>
-                          </HoverableCard>
-                        </Col>
-                      ))}
-                    </Row>
                   </Card>
                 </Col>
               </Row>
@@ -627,7 +424,7 @@ export default function ViewBlog(props) {
       </Layout>
       <Modal
         title="Ứng tuyển công việc"
-        style={{ color: "#ff914d", fontSize: "20px" }}
+        style={{ color: '#ff914d', fontSize: '20px' }}
         visible={isApplyModalVisible}
         onCancel={() => setIsApplyModalVisible(false)}
         footer={[
@@ -636,54 +433,7 @@ export default function ViewBlog(props) {
           </Button>,
         ]}
       >
-        {selectedBlogId && <Apply appliedBlogId={appliedBlogId} />}
-      </Modal>
-      <Modal
-        title="Gửi tin nhắn"
-        visible={isSendMessageModalVisible}
-        onCancel={() => setIsSendMessageModalVisible(false)}
-        footer={[
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Button
-              key="back"
-              onClick={() => setIsSendMessageModalVisible(false)}
-            >
-              Close
-            </Button>
-            <div>
-              <Button key="confirm" type="primary" onClick={handleConfirm}>
-                Confirm
-              </Button>
-            </div>
-          </div>,
-        ]}
-      >
-        <>
-          <Descriptions title="Message" column={1}>
-            <Descriptions.Item
-              label="Tiêu đề"
-              labelStyle={{ color: "black" }}
-              labelCol={{ span: 8 }}
-            >
-              <Input
-                placeholder="Message Title"
-                value={messageTitle}
-                onChange={(e) => setMessageTitle(e.target.value)}
-              />
-            </Descriptions.Item>
-            <Descriptions.Item
-              label="Nội dung"
-              labelStyle={{ color: "black" }}
-              labelCol={{ span: 8 }}
-            >
-              <Input.TextArea
-                placeholder="Message Content"
-                value={messageContent}
-                onChange={(e) => setMessageContent(e.target.value)}
-              />
-            </Descriptions.Item>
-          </Descriptions>
-        </>
+        
       </Modal>
     </>
   );

@@ -6,6 +6,7 @@ import {
   HomeOutlined,
   AuditOutlined,
   FileProtectOutlined,
+  MessageOutlined,
 
 } from "@ant-design/icons";
 
@@ -45,6 +46,12 @@ export const DASHBOARD_SIDEBAR_LINKS = [
     icon: <HeartOutlined />,
     label: "Công việc yêu thích",
     to: "/candidateDashboard/favorites",
+  },
+  {
+    key: "messages",
+    icon: <MessageOutlined />,
+    label: "Tin nhắn",
+    to: "/candidateDashboard/messages",
   },
   
 ];

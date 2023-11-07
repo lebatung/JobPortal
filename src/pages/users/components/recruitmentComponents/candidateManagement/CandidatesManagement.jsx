@@ -48,6 +48,10 @@ export default function CandidatesManagement() {
     id: "",
     personalDetailId: "",
   });
+  const [recipientUsername, setRecipientUsername] = useState("");
+  const [recipientId, setRecipientId] = useState({
+    id: "",
+  });
   const columns = [
     {
       title: "STT",
@@ -139,7 +143,14 @@ export default function CandidatesManagement() {
       .catch((error) => {
         console.error("Error loading categories:", error);
       });
-
+    loadUserByUsername(recipientUsername)
+      .then((data) => {
+        setRecipientId(data);
+        //console.log(data.id);
+      })
+      .catch((error) => {
+        console.error("Error loading categories:", error);
+      });
     loadBlogsByUserId(user.id)
       .then((data) => {
         setBlogs(data);
@@ -147,7 +158,7 @@ export default function CandidatesManagement() {
       .catch((error) => {
         console.error("Error loading users:", error);
       });
-  }, [user.id, username]);
+  }, [user.id, username, recipientUsername]);
   useEffect(() => {
     blogs.forEach((blog) => {
       loadAppliesByBlogId(blog.id)
@@ -180,6 +191,7 @@ export default function CandidatesManagement() {
     console.log(record.id);
     setSelectedApplyId(record.id);
     setIsProcessVisible(true);
+    setRecipientUsername(record.userApplied);
   };
 
   const handleConfirm = () => {
@@ -196,19 +208,28 @@ export default function CandidatesManagement() {
 
     const formDataMessage = {
       userId: user.id,
+      recipientId: recipientId.id,
       conversationName: messageTitle,
       messageContent: messageContent,
     };
     console.log(formDataMessage);
 
-    request("put","http://localhost:8080/api/apply/changeStatus",formDataApply)
+    request(
+      "put",
+      "http://localhost:8080/api/apply/changeStatus",
+      formDataApply
+    )
       .then((response) => {
         const formDataMessage = new FormData();
         formDataMessage.append("userId", user.id);
         formDataMessage.append("conversationName", messageTitle);
         formDataMessage.append("messageContent", messageContent);
-
-        return request("post", "http://localhost:8080/api/messages/create", formDataMessage);
+        formDataMessage.append("recipientId", recipientId.id);
+        return request(
+          "post",
+          "http://localhost:8080/api/messages/create",
+          formDataMessage
+        );
       })
       .then((response) => {
         toast.success("Phản hồi đến người dùng thành công!");

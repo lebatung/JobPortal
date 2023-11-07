@@ -11,12 +11,14 @@ import {
   Image,
   Button,
   Modal,
+  Input,
 } from "antd";
 import {
   request,
   loadCompanyNBlogs,
   loadPersonalDetailByUsername,
   loadFavoriteBlogsByPersonalDetailId,
+  loadUserByUsername,
 } from "../../../helpers/axios_helper";
 import {
   ArrowRightOutlined,
@@ -50,7 +52,11 @@ const { Title, Paragraph } = Typography;
 export default function ViewCompanyDetail() {
   const [companyDetail, setCompanyDetail] = useState([]);
   const [blogs, setBlogs] = useState([]);
-
+  const [user, setUser] = useState({
+    id: "",
+  });
+  const [messageTitle, setMessageTitle] = useState("");
+  const [messageContent, setMessageContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [floading, setFloading] = useState(false);
 
@@ -61,6 +67,7 @@ export default function ViewCompanyDetail() {
 
   const [selectedBlogId, setSelectedBlogId] = useState(null);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
+  const [isSendMessageModalVisible, setIsSendMessageModalVisible] = useState(false);
 
   function formatDateString(originalDate) {
     const parts = originalDate.split("-");
@@ -102,7 +109,14 @@ export default function ViewCompanyDetail() {
           console.error("Error loading loadPersonalDetailByUsername:", error);
         });
     }
-  }, [username]);
+    loadUserByUsername(username)
+      .then((data) => {
+        setUser(data);
+      })
+      .catch((error) => {
+        console.error("Error loading categories:", error);
+      });
+  }, [username, user.id]);
 
   useEffect(() => {
     console.log("personaldetailID", personalDetailId);
@@ -166,6 +180,33 @@ export default function ViewCompanyDetail() {
     //console.log(selectedBlogId);
     setIsViewModalVisible(true);
   };
+  const handleConfirm = () => {
+    // console.log("selectedApplyId", selectedApplyId);
+    // console.log("selectedOption",selectedOption);
+    // console.log("messageTitle",messageTitle);
+    // console.log("messageContent",messageContent);
+    // Tạo form data chứa selectedApplyId và selectedOption
+
+    const formDataMessage = {
+      userId: user.id,
+      recipientId: blogs[0].userId,
+      conversationName: messageTitle,
+      messageContent: messageContent,
+    };
+    console.log(formDataMessage);
+
+    request(
+      "post",
+      "http://localhost:8080/api/messages/create",
+      formDataMessage
+    )
+      .then((response) => {
+        toast.success("Gửi tin nhắn thành công!");
+      })
+      .catch((error) => {
+        toast.error("Gửi tin nhắn thất bại!");
+      });
+  };
 
   const handleUnFavoriteClick = (favoriteId) => {
     request("DELETE", `http://localhost:8080/api/favorites/${favoriteId}`)
@@ -209,6 +250,17 @@ export default function ViewCompanyDetail() {
   const handleApplyClick = () => {
     if (isAuthenticated) {
       alert("hehe");
+    } else {
+      toast.error("Bạn cần đăng nhập để sử dụng chức năng này!", {
+        position: "top-center",
+        autoClose: 2000,
+      });
+    }
+  };
+
+  const handleSendMessage = () => {
+    if (isAuthenticated) {
+      setIsSendMessageModalVisible(true);
     } else {
       toast.error("Bạn cần đăng nhập để sử dụng chức năng này!", {
         position: "top-center",
@@ -306,7 +358,13 @@ export default function ViewCompanyDetail() {
                                   padding: "10px",
                                 }}
                               >
-                                <Button size="large" style={sendMessageButton}>
+                                <Button 
+                                size="large" 
+                                style={sendMessageButton}
+                                onClick={(e) => {
+                                  handleSendMessage();
+                                }}
+                                >
                                   <MessageOutlined />
                                   Nhắn tin
                                 </Button>
@@ -560,6 +618,53 @@ export default function ViewCompanyDetail() {
             handleUnFavoriteClick={handleUnFavoriteClick}
           />
         )}
+      </Modal>
+      <Modal
+        title="Gửi tin nhắn"
+        visible={isSendMessageModalVisible}
+        onCancel={() => setIsSendMessageModalVisible(false)}
+        footer={[
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Button
+              key="back"
+              onClick={() => setIsSendMessageModalVisible(false)}
+            >
+              Close
+            </Button>
+            <div>
+              <Button key="confirm" type="primary" onClick={handleConfirm}>
+                Confirm
+              </Button>
+            </div>
+          </div>,
+        ]}
+      >
+        <>
+          <Descriptions title="Message" column={1}>
+            <Descriptions.Item
+              label="Tiêu đề"
+              labelStyle={{ color: "black" }}
+              labelCol={{ span: 8 }}
+            >
+              <Input
+                placeholder="Message Title"
+                value={messageTitle}
+                onChange={(e) => setMessageTitle(e.target.value)}
+              />
+            </Descriptions.Item>
+            <Descriptions.Item
+              label="Nội dung"
+              labelStyle={{ color: "black" }}
+              labelCol={{ span: 8 }}
+            >
+              <Input.TextArea
+                placeholder="Message Content"
+                value={messageContent}
+                onChange={(e) => setMessageContent(e.target.value)}
+              />
+            </Descriptions.Item>
+          </Descriptions>
+        </>
       </Modal>
     </>
   );

@@ -409,6 +409,24 @@ export const loadAppliesByBlogId = async (blogId) => {
   }
 };
 
+export const loadAppliedByUsernameApplied = async (username) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/apply/listAppliesByUsername/${username}`,
+      { headers }
+    );
+    console.log("loadAppliedByUsernameApplied:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadAppliedByUsernameApplied:", error);
+    throw error;
+  }
+};
+
 export const loadConversationByUserId = async (UserId) => {
   try {
     let headers = {};

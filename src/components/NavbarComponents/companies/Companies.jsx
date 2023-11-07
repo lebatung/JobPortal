@@ -54,7 +54,6 @@ export default function Companies() {
     display: "flex",
     justifyContent: "center",
     flexWrap: "wrap",
-    
   };
 
   const containerWrapper = {
@@ -76,9 +75,7 @@ export default function Companies() {
   const filteredCompanies =
     selectedCategory === "all"
       ? companies
-      : companies.filter(
-          (company) => company.category.name === selectedCategory
-        );
+      : companies.filter((company) => company.category.id === selectedCategory);
 
   return (
     <>
@@ -91,7 +88,11 @@ export default function Companies() {
               onChange={(value) => setSelectedCategory(value)}
             >
               <Option value="all">Tất cả lĩnh vực, ngành nghề</Option>
-              {/* Thêm các category khác vào đây */}
+              {categories.map((category) => (
+                <Option key={category.id} value={category.id}>
+                  {category.name}
+                </Option>
+              ))}
             </Select>
           </div>
           <div style={companyCardContainer}>

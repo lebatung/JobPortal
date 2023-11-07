@@ -31,6 +31,8 @@ import AddCategory from "./pages/admin/components/categoriesComponents/AddCatego
 
 import AdminBlogsManagement from "./pages/admin/components/blogComponents/BlogManagement";
 
+import AdminMessagesManagement from "./pages/admin/components/messagesManagement/MessagesManagement";
+
 // RECRUITMENT DASHBOARD
 import RecruitmentDashboard from "./pages/users/RecruitmentDashboard";
 import UserDetailManagement from "./pages/users/components/recruitmentComponents/userDetailManagement/UserDetailManagement";
@@ -44,6 +46,7 @@ import CandidateDetailManagement from "./pages/users/components/candidateCompone
 import BlogsApplied from "./pages/users/components/candidateComponents/blogsAppliedManagement/BlogsAppliedManagement";
 import Cvs from "./pages/users/components/candidateComponents/cvsManagement/CvsManagement";
 import Favorites from "./pages/users/components/candidateComponents/favoritesManagement/FavoritesManagement";
+import CandidateMessagesManagement from "./pages/users/components/candidateComponents/messagesManagement/MessagesManagement";
 
 //FORBIDDEN PAGE
 import ForbiddenPage from "./errorpages/ForbiddenPage";
@@ -89,8 +92,9 @@ function App() {
                 <Route path="/adminDashboard/categories/add-category" element={<AddCategory />}/>
               </Route>
               <Route path="/adminDashboard/blogs" element={<AdminBlogsManagement />}>
-                
+               
               </Route>
+              <Route path="/adminDashboard/messages" element={<AdminMessagesManagement />}></Route>
               
             </Route>
 
@@ -123,6 +127,7 @@ function App() {
               <Route path="/candidateDashboard/cvs" element={<Cvs/>}></Route>
               <Route path="/candidateDashboard/applied" element={<BlogsApplied/>}></Route>
               <Route path="/candidateDashboard/favorites" element={<Favorites/>}></Route>
+              <Route path="/candidateDashboard/messages" element={<CandidateMessagesManagement />}></Route>
             </Route>
 
             <Route path="/forbiddenPage" element={<ForbiddenPage />} />
