@@ -17,6 +17,8 @@ import {
   loadUserByUsername,
   loadPersonalDetailByUsername,
   loadBlogById,
+  loadLocations,
+  loadCategories,
 } from "../../../../../helpers/axios_helper";
 
 import { toast } from "react-toastify";
@@ -30,6 +32,9 @@ const { Option } = Select;
 const EditBlog = (props) => {
   const selectedBlogId = props.selectedBlogId;
   const { username } = useAuth();
+
+  const [locations, setLocations] = useState([]);
+  const [categories, setCatgories] = useState([]);
   const [form] = Form.useForm();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
@@ -64,6 +69,8 @@ const EditBlog = (props) => {
     exp: "",
     gender: "",
     image: "image.png",
+    location: "",
+    category: "",
   });
 
   const {
@@ -78,6 +85,8 @@ const EditBlog = (props) => {
     position,
     exp,
     gender,
+    locationId,
+    categoryId,
   } = blog;
 
   const navigate = useNavigate();
@@ -126,6 +135,20 @@ const EditBlog = (props) => {
       .catch((error) => {
         console.error("Error loading users:", error);
       });
+      loadLocations(selectedBlogId)
+      .then((data) => {
+        setLocations(data);
+      })
+      .catch((error) => {
+        console.error("Error loading users:", error);
+      });
+      loadCategories(selectedBlogId)
+      .then((data) => {
+        setCatgories(data);
+      })
+      .catch((error) => {
+        console.error("Error loading users:", error);
+      });
   }, [selectedBlogId, username]);
 
   const [selectedDay, setSelectedDay] = useState( blog.deadLine ? moment(blog.deadLine) : null );
@@ -148,8 +171,8 @@ const EditBlog = (props) => {
           position,
           exp,
           gender,
-          locationId: personalDetail.location.id,
-          categoryId: personalDetail.category.id,
+          locationId: blog.location.id,
+          categoryId: blog.category.id,
           userId: user.id,
         };
 
@@ -281,6 +304,90 @@ const EditBlog = (props) => {
                         name="education"
                         onChange={(e) => onInputChange(e)}
                       />
+                    </Form.Item>
+                  </div>
+                }
+              </Descriptions.Item>
+              <Descriptions.Item label="Location">
+                {
+                  <div
+                    style={{
+                      alignItems: "center",
+                    }}
+                  >
+                    <Form.Item
+                      label="Địa điểm"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng chọn địa điểm!",
+                        },
+                      ]}
+                    >
+                      <Select
+                        value={blog.location.name} 
+                        onChange={(value) => {
+                          const selectedLocation = locations.find(
+                            (location) => location.name === value
+                          );
+                          if (selectedLocation) {
+                            setBlog({
+                              ...blog,
+                              location: selectedLocation, 
+                            });
+                          }
+                          
+                        }}
+                        placeholder=""
+                      >
+                        {locations.map((location) => (
+                          <Option key={location.id} value={location.name}>
+                            {location.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </div>
+                }
+              </Descriptions.Item>
+              <Descriptions.Item label="Category">
+                {
+                  <div
+                    style={{
+                      alignItems: "center",
+                    }}
+                  >
+                    <Form.Item
+                      label="Nhóm ngành, nghề"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng chọn nhóm ngành, nghề!",
+                        },
+                      ]}
+                    >
+                      <Select
+                        value={blog.category.name} 
+                        onChange={(value) => {
+                          const selectedCategory = categories.find(
+                            (category) => category.name === value
+                          );
+                          if (selectedCategory) {
+                            setBlog({
+                              ...blog,
+                              category: selectedCategory, 
+                            });
+                          }
+                          
+                        }}
+                        placeholder=""
+                      >
+                        {categories.map((category) => (
+                          <Option key={category.id} value={category.name}>
+                            {category.name}
+                          </Option>
+                        ))}
+                      </Select>
                     </Form.Item>
                   </div>
                 }
@@ -447,7 +554,7 @@ const EditBlog = (props) => {
                 }
               </Descriptions.Item>
             </Descriptions>
-            <div style={{ marginTop: 16 }}>
+            <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end" }}>
               <Button
                 className="ant-btn-primary"
                 onClick={() => handleEditClick()}

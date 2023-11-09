@@ -19,6 +19,8 @@ import {
   request,
   loadPersonalDetailByUsername,
   loadUserByUsername,
+  loadLocations,
+  loadCategories,
 } from "../../../../../helpers/axios_helper";
 
 import { toast } from "react-toastify";
@@ -59,11 +61,11 @@ export default function AddBlog() {
     image: "image.png",
     title: "",
     detail: "",
-    deadLine: "",
+    deadLine: null,
     salaryMin: "",
     salaryMax: "",
     workingTime: "",
-    education:"",
+    education: "",
     quantity: "",
     position: "",
     exp: "",
@@ -112,7 +114,7 @@ export default function AddBlog() {
     loadUserByUsername(username)
       .then((data) => {
         setUser(data);
-        //console.log(data);  
+        //console.log(data);
       })
       .catch((error) => {
         console.error("Error loading categories:", error);
@@ -126,11 +128,26 @@ export default function AddBlog() {
       .catch((error) => {
         console.error("Error loading categories:", error);
       });
+
+    loadLocations()
+      .then((data) => {
+        setLocations(data);
+      })
+      .catch((error) => {
+        console.error("Error loading locations:", error);
+      });
+    loadCategories()
+      .then((data) => {
+        setCategories(data);
+      })
+      .catch((error) => {
+        console.error("Error loading locations:", error);
+      });
   }, [id, username]);
 
   const onFinish = () => {
     const formattedDay =
-      deadLine !== null ? deadLine.format("YYYY-MM-DD") : null;
+      deadLine !== null ? deadLine.format("YYYY-MM-DD") : "2023-12-31";
 
     const formData = {
       image,
@@ -145,8 +162,8 @@ export default function AddBlog() {
       position,
       exp,
       gender,
-      locationId: personalDetail.location.id,
-      categoryId: personalDetail.category.id,
+      locationId,
+      categoryId,
       userId: user.id,
       enable: 2, // 0: Active, 1: Inactive, 2: Pending, 3: Rejected
     };
@@ -286,7 +303,10 @@ export default function AddBlog() {
                       label="Yêu cầu chuyên môn"
                       name="education"
                       rules={[
-                        { required: true, message: "Vui lòng yêu cầu chuyên môn" },
+                        {
+                          required: true,
+                          message: "Vui lòng yêu cầu chuyên môn",
+                        },
                       ]}
                       validateTrigger="onBlur"
                     >
@@ -298,7 +318,7 @@ export default function AddBlog() {
                     </Form.Item>
                   </div>
                 }
-              </Descriptions.Item>          
+              </Descriptions.Item>
               <Descriptions.Item label="Working times">
                 {
                   <div
@@ -319,6 +339,80 @@ export default function AddBlog() {
                         name="workingTime"
                         onChange={(e) => onInputChange(e)}
                       />
+                    </Form.Item>
+                  </div>
+                }
+              </Descriptions.Item>
+              <Descriptions.Item label="Địa điểm">
+                {
+                  <div
+                    style={{
+                      alignItems: "center",
+                    }}
+                  >
+                    <Form.Item
+                      label="Địa điểm"
+                      name="location"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng chọn địa điểm!",
+                        },
+                      ]}
+                    >
+                      <Select
+                        value={locationId}
+                        onChange={(value) =>
+                          setBlog({
+                            ...blog,
+                            locationId: value,
+                          })
+                        }
+                        placeholder="Chọn địa điểm"
+                      >
+                        {locations.map((locations) => (
+                          <Option key={locations.id} value={locations.id}>
+                            {locations.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </div>
+                }
+              </Descriptions.Item>
+              <Descriptions.Item label="Category">
+                {
+                  <div
+                    style={{
+                      alignItems: "center",
+                    }}
+                  >
+                    <Form.Item
+                      label="Nhóm ngành, nghề"
+                      name="category"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng chọn nhóm ngành, nghề!",
+                        },
+                      ]}
+                    >
+                      <Select
+                        value={categoryId}
+                        onChange={(value) =>
+                          setBlog({
+                            ...blog,
+                            categoryId: value,
+                          })
+                        }
+                        placeholder="Chọn địa điểm"
+                      >
+                        {categories.map((categories) => (
+                          <Option key={categories.id} value={categories.id}>
+                            {categories.name}
+                          </Option>
+                        ))}
+                      </Select>
                     </Form.Item>
                   </div>
                 }
@@ -346,55 +440,59 @@ export default function AddBlog() {
                   </div>
                 }
               </Descriptions.Item>
-              <Descriptions.Item label="Gender">
-                {
-                  <div
-                    style={{
-                      alignItems: "center",
-                    }}
+
+              <Descriptions.Item label="Giới tính">
+                <Form.Item
+                  label="Giới tính"
+                  name="gender"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng chọn giới tính!",
+                    },
+                  ]}
+                >
+                  <Select
+                    value={gender}
+                    name="gender"
+                    onChange={(value) =>
+                      onInputChange({ target: { name: "gender", value } })
+                    }
                   >
-                    <Form.Item
-                      label="Giới tính"
-                      name="gender"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Vui lòng nhập gới tính!",
-                        },
-                      ]}
-                    >
-                      <Input
-                        value={gender}
-                        name="gender"
-                        onChange={(e) => onInputChange(e)}
-                      />
-                    </Form.Item>
-                  </div>
-                }
+                    <Select.Option value="Nam">Nam</Select.Option>
+                    <Select.Option value="Nữ">Nữ</Select.Option>
+                    <Select.Option value="Tất cả">Tất cả</Select.Option>
+                  </Select>
+                </Form.Item>
               </Descriptions.Item>
-              <Descriptions.Item label="Exp">
-                {
-                  <div
-                    style={{
-                      alignItems: "center",
-                    }}
+
+              <Descriptions.Item label="Kinh nghiệm làm việc">
+                <Form.Item
+                  label="Kinh nghiệm làm việc"
+                  name="exp"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng chọn kinh nghiệm làm việc",
+                    },
+                  ]}
+                >
+                  <Select
+                    value={exp}
+                    onChange={(value) =>
+                      onInputChange({ target: { name: "exp", value } })
+                    }
                   >
-                    <Form.Item
-                      label="Kinh nghiệm làm việc"
-                      name="exp"
-                      rules={[
-                        { required: true, message: "Vui lòng nhập kinh nghiệm làm việc" },
-                      ]}
-                    >
-                      <Input
-                        value={exp}
-                        name="exp"
-                        onChange={(e) => onInputChange(e)}
-                      />
-                    </Form.Item>
-                  </div>
-                }
+                    <Select.Option value="0">
+                      Không yêu cầu kinh nghiệm
+                    </Select.Option>
+                    <Select.Option value="1-2">1-2 năm</Select.Option>
+                    <Select.Option value="2-5">2-5 năm</Select.Option>
+                    <Select.Option value="5+">Trên 5 năm</Select.Option>
+                  </Select>
+                </Form.Item>
               </Descriptions.Item>
+
               <Descriptions.Item label="Position">
                 {
                   <div
@@ -465,7 +563,13 @@ export default function AddBlog() {
                 }
               </Descriptions.Item>
             </Descriptions>
-            <div style={{ marginTop: 16 }}>
+            <div
+              style={{
+                marginTop: 16,
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
               <Button
                 className="ant-btn-primary"
                 onClick={() => handleEditClick(id)}

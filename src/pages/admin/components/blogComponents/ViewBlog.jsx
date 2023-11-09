@@ -84,7 +84,12 @@ export default function ViewBlog(props) {
       .catch((error) => {
         console.error("Error loading categories:", error);
       });
-  }, [selectedBlogId, blog.userId, isApproveModalVisible, isRejectModalVisible]);
+  }, [
+    selectedBlogId,
+    blog.userId,
+    isApproveModalVisible,
+    isRejectModalVisible,
+  ]);
 
   const paragraphStyleHeading = {
     fontSize: "20px",
@@ -114,7 +119,6 @@ export default function ViewBlog(props) {
       .catch((error) => {
         console.error("Duyệt tin thất bại:", error);
         console.error("Error approve blog:", error);
-
       });
   };
   const handleRejectClick = () => {
@@ -138,13 +142,17 @@ export default function ViewBlog(props) {
       .catch((error) => {
         console.error("Duyệt tin thất bại:", error);
         console.error("Error approve blog:", error);
-
       });
-    
+  };
+
+  const headingStyle = {
+    fontWeight: "Bold",
+    fontSize: "20px",
+    color: "#002347",
   };
   return (
     <>
-    <ToastContainer />
+      <ToastContainer />
       <Layout style={{ padding: "0px" }}>
         <Content>
           <Row align="stretch">
@@ -174,18 +182,29 @@ export default function ViewBlog(props) {
             <Col span={20}>
               <Card>
                 <Paragraph>
-                  <strong>{blog.title}</strong>
+                  <strong style={headingStyle}>{blog.title}</strong>
                 </Paragraph>
                 <Paragraph>
-                  <strong>Công ty:</strong> {personalDetail.name}
+                  <strong style={{ color: "#001253", marginRight: 6 }}>
+                    Công ty:
+                  </strong>{" "}
+                  {personalDetail.name}
                 </Paragraph>
                 <Paragraph>
-                  <strong>Địa chỉ:</strong> {personalDetail.address}
+                  <strong style={{ color: "#001253", marginRight: 6 }}>
+                    Địa chỉ:
+                  </strong>{" "}
+                  {personalDetail.address}
                 </Paragraph>
                 <Paragraph>
-                  <strong>Mức lương: </strong>
+                  <strong style={{ color: "#001253", marginRight: 6 }}>
+                    Mức lương:{" "}
+                  </strong>
                   {blog.salaryMin} - {blog.salaryMax} Triệu đồng |{" "}
-                  <strong>Hạn nộp hồ sơ:</strong> {blog.deadLine}
+                  <strong style={{ color: "#001253", marginRight: 6 }}>
+                    Hạn nộp hồ sơ:
+                  </strong>{" "}
+                  {blog.deadLine}
                 </Paragraph>
               </Card>
             </Col>
@@ -193,21 +212,25 @@ export default function ViewBlog(props) {
           <div style={{ margin: "0px 0" }}></div>
           <Row align="stretch">
             <Col gutter={16} span={16}>
-              <Card title="Yêu cầu chung">
+              <Card title={<span style={{ color: "#002347" }}>Yêu cầu chung</span>}>
                 <Row gutter={-8}>
                   <Col span={12}>
                     <Paragraph>
                       <CrownOutlined style={{ marginRight: 4 }} />
-                      <strong style={{ marginRight: 4 }}>
+                      <strong style={{ color: "#001253", marginRight: 6 }}>
                         Kinh Nghiệm:
                       </strong>{" "}
-                      {blog.exp}
+                      {blog.exp ? (
+                        <span>{blog.exp} năm kinh nghiệm</span>
+                      ) : (
+                        <span>Không yêu cầu kinh nghiệm</span>
+                      )}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
                     <Paragraph>
                       <IdcardOutlined style={{ marginRight: 4 }} />
-                      <strong style={{ marginRight: 4 }}>
+                      <strong style={{ color: "#001253", marginRight: 6 }}>
                         Trình độ chuyên môn:
                       </strong>
                       {blog.education}
@@ -216,7 +239,7 @@ export default function ViewBlog(props) {
                   <Col span={12}>
                     <Paragraph>
                       <MenuOutlined style={{ marginRight: 4 }} />
-                      <strong style={{ marginRight: 4 }}>
+                      <strong style={{ color: "#001253", marginRight: 6 }}>
                         Ngành, nghề:
                       </strong>{" "}
                       {blog.category.name}
@@ -225,21 +248,25 @@ export default function ViewBlog(props) {
                   <Col span={12}>
                     <Paragraph>
                       <AuditOutlined style={{ marginRight: 4 }} />
-                      <strong style={{ marginRight: 4 }}>Chức vụ:</strong>
+                      <strong style={{ color: "#001253", marginRight: 6 }}>
+                        Chức vụ:
+                      </strong>
                       {blog.position}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
                     <Paragraph>
                       <TeamOutlined style={{ marginRight: 4 }} />
-                      <strong style={{ marginRight: 4 }}>Số lượng:</strong>{" "}
+                      <strong style={{ color: "#001253", marginRight: 6 }}>
+                        Số lượng:
+                      </strong>{" "}
                       {blog.quantity}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
                     <Paragraph>
                       <DeploymentUnitOutlined style={{ marginRight: 4 }} />
-                      <strong style={{ marginRight: 4 }}>
+                      <strong style={{ color: "#001253", marginRight: 6 }}>
                         Giới tính:
                       </strong>{" "}
                       {blog.gender}
@@ -248,7 +275,7 @@ export default function ViewBlog(props) {
                   <Col span={12}>
                     <Paragraph>
                       <ScheduleOutlined style={{ marginRight: 4 }} />
-                      <strong style={{ marginRight: 4 }}>
+                      <strong style={{ color: "#001253", marginRight: 6 }}>
                         Thời gian làm việc:
                       </strong>{" "}
                       {blog.workingTime}
@@ -257,7 +284,7 @@ export default function ViewBlog(props) {
                   <Col span={12}>
                     <Paragraph>
                       <EnvironmentOutlined style={{ marginRight: 4 }} />
-                      <strong style={{ marginRight: 4 }}>
+                      <strong style={{ color: "#001253", marginRight: 6 }}>
                         Địa điểm làm việc:
                       </strong>{" "}
                       {blog.location.name}
@@ -265,7 +292,9 @@ export default function ViewBlog(props) {
                   </Col>
                 </Row>
               </Card>
-              <Card title="Mô tả công việc">
+              <Card title={
+                  <span style={{ color: "#002347" }}>Mô tả công việc</span>
+                }>
                 <Paragraph>
                   {blog.detail.split("\n").map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
@@ -278,25 +307,29 @@ export default function ViewBlog(props) {
                 <Col span={24}>
                   <Card>
                     <Paragraph style={paragraphStyleHeading}>
-                      Thông tin công ty
+                      <span style={{ color: "#002347" }}>
+                        Thông tin công ty
+                      </span>
                     </Paragraph>
                     <Paragraph>
-                      <EnvironmentOutlined style={{ marginRight: 4 }} />
+                      <MenuOutlined
+                        style={{ color: "#001253", marginRight: 6 }}
+                      />
+                      
+                      {personalDetail.category.name}
+                    </Paragraph>
+                    <Paragraph>
+                      <EnvironmentOutlined  style={{ color: "#001253", marginRight: 6 }} />
                       {personalDetail.address}
                     </Paragraph>
                     <Paragraph>
-                      <PhoneOutlined style={{ marginRight: 4 }} />
+                      <PhoneOutlined  style={{ color: "#001253", marginRight: 6 }} />
                       {personalDetail.phoneNumber}
                     </Paragraph>
                     <Paragraph>
-                      <GlobalOutlined style={{ marginRight: 4 }} />
+                      <GlobalOutlined  style={{ color: "#001253", marginRight: 6 }} />
                       <a>{personalDetail.linkWebsite} </a>
                     </Paragraph>
-                  </Card>
-                </Col>
-                <Col span={24}>
-                  <Card>
-                    <Paragraph>20/10/23</Paragraph>
                   </Card>
                 </Col>
               </Row>
@@ -324,7 +357,6 @@ export default function ViewBlog(props) {
         Are you sure you want to {"Approved"} this blog?
       </Modal>
       <Modal
-        
         visible={isRejectModalVisible}
         onOk={onRejected}
         onCancel={() => setIsRejectModalVisible(false)}

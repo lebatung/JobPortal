@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Table, Button, Space,Modal } from "antd";
+import { Table, Button, Space, Modal, Select } from "antd";
 import { loadUsers } from "../../../../helpers/axios_helper";
 import axios from "axios";
 
@@ -19,7 +19,7 @@ function UserManagement() {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
-
+  const [selectedRole, setSelectedRole] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedUserActive, setSelectedUserActive] = useState(null);
 
@@ -42,7 +42,12 @@ function UserManagement() {
       .catch((error) => {
         console.error("Error loading users:", error);
       });
-  }, [isActiveModalVisible, isDeleteModalVisible, isCreateModalVisible, isEditModalVisible]);
+  }, [
+    isActiveModalVisible,
+    isDeleteModalVisible,
+    isCreateModalVisible,
+    isEditModalVisible,
+  ]);
 
   const columns = [
     {
@@ -72,10 +77,9 @@ function UserManagement() {
       key: "actions",
       render: (text, record) => (
         <Space size="middle">
-          <Button 
-          type="primary" 
-          onClick={() => handleEditClick(record)}
-          > Edit
+          <Button type="primary" onClick={() => handleEditClick(record)}>
+            {" "}
+            Edit
             {/* <Link
               to={`/adminDashboard/users/edit-user-detail/${record.personalDetailId}`}
             >
@@ -90,11 +94,8 @@ function UserManagement() {
             Delete
           </Button>
 
-          <Button 
-          onClick={() => handleViewClick(record)}
-          >View
-          </Button>
-          
+          <Button onClick={() => handleViewClick(record)}>View</Button>
+
           <Button
             className={
               record.active === 1 ? "ant-btn-danger" : "ant-btn-primary"
@@ -166,7 +167,7 @@ function UserManagement() {
   const handleViewClick = (record) => {
     setSelectedUserId(record.id);
     setIsViewModalVisible(true);
-};
+  };
 
   const handleEditClick = (record) => {
     setSelectedUserId(record.id);
@@ -174,13 +175,28 @@ function UserManagement() {
     setIsEditModalVisible(true);
   };
   const handleCreateClick = () => {
-
     setIsCreateModalVisible(true);
   };
 
+  const handleRoleChange = (value) => {
+    setSelectedRole(value);
+  };
+  const handleFilterByRole = () => {
+    console.log(selectedRole);
+    if (selectedRole) {
+      // Lọc người dùng dựa trên vai trò đã chọn
+      const filteredUsers = users.filter((user) =>
+        user.roles.includes(selectedRole)
+      );
+      setSearchResults(filteredUsers);
+    } else {
+      // Nếu không có vai trò được chọn, hiển thị tất cả người dùng
+      setSearchResults(users);
+    }
+  };
   return (
     <>
-    <ToastContainer />
+      <ToastContainer />
       <div
         style={{
           marginBottom: 10,
@@ -193,11 +209,26 @@ function UserManagement() {
         }}
       >
         <SearchComponents onSearch={performSearch} />
-        <Button 
-        type="primary"
-        onClick={() => handleCreateClick()}
-        >Add New User
-          {/* <Link to={"/adminDashboard/users/add-user"}>Add New User</Link> */}
+        <div>
+          <Select
+            style={{ width: 200, marginRight: 10 }}
+            placeholder="Lọc người dùng theo vai trò"
+            onChange={handleRoleChange}
+          >
+            <Select.Option value="">All</Select.Option>
+            <Select.Option value="ROLE_RECRUITMENT">
+              Recruitment
+            </Select.Option>{" "}
+            <Select.Option value="ROLE_CANDIDATE">Candidate</Select.Option>{" "}
+          </Select>
+
+          <Button type="primary" onClick={handleFilterByRole}>
+            Lọc
+          </Button>
+        </div>
+
+        <Button type="primary" onClick={() => handleCreateClick()}>
+          Add New User
         </Button>
       </div>
       <hr />
@@ -232,10 +263,7 @@ function UserManagement() {
           </Button>,
         ]}
       >
-        {selectedUserId && (
-          <ViewUserDetail selectedUserId={selectedUserId}/>
-
-        )}
+        {selectedUserId && <ViewUserDetail selectedUserId={selectedUserId} />}
       </Modal>
       <Modal
         title="Edit User Detail"
@@ -248,10 +276,7 @@ function UserManagement() {
           </Button>,
         ]}
       >
-        {selectedUserId && (
-          <EditUserDetail selectedUserId={selectedUserId}/>
-
-        )}
+        {selectedUserId && <EditUserDetail selectedUserId={selectedUserId} />}
       </Modal>
       <Modal
         title="Create User"
@@ -259,15 +284,18 @@ function UserManagement() {
         onCancel={() => setIsCreateModalVisible(false)}
         width={1200}
         footer={[
-          <Button key="back" onClick={() => setIsCreateModalVisible(false)}>
-            Close
-          </Button>,
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button key="back" onClick={() => setIsCreateModalVisible(false)}>
+              Close
+            </Button>
+            ,
+          </div>,
         ]}
       >
-        {
-          <AddUser/>
-
-        }
+        {<AddUser />}
       </Modal>
     </>
   );

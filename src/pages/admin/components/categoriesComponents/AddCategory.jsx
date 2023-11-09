@@ -43,7 +43,8 @@ const AddCategory = () => {
   };
 
   const onFinish = (values) => {
-    form.validateFields()
+    form
+      .validateFields()
       .then(() => {
         // Tất cả các trường đều hợp lệ, tiến hành submit
         axios
@@ -63,7 +64,6 @@ const AddCategory = () => {
         setIsCreateModalVisible(false);
       });
   };
-  
 
   return (
     <>
@@ -101,14 +101,24 @@ const AddCategory = () => {
                     },
                   ]}
                 >
-                  <Select onChange={(value) => setCategory({ ...category, enable: value })}>
+                  <Select
+                    onChange={(value) =>
+                      setCategory({ ...category, enable: value })
+                    }
+                  >
                     <Option value={1}>Enable</Option>
                     <Option value={0}>Disable</Option>
                   </Select>
                 </Form.Item>
               </Descriptions.Item>
             </Descriptions>
-            <div style={{ marginTop: 16 }}>
+            <div
+              style={{
+                marginTop: 16,
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
               <Button type="primary" onClick={() => handleCreateClick(id)}>
                 Xác nhận
               </Button>

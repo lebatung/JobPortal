@@ -406,11 +406,15 @@ export default function EditPersonalDetail(props) {
                 }
               </Descriptions.Item>
             </Descriptions>
-            <div style={{ marginTop: 16 }}>
+            <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end" }}>
               <Button
                 className="ant-btn-primary"
                 onClick={() => handleEditClick()}
-                style={{ narginRight: 16 }}
+                style={{
+                  marginTop: 16,
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
               >
                 {" "}
                 Lưu{" "}

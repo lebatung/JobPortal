@@ -67,11 +67,8 @@ function CategoriesManagement() {
       key: "actions",
       render: (text, record) => (
         <Space size="middle">
-          <Button 
-          type="primary"
-          onClick={() => handleEditClick(record)}
-          >Edit
-         
+          <Button type="primary" onClick={() => handleEditClick(record)}>
+            Edit
           </Button>
 
           <Button
@@ -81,11 +78,7 @@ function CategoriesManagement() {
             Delete
           </Button>
 
-          <Button 
-          onClick={() => handleViewClick(record)}
-
-          >
-          View</Button>
+          <Button onClick={() => handleViewClick(record)}>View</Button>
         </Space>
       ),
     },
@@ -113,7 +106,6 @@ function CategoriesManagement() {
   const handleViewClick = (record) => {
     setSelectedCategoryId(record.id);
     setIsViewModalVisible(true);
-    
   };
 
   const handleEditClick = (record) => {
@@ -124,7 +116,6 @@ function CategoriesManagement() {
   const handleCreateClick = () => {
     setIsCreateModalVisible(true);
   };
-
 
   return (
     <>
@@ -140,10 +131,9 @@ function CategoriesManagement() {
         }}
       >
         <SearchComponents onSearch={performSearch} />
-        <Button type="primary"
-        onClick={() => handleCreateClick()}
-        > Add new category
-          
+        <Button type="primary" onClick={() => handleCreateClick()}>
+          {" "}
+          Add new category
         </Button>
       </div>
 
@@ -165,14 +155,17 @@ function CategoriesManagement() {
         visible={isViewModalVisible}
         onCancel={() => setIsViewModalVisible(false)}
         footer={[
-          <Button key="back" onClick={() => setIsViewModalVisible(false)}>
+          <Button
+            key="back"
+            onClick={() => setIsViewModalVisible(false)}
+            style={{ textAlign: "left" }}
+          >
             Close
           </Button>,
         ]}
       >
         {selectedCategoryId && (
-          <ViewCategory selectedCategoryId={selectedCategoryId}/>
-
+          <ViewCategory selectedCategoryId={selectedCategoryId} />
         )}
       </Modal>
       <Modal
@@ -186,8 +179,7 @@ function CategoriesManagement() {
         ]}
       >
         {selectedCategoryId && (
-          <EditCategory selectedCategoryId={selectedCategoryId}/>
-
+          <EditCategory selectedCategoryId={selectedCategoryId} />
         )}
       </Modal>
       <Modal
@@ -195,15 +187,15 @@ function CategoriesManagement() {
         visible={isCreateModalVisible}
         onCancel={() => setIsCreateModalVisible(false)}
         footer={[
-          <Button key="back" onClick={() => setIsCreateModalVisible(false)}>
-            Close
-          </Button>,
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button onClick={() => setIsViewModalVisible(false)}>Close</Button>
+          </div>,
         ]}
       >
-        {
-          <AddCategory />
-
-        }
+        {<AddCategory />}
       </Modal>
     </>
   );

@@ -113,7 +113,7 @@ const EditUserDetail = (props) => {
     form
       .validateFields()
       .then(() => {
-        // Đảm bảo dayOfBirth là một chuỗi với định dạng "YYYY-MM-DD"
+       
         const formattedDayOfBirth = selectedDay ? selectedDay.format("YYYY-MM-DD") : null;
 
         const formData = {
@@ -374,7 +374,7 @@ const EditUserDetail = (props) => {
                       onChange={(values) => {
                         setSelectedDay(values);
                       }}
-                      placeholder=""
+                      placeholder="Ngày sinh"
                     />
                   </Form.Item>
                 </div>

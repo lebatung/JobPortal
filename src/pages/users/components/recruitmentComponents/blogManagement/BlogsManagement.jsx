@@ -4,6 +4,7 @@ import axios from "axios";
 import {
   loadBlogsByUserId,
   loadUserByUsername,
+  request,
 } from "../../../../../helpers/axios_helper";
 
 import { useAuth } from "../../../../../contexts/AuthContext";
@@ -29,20 +30,32 @@ function BlogsManagement() {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
-
   const [selectedBlogId, setSelectedBlogId] = useState(null);
   const [selectedBlogEnable, setSelectedBlogEnable] = useState(null);
 
   const handleDeleteClick = (record) => {
     // Xử lý logic xóa blog
-    setSelectedBlogEnable(record.id);
+    setSelectedBlogId(record.id);
     setIsDeleteModalVisible(true);
-
   };
 
   const handleDelete = () => {
-    console.log("Deleted!");
-    setIsDeleteModalVisible(false);
+    if (selectedBlogId !== null) {
+      console.log(selectedBlogId);
+
+      request("DELETE", `/api/blogs/delete/${selectedBlogId}`)
+        .then((response) => {
+          console.log("Removed", response);
+        })
+        .catch((error) => {
+          console.error("Error removal blog:", error);
+        });
+
+      console.log("Deleted!");
+      setIsDeleteModalVisible(false);
+    } else {
+      console.error("Selected blog id is null.");
+    }
   };
 
   const handleEditClick = (record) => {
@@ -95,13 +108,12 @@ function BlogsManagement() {
   };
   const handleCreateClick = () => {
     setIsCreateModalVisible(true);
-    
-  }
+  };
 
   const [searchResults, setSearchResults] = useState([]);
   const performSearch = (searchTerm) => {
     const filteredUsers = blogs.filter((blog) =>
-    blog.title.toLowerCase().includes(searchTerm.toLowerCase())
+      blog.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setSearchResults(filteredUsers);
   };
@@ -149,14 +161,12 @@ function BlogsManagement() {
           {record.enable === 0 || record.enable === 1 ? (
             <Button
               onClick={() => handleEditClick(record)}
-              className={
-                "ant-btn-primary"
-              }
+              className={"ant-btn-primary"}
             >
               {"Edit"}
             </Button>
           ) : null}
-    
+
           {record.enable === 0 || record.enable === 1 ? (
             <Button
               onClick={() => handleEnableClick(record)}
@@ -173,8 +183,6 @@ function BlogsManagement() {
   ];
 
   const { username } = useAuth();
-
-
 
   useEffect(() => {
     loadUserByUsername(username)
@@ -207,7 +215,6 @@ function BlogsManagement() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          
         }}
       >
         <SearchComponents onSearch={performSearch} />
@@ -218,9 +225,10 @@ function BlogsManagement() {
       </div>
       <hr />
       <div className="App">
-        <Table 
-         dataSource={searchResults.length > 0 ? searchResults : blogs}
-         columns={columns} />
+        <Table
+          dataSource={searchResults.length > 0 ? searchResults : blogs}
+          columns={columns}
+        />
       </div>
       <Modal
         title="Tin Tuyển Dụng"
@@ -233,10 +241,7 @@ function BlogsManagement() {
           </Button>,
         ]}
       >
-        {selectedBlogId && (
-          <ViewBlog selectedBlogId={selectedBlogId}/>
-
-        )}
+        {selectedBlogId && <ViewBlog selectedBlogId={selectedBlogId} />}
       </Modal>
       <Modal
         title="Edit User Detail"
@@ -244,15 +249,18 @@ function BlogsManagement() {
         onCancel={() => setIsEditModalVisible(false)}
         width={1200}
         footer={[
-          <Button key="back" onClick={() => setIsEditModalVisible(false)}>
-            Close
-          </Button>,
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button key="back" onClick={() => setIsEditModalVisible(false)}>
+              Close
+            </Button>
+            ,
+          </div>,
         ]}
       >
-        {selectedBlogId && (
-          <EditBlog selectedBlogId={selectedBlogId}/>
-
-        )}
+        {selectedBlogId && <EditBlog selectedBlogId={selectedBlogId} />}
       </Modal>
       <Modal
         title="Create User"
@@ -260,15 +268,18 @@ function BlogsManagement() {
         onCancel={() => setIsCreateModalVisible(false)}
         width={1200}
         footer={[
-          <Button key="back" onClick={() => setIsCreateModalVisible(false)}>
-            Close
-          </Button>,
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button key="back" onClick={() => setIsCreateModalVisible(false)}>
+              Close
+            </Button>
+            ,
+          </div>,
         ]}
       >
-        {
-          <AddBlog/>
-
-        }
+        {<AddBlog />}
       </Modal>
       <Modal
         title={selectedBlogEnable === 1 ? "Confirm Disable" : "Confirm Enable"}

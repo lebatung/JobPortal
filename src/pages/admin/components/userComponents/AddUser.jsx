@@ -109,10 +109,11 @@ export default function AddUser() {
       });
   }, [id]);
 
+  const [selectedDay, setSelectedDay] = useState( personalDetail.dayOfBirth ? moment(personalDetail.dayOfBirth) : null );
+
   const onFinish = () => {
-    // Đảm bảo dayOfBirth là một chuỗi với định dạng "YYYY-MM-DD"
-    const formattedDayOfBirth =
-      dayOfBirth !== null ? dayOfBirth.format("YYYY-MM-DD") : null;
+    
+    const formattedDayOfBirth = selectedDay ? selectedDay.format("YYYY-MM-DD") : null;
 
     const formData = {
       username,
@@ -135,7 +136,7 @@ export default function AddUser() {
       .then((response) => {
         toast.success("Thêm người dùng thành công");
         console.log("response:", response.data);
-        setIsCreateModalVisible(false);
+        setIsCreateModalVisible(false); 
       })
       .catch((error) => {
         console.error("Thêm người dùng thất bại:", error);
@@ -445,14 +446,11 @@ export default function AddUser() {
                   >
                     <Form.Item label="Ngày sinh">
                       <DatePicker
-                        value={dayOfBirth !== null ? moment(dayOfBirth) : null}
-                        onChange={(date) =>
-                          setPersonalDetail({
-                            ...personalDetail,
-                            dayOfBirth: date,
-                          })
-                        }
-                        placeholder="Ngày/tháng/năm sinh"
+                        value={selectedDay}
+                        onChange={(values) => {
+                          setSelectedDay(values);
+                        }}
+                        placeholder="Ngày sinh"
                       />
                     </Form.Item>
                   </div>
@@ -532,7 +530,11 @@ export default function AddUser() {
                 }
               </Descriptions.Item>
             </Descriptions>
-            <div style={{ marginTop: 16 }}>
+            <div style={{
+                marginTop: 16,
+                display: "flex",
+                justifyContent: "flex-end",
+              }}>
               <Button
                 className="ant-btn-primary"
                 onClick={() => handleEditClick(id)}

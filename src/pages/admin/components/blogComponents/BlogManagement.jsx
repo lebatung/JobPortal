@@ -157,7 +157,7 @@ function BlogsManagement() {
         title="Tin Tuyển Dụng"
         visible={isViewModalVisible}
         onCancel={() => setIsViewModalVisible(false)}
-        width={1200}
+        width={1400}
         footer={[
           <Button key="back" onClick={() => setIsViewModalVisible(false)}>
             Close

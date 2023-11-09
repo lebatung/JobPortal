@@ -4,8 +4,8 @@ import { Card, Descriptions, Tag, Image, Button, Modal } from "antd";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import { loadPersonalDetailByUsername } from "../../../../../helpers/axios_helper";
 
-import ChangePassword from './ChangePassword';
-import EditPersonalDetail from './EditPersonalDetail';
+import ChangePassword from "./ChangePassword";
+import EditPersonalDetail from "./EditPersonalDetail";
 
 const UserDetailManagement = () => {
   const { username } = useAuth();
@@ -13,7 +13,8 @@ const UserDetailManagement = () => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [isChangePwModalVisible, setIsChangePwModalVisible] = useState(false);
 
-  const [selectedPersonalDetailId, setSelectedPersonalDetailId] = useState(null);
+  const [selectedPersonalDetailId, setSelectedPersonalDetailId] =
+    useState(null);
 
   const [personalDetail, setPersonalDetail] = useState({
     avatar: "",
@@ -41,8 +42,8 @@ const UserDetailManagement = () => {
   }, [username]);
 
   const handleEditClick = () => {
-    setSelectedPersonalDetailId(personalDetail.id)
-    console.log(personalDetail.id)
+    setSelectedPersonalDetailId(personalDetail.id);
+    console.log(personalDetail.id);
     setIsEditModalVisible(true);
   };
 
@@ -55,8 +56,10 @@ const UserDetailManagement = () => {
     <>
       <hr />
       <Card title="Thông Tin Nhà Tuyển Dụng">
-        <Descriptions bordered column={1}>
-          <Descriptions.Item label="Ảnh đại diện">
+        <Descriptions bordered column={1} style={{ marginBottom: "16px" }}>
+          <Descriptions.Item
+            label={<strong style={{ fontWeight: "bold" }}>Ảnh đại diện</strong>}
+          >
             {
               <div
                 style={{
@@ -71,29 +74,53 @@ const UserDetailManagement = () => {
               </div>
             }
           </Descriptions.Item>
-          <Descriptions.Item label="Tên nhà tuyển dụng">
+          <Descriptions.Item
+            label={
+              <strong style={{ fontWeight: "bold" }}>Tên nhà tuyển dụng</strong>
+            }
+          >
             {personalDetail.name}
           </Descriptions.Item>
-          <Descriptions.Item label="Email">
+          <Descriptions.Item
+            label={<strong style={{ fontWeight: "bold" }}>Email</strong>}
+          >
             {personalDetail.email}
           </Descriptions.Item>
 
-          <Descriptions.Item label="Địa chỉ">
+          <Descriptions.Item
+            label={<strong style={{ fontWeight: "bold" }}>Địa chỉ</strong>}
+          >
             {personalDetail.address}
           </Descriptions.Item>
-          <Descriptions.Item label="Số liên hệ">
+          <Descriptions.Item
+            label={<strong style={{ fontWeight: "bold" }}>Liên hệ</strong>}
+          >
             {personalDetail.phoneNumber}
           </Descriptions.Item>
-          <Descriptions.Item label="Mã số thuế">
-            {personalDetail.taxCode}
+          <Descriptions.Item
+            label={<strong style={{ fontWeight: "bold" }}>Mã số thuế</strong>}
+          >
+            {personalDetail.taxCode ? (
+              <span>{personalDetail.taxCode}</span>
+            ) : (
+              <span>Chưa cập nhật</span>
+            )}
           </Descriptions.Item>
-          <Descriptions.Item label="Nhóm ngành, nghề">
+          <Descriptions.Item
+            label={
+              <strong style={{ fontWeight: "bold" }}>Nhóm ngành, nghề</strong>
+            }
+          >
             <Tag color="blue">{personalDetail.category.name}</Tag>
           </Descriptions.Item>
-          <Descriptions.Item label="Địa điểm">
+          <Descriptions.Item
+            label={<strong style={{ fontWeight: "bold" }}>Địa điểm</strong>}
+          >
             <Tag color="green">{personalDetail.location.name}</Tag>
           </Descriptions.Item>
-          <Descriptions.Item label="Website">
+          <Descriptions.Item
+            label={<strong style={{ fontWeight: "bold" }}>Website</strong>}
+          >
             <a
               href={personalDetail.linkWebsite}
               target="_blank"
@@ -107,15 +134,11 @@ const UserDetailManagement = () => {
           <Button
             type="primary"
             onClick={() => handleEditClick()}
-            style={{ marginRight: 16}}
+            style={{ marginRight: 16 }}
           >
             Edit
           </Button>
-          <Button
-              onClick={() => handleChangePw()}
-              >Đổi mật khẩu
-
-              </Button>
+          <Button onClick={() => handleChangePw()}>Đổi mật khẩu</Button>
         </div>
       </Card>
       <Modal
@@ -124,27 +147,40 @@ const UserDetailManagement = () => {
         onCancel={() => setIsEditModalVisible(false)}
         width={1200}
         footer={[
-          <Button key="back" onClick={() => setIsEditModalVisible(false)}>
-            Close
-          </Button>,
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button key="back" onClick={() => setIsEditModalVisible(false)}>
+              Close
+            </Button>
+            ,
+          </div>,
         ]}
       >
-        { 
-          <EditPersonalDetail selectedPersonalDetailId={selectedPersonalDetailId}/>
-
+        {
+          <EditPersonalDetail
+            selectedPersonalDetailId={selectedPersonalDetailId}
+          />
         }
       </Modal>
-      <Modal  
+      <Modal
         title={"Đổi mật khẩu"}
         visible={isChangePwModalVisible}
         onCancel={() => setIsChangePwModalVisible(false)}
         footer={[
-          <Button key="back" onClick={() => setIsChangePwModalVisible(false)}>
-            Close
-          </Button>,
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button key="back" onClick={() => setIsChangePwModalVisible(false)}>
+              Close
+            </Button>
+            ,
+          </div>,
         ]}
       >
-        { <ChangePassword/> }
+        {<ChangePassword />}
       </Modal>
     </>
   );
