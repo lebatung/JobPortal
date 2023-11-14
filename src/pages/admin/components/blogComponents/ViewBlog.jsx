@@ -152,7 +152,7 @@ export default function ViewBlog(props) {
   };
   return (
     <>
-      <ToastContainer />
+    
       <Layout style={{ padding: "0px" }}>
         <Content>
           <Row align="stretch">

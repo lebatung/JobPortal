@@ -5,16 +5,16 @@ import Footer from "../components/Footer";
 import { Outlet } from "react-router-dom";
 
 const container = {
-  backgroundColor: "#f5f5f5",
   minHeight: "100vh",
   display: "flex",
   flexDirection: "column",
 };
 const containerStyle = {
   display: "flex",
-  justifyContent: "center",
-  backgroundColor: "#f5f5f5",
+  flexDirection: "column",
+  alignItems: "center",
   flex: 1,
+  backgroundColor: "#f5f5f5",
 };
 
 export default function HomePage() {

@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Button, Divider, Typography } from "antd";
 import axios from "axios";
 
-import {toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import {
-    request
-} from "../../../helpers/axios_helper";
+import { request } from "../../../helpers/axios_helper";
 import { useAuth } from "../../../contexts/AuthContext";
 const { Paragraph } = Typography;
 
@@ -22,7 +20,34 @@ export default function Apply(props) {
     setFiles(selectedFiles);
   };
 
-  const {username} = useAuth();
+  const { username } = useAuth();
+
+  // Storing Interaction between user_id and blog_id
+  const { isAuthenticated, userId } = useAuth();
+  const saveUserInteraction = async (appliedBlogId) => {
+    try {
+      if (isAuthenticated) {
+        const interactionData = {
+          userId: userId,
+          blogId: appliedBlogId,
+          interactionType: "APPLY",
+        };
+
+        const response = await request(
+          "POST",
+          "/api/user-interactions/create",
+          interactionData
+        );
+        console.log(response.data);
+        console.log("APPLY INTERACTION", interactionData);
+      } else {
+        console.log("User is not authenticated. Please log in.");
+      }
+    } catch (error) {
+      console.error("Error saving user interaction:", error);
+    }
+  };
+
   const handleUpload = async () => {
     if (files.length === 0) {
       console.log("Vui lòng chọn ít nhất một tệp.");
@@ -53,12 +78,14 @@ export default function Apply(props) {
       console.log("requestData", requestData);
 
       const result = await request("POST", "/api/apply/create", requestData);
-      
+
       console.log("Apply result:", result.data);
       toast.success("Nộp hồ sơ ứng tuyển thành công!");
     } catch (error) {
       console.error("Upload failed:", error);
     }
+
+    saveUserInteraction(appliedBlogId);
   };
 
   const bodyContainer = {
@@ -75,8 +102,12 @@ export default function Apply(props) {
           <input type="file" multiple onChange={handleFileChange} />
         </Paragraph>
         <Divider orientation="left"></Divider>
-        <Paragraph>
-          <Button style={{ marginTop: "20px" }} onClick={handleUpload}>
+        <Paragraph style={{ textAlign: "right" }}>
+          <Button 
+          style={{ marginTop: "20px" }} 
+          onClick={handleUpload}
+
+          >
             Xác nhận
           </Button>
         </Paragraph>

@@ -67,7 +67,8 @@ export default function ViewCompanyDetail() {
 
   const [selectedBlogId, setSelectedBlogId] = useState(null);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
-  const [isSendMessageModalVisible, setIsSendMessageModalVisible] = useState(false);
+  const [isSendMessageModalVisible, setIsSendMessageModalVisible] =
+    useState(false);
 
   function formatDateString(originalDate) {
     const parts = originalDate.split("-");
@@ -162,15 +163,74 @@ export default function ViewCompanyDetail() {
     width: "80%",
   };
 
+  const sendMessageButton = {
+    marginBottom: "10px",
+    fontSize: "16px",
+    padding: "0px 27px",
+  };
+
   const HoverableCard = styled(Card)`
-    flex: 1;
-    transition: background-color 0.3s;
-    cursor: pointer;
-    margin-bottom: 8px;
-    &:hover {
-      background-color: #f0f0f0;
+  flex: 1;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  margin: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  &:hover {
+    background-color: #f0f0f0;
+    border: 1px solid #ff6f4e;
+  }
+`;
+
+  // Storing Interaction between user_id and blog_id
+  const { userId } = useAuth();
+  const saveUserInteraction = async (blogId) => {
+    try {
+      if (isAuthenticated) {
+        const interactionData = {
+          userId: userId,
+          blogId: blogId,
+          interactionType: "CLICK",
+        };
+
+        const response = await request(
+          "POST",
+          "/api/user-interactions/create",
+          interactionData
+        );
+        console.log(response.data);
+        console.log("CLICK INTERACTION", interactionData);
+      } else {
+        console.log("User is not authenticated. Please log in.");
+      }
+    } catch (error) {
+      console.error("Error saving user interaction:", error);
     }
-  `;
+  };
+
+  const saveUserInteractionFav = async (blogId) => {
+    try {
+      if (isAuthenticated) {
+        const interactionData = {
+          userId: userId,
+          blogId: blogId,
+          interactionType: "FAVORITE",
+        };
+
+        const response = await request(
+          "POST",
+          "/api/user-interactions/create",
+          interactionData
+        );
+        console.log(response.data);
+        console.log("FAVORITE INTERACTION", interactionData);
+      } else {
+        console.log("User is not authenticated. Please log in.");
+      }
+    } catch (error) {
+      console.error("Error saving user interaction:", error);
+    }
+  };
 
   const handleViewClick = (blogId) => {
     if (floading) {
@@ -178,6 +238,9 @@ export default function ViewCompanyDetail() {
     }
     setSelectedBlogId(blogId);
     //console.log(selectedBlogId);
+
+    saveUserInteraction(blogId);
+
     setIsViewModalVisible(true);
   };
   const handleConfirm = () => {
@@ -230,26 +293,12 @@ export default function ViewCompanyDetail() {
         .then((response) => {
           loadFavoriteBlogs();
           setFloading(false);
-          // if (response.status === 200) {
-          //   setFavoriteBlogsList([...favoriteBlogsList, dto]);
-          // } else {
-          //   console.log("Error setFavoriteBlogsList");
-          // }
         })
         .catch((error) => {
           console.log("Error setFavoriteBlogsList on Catch");
         });
-    } else {
-      toast.error("Bạn cần đăng nhập để sử dụng chức năng này!", {
-        position: "top-center",
-        autoClose: 2000,
-      });
-    }
-  };
 
-  const handleApplyClick = () => {
-    if (isAuthenticated) {
-      alert("hehe");
+      saveUserInteractionFav(blogId);
     } else {
       toast.error("Bạn cần đăng nhập để sử dụng chức năng này!", {
         position: "top-center",
@@ -269,11 +318,6 @@ export default function ViewCompanyDetail() {
     }
   };
 
-  const sendMessageButton = {
-    marginBottom: "10px",
-    fontSize: "16px",
-    padding: "0px 27px",
-  };
   return (
     <>
       {" "}
@@ -358,12 +402,12 @@ export default function ViewCompanyDetail() {
                                   padding: "10px",
                                 }}
                               >
-                                <Button 
-                                size="large" 
-                                style={sendMessageButton}
-                                onClick={(e) => {
-                                  handleSendMessage();
-                                }}
+                                <Button
+                                  size="large"
+                                  style={sendMessageButton}
+                                  onClick={(e) => {
+                                    handleSendMessage();
+                                  }}
                                 >
                                   <MessageOutlined />
                                   Nhắn tin
@@ -434,20 +478,6 @@ export default function ViewCompanyDetail() {
                                   }}
                                 >
                                   <Col style={{ marginTop: 15 }}>
-                                    {/* <Button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleApplyClick();
-                                      }}
-                                      style={{
-                                        marginRight: 8,
-                                        backgroundColor: "#ff914d",
-                                        color: "#fff",
-                                      }}
-                                    >
-                                      <ArrowRightOutlined />
-                                      Ứng tuyển
-                                    </Button> */}
                                     {favoriteBlogsList.some(
                                       (favorite) => favorite.blogId === blog.id
                                     ) ? (
@@ -614,7 +644,7 @@ export default function ViewCompanyDetail() {
             selectedBlogId={selectedBlogId}
             favoriteBlogsList={favoriteBlogsList}
             handleViewClick={handleViewClick}
-            handleFavoriteClick ={handleFavoriteClick}
+            handleFavoriteClick={handleFavoriteClick}
             handleUnFavoriteClick={handleUnFavoriteClick}
           />
         )}

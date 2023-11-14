@@ -109,11 +109,14 @@ export default function AddUser() {
       });
   }, [id]);
 
-  const [selectedDay, setSelectedDay] = useState( personalDetail.dayOfBirth ? moment(personalDetail.dayOfBirth) : null );
+  const [selectedDay, setSelectedDay] = useState(
+    personalDetail.dayOfBirth ? moment(personalDetail.dayOfBirth) : null
+  );
 
   const onFinish = () => {
-    
-    const formattedDayOfBirth = selectedDay ? selectedDay.format("YYYY-MM-DD") : null;
+    const formattedDayOfBirth = selectedDay
+      ? selectedDay.format("YYYY-MM-DD")
+      : null;
 
     const formData = {
       username,
@@ -136,7 +139,7 @@ export default function AddUser() {
       .then((response) => {
         toast.success("Thêm người dùng thành công");
         console.log("response:", response.data);
-        setIsCreateModalVisible(false); 
+        setIsCreateModalVisible(false);
       })
       .catch((error) => {
         console.error("Thêm người dùng thất bại:", error);
@@ -209,11 +212,7 @@ export default function AddUser() {
                   </div>
                 }
               </Descriptions.Item>
-              <Descriptions.Item 
-              label="Mật khẩu"
-              name="password"
-              >
-
+              <Descriptions.Item label="Mật khẩu" name="password">
                 {
                   <div
                     style={{
@@ -247,10 +246,10 @@ export default function AddUser() {
                       alignItems: "center",
                     }}
                   >
-                    <Form.Item 
-                    label="Vai trò"
-                    name="roleId"
-                    rules={[
+                    <Form.Item
+                      label="Vai trò"
+                      name="roleId"
+                      rules={[
                         {
                           required: true,
                           message: "Vui lòng chọn vai trò!",
@@ -304,7 +303,17 @@ export default function AddUser() {
                       alignItems: "center",
                     }}
                   >
-                    <Form.Item label="Email">
+                    <Form.Item
+                      label="Email"
+                      rules={[
+                        { required: true, message: "Vui lòng nhập email" },
+                        {
+                          type: "email",
+                          message: "Email không hợp lệ!",
+                        },
+                      ]}
+                      name="email"
+                    >
                       <Input
                         value={email}
                         name="email"
@@ -412,7 +421,8 @@ export default function AddUser() {
                   </div>
                 }
               </Descriptions.Item>
-              <Descriptions.Item label="Địa chỉ">
+              <Descriptions.Item label="Địa chỉ" >
+
                 {
                   <div
                     style={{
@@ -421,6 +431,7 @@ export default function AddUser() {
                   >
                     <Form.Item
                       label="Địa chỉ:"
+                      name="address"
                       rules={[
                         {
                           required: true,
@@ -465,6 +476,7 @@ export default function AddUser() {
                   >
                     <Form.Item
                       label="Số điện thoại"
+                      name="phoneNumber"
                       rules={[
                         {
                           required: true,
@@ -530,11 +542,13 @@ export default function AddUser() {
                 }
               </Descriptions.Item>
             </Descriptions>
-            <div style={{
+            <div
+              style={{
                 marginTop: 16,
                 display: "flex",
                 justifyContent: "flex-end",
-              }}>
+              }}
+            >
               <Button
                 className="ant-btn-primary"
                 onClick={() => handleEditClick(id)}

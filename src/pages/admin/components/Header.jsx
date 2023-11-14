@@ -25,7 +25,7 @@ function HeaderDashboard() {
           <Row justify="end" align="middle">
             <Col>
               <Text style={{ color: 'black', marginRight: '16px' }}>
-                <MessageOutlined />
+                
               </Text>
             </Col>
             

@@ -109,10 +109,10 @@ export const loadAllBlogs = async () => {
       `http://localhost:8080/api/blogs/listAllBlogs`,
       { headers }
     );
-    console.log("loadBlogs:", response.data);
+    console.log("loadAllBlogs:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error loading loadBlogs:", error);
+    console.error("Error loading loadAllBlogs:", error);
     throw error;
   }
 };
@@ -127,10 +127,10 @@ export const loadAllRecruitments = async () => {
       `http://localhost:8080/api/users/getRecruitment`,
       { headers }
     );
-    console.log("loadBlogs:", response.data);
+    console.log("loadAllRecruitments:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error loading loadBlogs:", error);
+    console.error("Error loading loadAllRecruitments:", error);
     throw error;
   }
 };
@@ -441,6 +441,114 @@ export const loadConversationByUserId = async (UserId) => {
     return response.data;
   } catch (error) {
     console.error("Error loading loadConversationByUserId:", error);
+    throw error;
+  }
+};
+
+export const loadListMostBlogFrequency = async () => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/blogs/listmostBlogFrequency`,
+      { headers }
+    );
+    console.log("loadListMostBlogFrequency:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadListMostBlogFrequency:", error);
+    throw error;
+  }
+};
+
+export const loadAllBlogsByCategoryId = async (categoryId) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/blogs/getAllBlogsByCategoryId/${categoryId}`,
+      { headers }
+    );
+    console.log("loadAllBlogsByCategoryId:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadAllBlogsByCategoryId:", error);
+    throw error;
+  }
+};
+
+export const loadListCategoriesNBlogsRelated = async (categoryId) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/categories/listCategoriesNBlogsRelated`,
+      { headers }
+    );
+    console.log("loadListCategoriesNBlogsRelated:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadListCategoriesNBlogsRelated:", error);
+    throw error;
+  }
+};
+
+export const loadNewestBlogs = async () => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/blogs/getNewestBlogs`,
+      { headers }
+    );
+    console.log("loadNewestBlogs:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadNewestBlogs:", error);
+    throw error;
+  }
+};
+
+export const loadBlogsByCategorySlug = async (categorySlug) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/blogs/byCategory/${categorySlug}`,
+      { headers }
+    );
+    console.log("loadBlogsByCategorySlug:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadBlogsByCategorySlug:", error);
+    throw error;
+  }
+};
+
+export const loadHighSalaryBlogs = async () => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/blogs/listHighSalaryBlogs`,
+      { headers }
+    );
+    console.log("loadHighSalaryBlogs:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadHighSalaryBlogs:", error);
     throw error;
   }
 };

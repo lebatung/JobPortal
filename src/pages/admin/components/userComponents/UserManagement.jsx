@@ -127,10 +127,16 @@ function UserManagement() {
             } user with ID ${selectedUserId}`
           );
           setIsActiveModalVisible(false);
+          toast.success(`${
+            selectedUserActive === 1 ? "Disabled" : "Enabled"
+          } thành công`);
         })
         .catch((error) => {
           console.error("Error disabling/enabling user:", error);
           setIsActiveModalVisible(false);
+          toast.error(`${
+            selectedUserActive === 1 ? "Disabled" : "Enabled"
+          } thành công`);
         });
     } else {
       console.error(

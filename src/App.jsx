@@ -13,6 +13,11 @@ import ProtectedRoute from "./protected/ProtectedRoute";
 import MyJobsCpn from "./components/NavbarComponents/MyJobs/MyJobsCpn";
 import Companies from "./components/NavbarComponents/companies/Companies";
 
+
+// LANDING PAGE
+import LandingPage from "./pages/LandingPage";
+import BlogList from "./pages/BlogList";
+
 // COMPANIES - NAVIGATION BAR
 import ViewCompanyDetail from "./components/NavbarComponents/companies/ViewCompanyDetail";
 
@@ -60,7 +65,11 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
+            <Route path="/" element={<LandingPage />}>
+             
+            </Route>
             <Route path="/" element={<HomePage />}>
+              <Route path="/:slug" element={<BlogList/>} />
               <Route path="/myJobs" element={<MyJobsCpn />} />
               <Route path="/companies" element={<Companies />} /> 
               <Route path="/companies/:slug" element={<ViewCompanyDetail/>} />

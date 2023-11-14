@@ -32,14 +32,15 @@ import {
   FieldTimeOutlined,
   HeartFilled,
 } from "@ant-design/icons";
-import { useAuth } from "../../../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 
-import SendMessage from "./SendMessage";
+import SendMessage from "../components/NavbarComponents/companies/SendMessage";
+import Apply from "../components/NavbarComponents/companies/Apply";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import Apply from "./Apply";
+
 
 import {
   request,
@@ -49,25 +50,24 @@ import {
   loadRelatedBlogs,
   loadUserByUsername,
   loadUser,
-} from "../../../helpers/axios_helper";
+} from "../helpers/axios_helper";
 import styled from "styled-components";
 
 const { Header, Content, Sider } = Layout;
 const { Title, Paragraph } = Typography;
 
 export default function ViewBlog(props) {
-  //console.log(props);
+  console.log(props);
   const { isAuthenticated, username } = useAuth();
 
+  const selectedBlog = props.selectedBlog;
   const handleViewClick = props.handleViewClick;
-  const selectedBlogId = props.selectedBlogId;
-
-  const [loading, setLoading] = useState();
-
-  const companyDetail = props.companyDetail;
   const handleFavoriteClick = props.handleFavoriteClick;
   const handleUnFavoriteClick = props.handleUnFavoriteClick;
   const favoriteBlogsList = props.favoriteBlogsList;
+  const [loading, setLoading] = useState();
+  const [floading, setFloading] = useState();
+
 
   const [messageTitle, setMessageTitle] = useState("");
   const [messageContent, setMessageContent] = useState("");
@@ -86,20 +86,6 @@ export default function ViewBlog(props) {
   }
 
   const [relatedBlogs, setRelatedBlogs] = useState([]);
-  const [personalDetail, setPersonalDetail] = useState({
-    avatar: "",
-    name: "",
-    email: "",
-    gender: "",
-    location: "",
-    category: "",
-    address: "",
-    dayOfBirth: null,
-    phoneNumber: "",
-    taxCode: "",
-    linkWebsite: "",
-    userRoleDTOList: "",
-  });
   const [blog, setBlog] = useState({
     image: "none.jpg",
     title: "",
@@ -119,23 +105,8 @@ export default function ViewBlog(props) {
   });
 
   useEffect(() => {
-    loadPersonalDetailByUsername(username)
-      .then((data) => {
-        setPersonalDetail(data);
-        //console.log(user.id);
-      })
-      .catch((error) => {
-        console.error("Error loading categories:", error);
-      });
 
-    loadBlogById(selectedBlogId)
-      .then((data) => {
-        setBlog(data);
-      })
-      .catch((error) => {
-        console.error("Error loading users:", error);
-      });
-    loadRelatedBlogs(companyDetail.category.id)
+    loadRelatedBlogs(selectedBlog.personalDetail.category.id)
       .then((data) => {
         setRelatedBlogs(data);
       })
@@ -149,7 +120,8 @@ export default function ViewBlog(props) {
       .catch((error) => {
         console.error("Error loading categories:", error);
       });
-  }, [selectedBlogId, username, user.id]);
+  }, [selectedBlog.id, username, user.id]);
+
 
   const headingStyle = {
     fontWeight: "Bold",
@@ -209,6 +181,8 @@ export default function ViewBlog(props) {
       });
     }
   };
+
+
   const handleSendMessage = () => {
     if (isAuthenticated) {
       setIsSendMessageModalVisible(true);
@@ -229,7 +203,7 @@ export default function ViewBlog(props) {
 
     const formDataMessage = {
       userId: user.id,
-      recipientId: blog.userId,
+      recipientId: selectedBlog.userId,
       conversationName: messageTitle,
       messageContent: messageContent,
     };
@@ -248,13 +222,13 @@ export default function ViewBlog(props) {
       });
   };
 
-  const handleClickRelatedBlog = (relatedBlogId) => {
+  const handleClickRelatedBlog = (relatedBlog) => {
     // setSelectedBlogId(relatedBlogId);
     // console.log(selectedBlogId);
-    handleViewClick(relatedBlogId);
+    handleViewClick(relatedBlog);
   };
   return (
-    <>
+    <> <ToastContainer/>
       <Layout style={{ padding: "0px" }}>
         <Content>
           <Row align="stretch">
@@ -276,7 +250,7 @@ export default function ViewBlog(props) {
                   }}
                   width={100}
                   height={100}
-                  src={`http://localhost:8080/api/files/${companyDetail.avatar}`}
+                  src={`http://localhost:8080/api/files/${selectedBlog.personalDetail.avatar}`}
                   alt="Avatar"
                 />
               </Card>
@@ -292,29 +266,30 @@ export default function ViewBlog(props) {
                 >
                   <div>
                     <Paragraph style={headingStyle}>
-                      <strong>{blog.title}</strong>
+                      <strong>{selectedBlog.title}</strong>
                     </Paragraph>
                     <Paragraph>
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Công ty:
                       </strong>{" "}
-                      {companyDetail.name}
+                      {selectedBlog.personalDetail.name}
                     </Paragraph>
                     <Paragraph>
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Địa chỉ:
                       </strong>{" "}
-                      {companyDetail.address}
+                      {selectedBlog.personalDetail.address}
                     </Paragraph>
                     <Paragraph>
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Mức lương:{" "}
                       </strong>
-                      {blog.salaryMin} - {blog.salaryMax} Triệu đồng |{" "}
+                      {selectedBlog.salaryMin} - {selectedBlog.salaryMax} Triệu
+                      đồng |{" "}
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Hạn nộp hồ sơ:
                       </strong>{" "}
-                      {formatDateString(blog.deadLine)}
+                      {formatDateString(selectedBlog.deadLine)}
                     </Paragraph>
                   </div>
 
@@ -330,7 +305,7 @@ export default function ViewBlog(props) {
                       size="large"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleApplyClick(blog.id);
+                        handleApplyClick(selectedBlog.id);
                       }}
                       style={appliedButton}
                     >
@@ -338,12 +313,12 @@ export default function ViewBlog(props) {
                       Ứng tuyển
                     </Button>
                     {favoriteBlogsList.some(
-                      (favorite) => favorite.blogId === blog.id
+                      (favorite) => favorite.blogId === selectedBlog.id
                     ) ? (
                       <Button
                         onClick={(e) => {
                           const favoriteItem = favoriteBlogsList.find(
-                            (fav) => fav.blogId === blog.id
+                            (fav) => fav.blogId === selectedBlog.id
                           );
                           if (favoriteItem) {
                             const favoriteId = favoriteItem.id;
@@ -364,7 +339,7 @@ export default function ViewBlog(props) {
                     ) : (
                       <Button
                         onClick={(e) => {
-                          handleFavoriteClick(blog.id);
+                          handleFavoriteClick(selectedBlog);
                         }}
                         size="large"
                         style={{
@@ -404,9 +379,9 @@ export default function ViewBlog(props) {
                     <Paragraph>
                       <CrownOutlined style={paragraphTitle} />
                       <strong style={paragraphTitle}>Kinh Nghiệm:</strong>{" "}
-                      {parseInt(blog.exp) === 0
+                      {parseInt(selectedBlog.exp) === 0
                         ? "Không yêu cầu kinh nghiệm"
-                        : `${blog.exp} năm kinh nghiệm`}
+                        : `${selectedBlog.exp} năm kinh nghiệm`}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
@@ -415,35 +390,35 @@ export default function ViewBlog(props) {
                       <strong style={paragraphTitle}>
                         Trình độ chuyên môn:
                       </strong>
-                      {blog.education}
+                      {selectedBlog.education}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
                     <Paragraph>
                       <MenuOutlined style={paragraphTitle} />
                       <strong style={paragraphTitle}>Ngành, nghề:</strong>{" "}
-                      {blog.category.name}
+                      {selectedBlog.category.name}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
                     <Paragraph>
                       <AuditOutlined style={paragraphTitle} />
                       <strong style={paragraphTitle}>Chức vụ:</strong>
-                      {blog.position}
+                      {selectedBlog.position}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
                     <Paragraph>
                       <TeamOutlined style={paragraphTitle} />
                       <strong style={paragraphTitle}>Số lượng:</strong>{" "}
-                      {blog.quantity}
+                      {selectedBlog.quantity}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
                     <Paragraph>
                       <DeploymentUnitOutlined style={paragraphTitle} />
                       <strong style={paragraphTitle}>Giới tính:</strong>{" "}
-                      {blog.gender}
+                      {selectedBlog.gender}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
@@ -452,7 +427,7 @@ export default function ViewBlog(props) {
                       <strong style={paragraphTitle}>
                         Thời gian làm việc:
                       </strong>{" "}
-                      {blog.workingTime}
+                      {selectedBlog.workingTime}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
@@ -461,7 +436,7 @@ export default function ViewBlog(props) {
                       <strong style={paragraphTitle}>
                         Địa điểm làm việc:
                       </strong>{" "}
-                      {blog.location.name}
+                      {selectedBlog.location.name}
                     </Paragraph>
                   </Col>
                 </Row>
@@ -472,7 +447,7 @@ export default function ViewBlog(props) {
                 }
               >
                 <Paragraph>
-                  {blog.detail.split("\n").map((paragraph, index) => (
+                  {selectedBlog.detail.split("\n").map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
                   ))}
                 </Paragraph>
@@ -504,7 +479,7 @@ export default function ViewBlog(props) {
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Nhóm ngành, nghề:
                       </strong>{" "}
-                      {companyDetail.category.name}
+                      {selectedBlog.personalDetail.category.name}
                     </Paragraph>
                     <Paragraph>
                       <EnvironmentOutlined
@@ -513,7 +488,7 @@ export default function ViewBlog(props) {
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Địa điểm:
                       </strong>{" "}
-                      {companyDetail.location.name}
+                      {selectedBlog.personalDetail.location.name}
                     </Paragraph>
                     <Paragraph>
                       <BarcodeOutlined
@@ -522,7 +497,7 @@ export default function ViewBlog(props) {
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Mã số thuế:
                       </strong>{" "}
-                      {companyDetail.taxCode}
+                      {selectedBlog.personalDetail.taxCode}
                     </Paragraph>
                   </Card>
                 </Col>
@@ -540,7 +515,7 @@ export default function ViewBlog(props) {
                       <EnvironmentOutlined
                         style={{ color: "#001253", marginRight: 6 }}
                       />
-                      {companyDetail.address}
+                      {selectedBlog.personalDetail.address}
                     </Paragraph>
                     <strong style={{ color: "#001253", marginRight: 6 }}>
                       Website:
@@ -551,8 +526,8 @@ export default function ViewBlog(props) {
                       />
                       <a>
                         {" "}
-                        {companyDetail.linkWebsite ? (
-                          <span>{companyDetail.linkWebsite}</span>
+                        {selectedBlog.personalDetail.linkWebsite ? (
+                          <span>{selectedBlog.personalDetail.linkWebsite}</span>
                         ) : (
                           <span>Chưa cập nhật</span>
                         )}
@@ -565,7 +540,7 @@ export default function ViewBlog(props) {
                       <PhoneOutlined
                         style={{ color: "#001253", marginRight: 6 }}
                       />
-                      <a>{companyDetail.phoneNumber}</a>
+                      <a>{selectedBlog.personalDetail.phoneNumber}</a>
                     </Paragraph>
                     <strong style={{ color: "#001253", marginRight: 6 }}>
                       Email:
@@ -576,8 +551,8 @@ export default function ViewBlog(props) {
                       />
                       <a>
                         {" "}
-                        {companyDetail.email ? (
-                          <span>{companyDetail.email}</span>
+                        {selectedBlog.personalDetail.email ? (
+                          <span>{selectedBlog.personalDetail.email}</span>
                         ) : (
                           <span>Chưa cập nhật</span>
                         )}
@@ -603,7 +578,7 @@ export default function ViewBlog(props) {
                               </span>
                             }
                             onClick={() =>
-                              handleClickRelatedBlog(relatedBlog.id)
+                              handleClickRelatedBlog(relatedBlog)
                             }
                           >
                             <Row gutter={16}>
@@ -660,7 +635,7 @@ export default function ViewBlog(props) {
           </div>,
         ]}
       >
-        {selectedBlogId && <Apply appliedBlogId={appliedBlogId} />}
+        {selectedBlog && <Apply appliedBlogId={appliedBlogId} />}
       </Modal>
       <Modal
         title="Gửi tin nhắn"
