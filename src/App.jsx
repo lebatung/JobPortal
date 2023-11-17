@@ -12,11 +12,12 @@ import ProtectedRoute from "./protected/ProtectedRoute";
 // NAVIGATION BAR
 import MyJobsCpn from "./components/NavbarComponents/MyJobs/MyJobsCpn";
 import Companies from "./components/NavbarComponents/companies/Companies";
-
+import Jobs from "./components/NavbarComponents/jobs/Jobs";
 
 // LANDING PAGE
 import LandingPage from "./pages/LandingPage";
 import BlogList from "./pages/BlogList";
+import SearchResult from "./pages/SearchResult";
 
 // COMPANIES - NAVIGATION BAR
 import ViewCompanyDetail from "./components/NavbarComponents/companies/ViewCompanyDetail";
@@ -65,16 +66,19 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<LandingPage />}>
-             
+            <Route path="/" element={<LandingPage />}>    
+              
             </Route>
             <Route path="/" element={<HomePage />}>
               <Route path="/:slug" element={<BlogList/>} />
               <Route path="/myJobs" element={<MyJobsCpn />} />
+              <Route path="/jobs" element={<Jobs />} />
               <Route path="/companies" element={<Companies />} /> 
               <Route path="/companies/:slug" element={<ViewCompanyDetail/>} />
+              <Route path="/search-result" element={<SearchResult />} />
             </Route>
 
+            
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/register" element={<Register />} >
               
@@ -137,6 +141,7 @@ function App() {
               <Route path="/candidateDashboard/applied" element={<BlogsApplied/>}></Route>
               <Route path="/candidateDashboard/favorites" element={<Favorites/>}></Route>
               <Route path="/candidateDashboard/messages" element={<CandidateMessagesManagement />}></Route>
+
             </Route>
 
             <Route path="/forbiddenPage" element={<ForbiddenPage />} />

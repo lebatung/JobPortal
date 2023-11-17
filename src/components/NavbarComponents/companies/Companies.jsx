@@ -64,16 +64,17 @@ export default function Companies() {
   };
 
   const HoverableCard = styled(Card)`
-    flex: 1;
-    transition: background-color 0.3s;
-    cursor: pointer;
-    margin: 8px;
-    border: 1px solid #ccc;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    &:hover {
-      background-color: #f0f0f0;
-    }
-  `;
+  flex: 1;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  margin: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  &:hover {
+    background-color: #f0f0f0;
+    border: 1px solid #ff6f4e;
+  }
+`;
 
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);

@@ -295,11 +295,7 @@ export default function ViewBlog(props) {
               <Card title={
                   <span style={{ color: "#002347" }}>Mô tả công việc</span>
                 }>
-                <Paragraph>
-                  {blog.detail.split("\n").map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                  ))}
-                </Paragraph>
+                <div dangerouslySetInnerHTML={{ __html: blog.detail }} />
               </Card>
             </Col>
             <Col span={8}>

@@ -1,6 +1,6 @@
 import React from "react";
 
-import Jobs from "./NavbarComponents/Jobs";
+import Jobs from "./NavbarComponents/jobs/Jobs";
 import LoginDropDown from "./NavbarComponents/LoginDropDown";
 
 import { Image } from "antd";
@@ -58,7 +58,7 @@ export default function Navbar() {
 
       <ul style={navBar.leftNavBarItemContainer}>
         <li style={navBar.navBarItems}>
-          <Jobs />
+        <Link to={"/jobs"} style={{ textDecoration: "none", color: "white" }}>Việc làm</Link>
         </li>
 
         <li style={{ ...navBar.navBarItems, color: "white", textDecoration: "none" }} >

@@ -130,10 +130,10 @@ export default function BlogsAppliedManagement() {
       return;
     }
     console.log("blogId", record.id);
-    setSelectedBlogId(record.id);
+    setSelectedBlogId(record.blogId);
 
     // Gọi hàm để lấy thông tin blog dựa trên ID
-    loadBlogByBlogId(record.id);
+    loadBlogByBlogId(record.blogId);
     setIsViewModalVisible(true);
   };
 

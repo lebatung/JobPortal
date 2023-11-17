@@ -18,6 +18,16 @@ export default function MyJobsCpn() {
       <p>username: {username}</p>
       <p>userRole: {userRole}</p>
       <p>userId: {userId}</p>
+      <div>
+    <ol>
+      <li><strong>Heading 1;</strong></li>
+    </ol>
+    <p> paragraph 1</p>
+    <ol>
+      <li><strong>Heading 2;</strong></li>
+    </ol>
+    <p> paragraph 2</p>
+  </div>
     </div>
   )
 }

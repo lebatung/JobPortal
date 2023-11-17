@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState  } from "react";
+import { useNavigate } from 'react-router-dom';
 import Navbar from "../components/Navbar";
 
 import ViewLandingBlog from "./ViewLandingBlog";
@@ -37,7 +38,7 @@ import {
   EnvironmentOutlined,
   WalletOutlined,
 } from "@ant-design/icons";
-import { Link, useAsyncError } from "react-router-dom";
+import { Link, Navigate, useAsyncError, useNavigation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 
@@ -149,11 +150,27 @@ export default function LandingPage() {
   const [favoriteBlogsList, setFavoriteBlogsList] = useState([]);
 
   //func
+  const navigate = useNavigate();
+  const [searchData, setSearchData] = useState(null);
+  
   const handleSearch = () => {
-    // Log nội dung của các ô nhập ra console
-    console.log("Tên công việc:", jobTitle);
-    console.log("Ngành nghề:", industry);
-    console.log("Tỉnh thành:", province);
+    // console.log("Tên công việc:", jobTitle);
+    // console.log("Ngành nghề:", industry);
+    // console.log("Tỉnh thành:", province);
+    const searchData = {
+      jobTitle: jobTitle,
+      industry: industry,
+      province: province,
+    };
+    console.log(searchData);
+    request('POST', 'http://localhost:8080/api/search', searchData)
+      .then(response => {
+        console.log(response.data);
+        navigate('/search-result', { state: { searchResult: response.data } });
+      })
+      .catch(error => {
+        console.error('Error searching:', error);
+      });
   };
 
   const handleViewClick = (blog) => {
@@ -495,6 +512,7 @@ export default function LandingPage() {
                                 style={{
                                   textAlign: "left",
                                   textTransform: "uppercase",
+                                  fontSize: "13px",
                                 }}
                               >
                                 {/* Thẻ p */}

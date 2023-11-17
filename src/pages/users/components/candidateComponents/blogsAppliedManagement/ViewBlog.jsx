@@ -250,7 +250,9 @@ export default function ViewBlog(props) {
                     <Paragraph>
                       <CrownOutlined style={paragraphTitle} />
                       <strong style={paragraphTitle}>Kinh Nghiệm:</strong>{" "}
-                      {blog.exp}
+                      {parseInt(blog.exp) === 0
+                        ? "Không yêu cầu kinh nghiệm"
+                        : `${blog.exp} năm kinh nghiệm`}
                     </Paragraph>
                   </Col>
                   <Col span={12}>

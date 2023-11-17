@@ -21,7 +21,7 @@ export default function HomePage() {
   return (
     <>
       <Navbar></Navbar>
-      <SearchBar />
+      {/* <SearchBar /> */}
       <div style={container}>
         
         <div style={containerStyle}>

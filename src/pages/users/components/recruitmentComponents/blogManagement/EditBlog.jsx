@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+
 import moment from "moment";
 import {
   Form,
@@ -26,7 +27,9 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { useAuth } from "../../../../../contexts/AuthContext";
-
+import ReactQuill from "react-quill";
+import Delta from "quill-delta";
+import { QuillDeltaToHtmlConverter } from "quill-delta-to-html";
 const { Option } = Select;
 
 const EditBlog = (props) => {
@@ -56,6 +59,7 @@ const EditBlog = (props) => {
     linkWebsite: "",
   });
 
+
   const [blog, setBlog] = useState({
     title: "",
     detail: "",
@@ -63,7 +67,7 @@ const EditBlog = (props) => {
     salaryMin: "",
     salaryMax: "",
     workingTime: "",
-    education:"",
+    education: "",
     quantity: "",
     position: "",
     exp: "",
@@ -108,16 +112,16 @@ const EditBlog = (props) => {
 
   const { id } = useParams();
 
+  const editor_ref = useRef('');
   useEffect(() => {
-
     loadUserByUsername(username)
-    .then((data) => {
-      setUser(data);
-      //console.log(data);  
-    })
-    .catch((error) => {
-      console.error("Error loading categories:", error);
-    });
+      .then((data) => {
+        setUser(data);
+        //console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error loading categories:", error);
+      });
 
     loadPersonalDetailByUsername(username)
       .then((data) => {
@@ -128,21 +132,33 @@ const EditBlog = (props) => {
         console.error("Error loading users:", error);
       });
 
+    // loadBlogById(selectedBlogId)
+    //   .then((data) => {
+    //     setBlog(data);
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error loading users:", error);
+    //   });
+
     loadBlogById(selectedBlogId)
       .then((data) => {
         setBlog(data);
+        setBlogDetail(data.detail);
+        editor_ref.current.getEditor().pasteHTML(data.detail)
+
       })
       .catch((error) => {
         console.error("Error loading users:", error);
       });
-      loadLocations(selectedBlogId)
+
+    loadLocations(selectedBlogId)
       .then((data) => {
         setLocations(data);
       })
       .catch((error) => {
         console.error("Error loading users:", error);
       });
-      loadCategories(selectedBlogId)
+    loadCategories(selectedBlogId)
       .then((data) => {
         setCatgories(data);
       })
@@ -151,14 +167,18 @@ const EditBlog = (props) => {
       });
   }, [selectedBlogId, username]);
 
-  const [selectedDay, setSelectedDay] = useState( blog.deadLine ? moment(blog.deadLine) : null );
+  const [blogDetail, setBlogDetail] = useState("");
 
+  const [selectedDay, setSelectedDay] = useState(
+    blog.deadLine ? moment(blog.deadLine) : null
+  );
   const onFinish = () => {
     form
       .validateFields()
       .then(() => {
-        
-        const formattedDeadLine = selectedDay ? selectedDay.format("YYYY-MM-DD") : null;
+        const formattedDeadLine = selectedDay
+          ? selectedDay.format("YYYY-MM-DD")
+          : null;
         const formData = {
           title,
           detail,
@@ -234,7 +254,7 @@ const EditBlog = (props) => {
                   </div>
                 }
               </Descriptions.Item>
-              <Descriptions.Item label="Mô tả công việc">
+              {/* <Descriptions.Item label="Mô tả công việc">
                 {
                   <div
                     style={{
@@ -259,7 +279,36 @@ const EditBlog = (props) => {
                     </Form.Item>
                   </div>
                 }
+              </Descriptions.Item> */}
+
+              <Descriptions.Item label="Mô tả công việc">
+                <div style={{ alignItems: "center" }}>
+                  <Form.Item
+                    label="Mô tả nội dung công việc"
+                    name="detail"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập mô tả công việc!",
+                      },
+                    ]}
+                  >
+                    <ReactQuill
+                      value={blogDetail}
+                      ref={editor_ref}
+                      onChange={(value) =>
+                        onInputChange({ target: { name: "detail", value } })
+                      }
+                      style={{
+                        height: "200px",
+                        width: "100%",
+                        marginBottom: "20px",
+                      }}
+                    />
+                  </Form.Item>
+                </div>
               </Descriptions.Item>
+
               <Descriptions.Item label="Deadline">
                 <div style={{ alignItems: "center" }}>
                   <Form.Item
@@ -290,7 +339,6 @@ const EditBlog = (props) => {
                   >
                     <Form.Item
                       label="Yêu cầu chuyên môn"
-                      
                       rules={[
                         {
                           required: true,
@@ -325,7 +373,7 @@ const EditBlog = (props) => {
                       ]}
                     >
                       <Select
-                        value={blog.location.name} 
+                        value={blog.location.name}
                         onChange={(value) => {
                           const selectedLocation = locations.find(
                             (location) => location.name === value
@@ -333,10 +381,9 @@ const EditBlog = (props) => {
                           if (selectedLocation) {
                             setBlog({
                               ...blog,
-                              location: selectedLocation, 
+                              location: selectedLocation,
                             });
                           }
-                          
                         }}
                         placeholder=""
                       >
@@ -367,7 +414,7 @@ const EditBlog = (props) => {
                       ]}
                     >
                       <Select
-                        value={blog.category.name} 
+                        value={blog.category.name}
                         onChange={(value) => {
                           const selectedCategory = categories.find(
                             (category) => category.name === value
@@ -375,10 +422,9 @@ const EditBlog = (props) => {
                           if (selectedCategory) {
                             setBlog({
                               ...blog,
-                              category: selectedCategory, 
+                              category: selectedCategory,
                             });
                           }
-                          
                         }}
                         placeholder=""
                       >
@@ -438,55 +484,59 @@ const EditBlog = (props) => {
                 }
               </Descriptions.Item>
               <Descriptions.Item label="Gender">
-                {
-                  <div
-                    style={{
-                      alignItems: "center",
-                    }}
+                <div style={{ alignItems: "center" }}>
+                  <Form.Item
+                    label="Giới tính"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Chọn giới tính!",
+                      },
+                    ]}
                   >
-                    <Form.Item
-                      label="Giới tính"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Vui lòng nhập gới tính!",
-                        },
-                      ]}
+                    <Select
+                      value={gender}
+                      name="gender"
+                      onChange={(value) =>
+                        onInputChange({ target: { name: "gender", value } })
+                      }
                     >
-                      <Input
-                        value={gender}
-                        name="gender"
-                        onChange={(e) => onInputChange(e)}
-                      />
-                    </Form.Item>
-                  </div>
-                }
+                      <Select.Option value="Nam">Nam</Select.Option>
+                      <Select.Option value="Nữ">Nữ</Select.Option>
+                      <Select.Option value="Tất cả">Tất cả</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </div>
               </Descriptions.Item>
+
               <Descriptions.Item label="Exp">
-                {
-                  <div
-                    style={{
-                      alignItems: "center",
-                    }}
+                <div style={{ alignItems: "center" }}>
+                  <Form.Item
+                    label="Kinh nghiệm làm việc"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập kinh nghiệm làm việc",
+                      },
+                    ]}
                   >
-                    <Form.Item
-                      label="Kinh nghiệm làm việc"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Vui lòng nhập kinh nghiệm làm việc",
-                        },
-                      ]}
+                    <Select
+                      value={exp}
+                      onChange={(value) =>
+                        onInputChange({ target: { name: "exp", value } })
+                      }
                     >
-                      <Input
-                        value={exp}
-                        name="exp"
-                        onChange={(e) => onInputChange(e)}
-                      />
-                    </Form.Item>
-                  </div>
-                }
+                      <Select.Option value="0">
+                        Không yêu cầu kinh nghiệm
+                      </Select.Option>
+                      <Select.Option value="1-2">1-2 năm</Select.Option>
+                      <Select.Option value="2-5">2-5 năm</Select.Option>
+                      <Select.Option value="5+">Trên 5 năm</Select.Option>
+                    </Select>
+                  </Form.Item>
+                </div>
               </Descriptions.Item>
+
               <Descriptions.Item label="Position">
                 {
                   <div
@@ -554,7 +604,13 @@ const EditBlog = (props) => {
                 }
               </Descriptions.Item>
             </Descriptions>
-            <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end" }}>
+            <div
+              style={{
+                marginTop: 16,
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
               <Button
                 className="ant-btn-primary"
                 onClick={() => handleEditClick()}

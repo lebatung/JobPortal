@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+
 import { useAuth } from "../../../../../contexts/AuthContext";
 
 import {
@@ -245,7 +248,7 @@ export default function AddBlog() {
                   </div>
                 }
               </Descriptions.Item>
-              <Descriptions.Item label="Mô tả công việc">
+              {/* <Descriptions.Item label="Mô tả công việc">
                 {
                   <div
                     style={{
@@ -271,7 +274,31 @@ export default function AddBlog() {
                     </Form.Item>
                   </div>
                 }
+              </Descriptions.Item> */}
+
+              <Descriptions.Item label="Mô tả công việc">
+                <div style={{ alignItems: "center" }}>
+                  <Form.Item
+                    label="Mô tả ngắn gọn về nội dung công việc"
+                    name="detail"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập mô tả công việc!",
+                      },
+                    ]}
+                  >
+                    <ReactQuill
+                      value={detail}
+                      onChange={(value) =>
+                        onInputChange({ target: { name: "detail", value } })
+                      }
+                      style={{ height: '300px', width: '100%' }}
+                    />
+                  </Form.Item>
+                </div>
               </Descriptions.Item>
+
               <Descriptions.Item label="Deadline">
                 <div style={{ alignItems: "center" }}>
                   <Form.Item
