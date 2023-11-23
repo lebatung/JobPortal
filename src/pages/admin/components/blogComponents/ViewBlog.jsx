@@ -152,7 +152,6 @@ export default function ViewBlog(props) {
   };
   return (
     <>
-    
       <Layout style={{ padding: "0px" }}>
         <Content>
           <Row align="stretch">
@@ -212,7 +211,9 @@ export default function ViewBlog(props) {
           <div style={{ margin: "0px 0" }}></div>
           <Row align="stretch">
             <Col gutter={16} span={16}>
-              <Card title={<span style={{ color: "#002347" }}>Yêu cầu chung</span>}>
+              <Card
+                title={<span style={{ color: "#002347" }}>Yêu cầu chung</span>}
+              >
                 <Row gutter={-8}>
                   <Col span={12}>
                     <Paragraph>
@@ -292,9 +293,11 @@ export default function ViewBlog(props) {
                   </Col>
                 </Row>
               </Card>
-              <Card title={
+              <Card
+                title={
                   <span style={{ color: "#002347" }}>Mô tả công việc</span>
-                }>
+                }
+              >
                 <div dangerouslySetInnerHTML={{ __html: blog.detail }} />
               </Card>
             </Col>
@@ -311,19 +314,25 @@ export default function ViewBlog(props) {
                       <MenuOutlined
                         style={{ color: "#001253", marginRight: 6 }}
                       />
-                      
+
                       {personalDetail.category.name}
                     </Paragraph>
                     <Paragraph>
-                      <EnvironmentOutlined  style={{ color: "#001253", marginRight: 6 }} />
+                      <EnvironmentOutlined
+                        style={{ color: "#001253", marginRight: 6 }}
+                      />
                       {personalDetail.address}
                     </Paragraph>
                     <Paragraph>
-                      <PhoneOutlined  style={{ color: "#001253", marginRight: 6 }} />
+                      <PhoneOutlined
+                        style={{ color: "#001253", marginRight: 6 }}
+                      />
                       {personalDetail.phoneNumber}
                     </Paragraph>
                     <Paragraph>
-                      <GlobalOutlined  style={{ color: "#001253", marginRight: 6 }} />
+                      <GlobalOutlined
+                        style={{ color: "#001253", marginRight: 6 }}
+                      />
                       <a>{personalDetail.linkWebsite} </a>
                     </Paragraph>
                   </Card>
@@ -333,16 +342,18 @@ export default function ViewBlog(props) {
           </Row>
         </Content>
       </Layout>
-      <div style={{ marginTop: 16 }}>
+      <div
+        style={{ marginTop: 16, display: "flex", justifyContent: "flex-end" }}
+      >
+        <Button style={{ marginRight: 10 }} className="ant-btn-danger" onClick={() => handleRejectClick()}>
+          Reject
+        </Button>
         <Button
           type="primary"
           onClick={() => handleApproveClick()}
-          style={{ marginRight: 16 }}
+          
         >
           Approve
-        </Button>
-        <Button className="ant-btn-danger" onClick={() => handleRejectClick()}>
-          Reject
         </Button>
       </div>
       <Modal

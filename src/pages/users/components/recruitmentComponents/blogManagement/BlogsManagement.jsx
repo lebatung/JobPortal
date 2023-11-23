@@ -46,8 +46,10 @@ function BlogsManagement() {
       request("DELETE", `/api/blogs/delete/${selectedBlogId}`)
         .then((response) => {
           console.log("Removed", response);
+          toast.success("Xóa tin tuyển dụng thành công!")
         })
         .catch((error) => {
+          toast.error("Xóa tin tuyển dụng thất bại!")
           console.error("Error removal blog:", error);
         });
 
@@ -201,7 +203,19 @@ function BlogsManagement() {
       .catch((error) => {
         console.error("Error loading users:", error);
       });
-  }, [user.id, username, isEnableModalVisible]);
+  }, [user.id, username]);
+
+  useEffect(() => {
+    loadBlogsByUserId(user.id)
+      .then((data) => {
+        setBlogs(data);
+      })
+      .catch((error) => {
+        console.error("Error loading users:", error);
+      });
+  }, [user.id, username, isEnableModalVisible, isCreateModalVisible, isDeleteModalVisible, isEditModalVisible]);
+
+
 
   return (
     <>
@@ -296,7 +310,7 @@ function BlogsManagement() {
         onOk={handleDelete}
         onCancel={() => setIsDeleteModalVisible(false)}
       >
-        Are you sure you want to {"delete"} this user's account?
+        Are you sure you want to {"delete"} this blog?
       </Modal>
     </>
   );

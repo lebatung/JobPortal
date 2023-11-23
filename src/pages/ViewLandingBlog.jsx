@@ -629,7 +629,7 @@ export default function ViewBlog(props) {
             style={{ display: "flex", justifyContent: "space-between" }}
           >
             <Button key="back" onClick={() => setIsApplyModalVisible(false)}>
-              Close
+              Đóng
             </Button>
             ,
           </div>,

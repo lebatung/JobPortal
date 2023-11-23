@@ -453,7 +453,7 @@ export default function ViewBlog(props) {
         onCancel={() => setIsApplyModalVisible(false)}
         footer={[
           <Button key="back" onClick={() => setIsApplyModalVisible(false)}>
-            Close
+            Đóng
           </Button>,
         ]}
       >

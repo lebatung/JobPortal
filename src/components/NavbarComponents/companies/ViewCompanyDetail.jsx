@@ -634,7 +634,7 @@ export default function ViewCompanyDetail() {
         width={1200}
         footer={[
           <Button key="back" onClick={() => setIsViewModalVisible(false)}>
-            Close
+            Đóng
           </Button>,
         ]}
       >
@@ -659,11 +659,11 @@ export default function ViewCompanyDetail() {
               key="back"
               onClick={() => setIsSendMessageModalVisible(false)}
             >
-              Close
+              Đóng
             </Button>
             <div>
               <Button key="confirm" type="primary" onClick={handleConfirm}>
-                Confirm
+                Xác nhận
               </Button>
             </div>
           </div>,

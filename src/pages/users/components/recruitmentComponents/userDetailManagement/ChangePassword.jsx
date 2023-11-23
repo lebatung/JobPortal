@@ -20,7 +20,6 @@ const ChangePassword = () => {
 
   const { currentPassword, newPassword } = requestPassword;
 
-
   const onFinish = async (values) => {
     const requestData = {
       username,
@@ -51,7 +50,7 @@ const ChangePassword = () => {
   return (
     <>
       <ToastContainer />
-      <Card >
+      <Card>
         <Form
           form={form}
           name="changePassword"
@@ -83,15 +82,21 @@ const ChangePassword = () => {
               </Form.Item>
             </Descriptions.Item>
           </Descriptions>
-          <Button
-            type="primary"
-            htmlType="submit"
-            style={{
-              marginTop: 16,
-            }}
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            Thay Đổi Mật Khẩu
-          </Button>
+            <div style={{ flex: 1 }}></div> {/* Phần tử trống */}
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{
+                marginTop: 16,
+              }}
+            >
+              Thay Đổi Mật Khẩu
+            </Button>
+          </div>
         </Form>
       </Card>
     </>

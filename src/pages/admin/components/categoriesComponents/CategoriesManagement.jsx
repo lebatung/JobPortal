@@ -133,7 +133,7 @@ function CategoriesManagement() {
         <SearchComponents onSearch={performSearch} />
         <Button type="primary" onClick={() => handleCreateClick()}>
           {" "}
-          Add new category
+          Thêm nhóm ngành, nghề
         </Button>
       </div>
 

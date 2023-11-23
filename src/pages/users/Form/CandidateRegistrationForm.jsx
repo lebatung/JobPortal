@@ -24,6 +24,7 @@ export default function RecruitmentRegistrationForm() {
   const [categoryId, setCattegoryId] = useState("");
   const [locationId, setLocationId] = useState("");
   const [roleId, setRoleId] = useState(13);
+  const [active, setActive] = useState(1);
 
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -32,7 +33,6 @@ export default function RecruitmentRegistrationForm() {
     setUsername(values.username);
     setEmail(values.email);
     setPassword(values.password);
-
     setShowDetailedForm(true);
   };
 
@@ -41,6 +41,7 @@ export default function RecruitmentRegistrationForm() {
     setCattegoryId(values.category);
     setLocationId(values.location);
     setRoleId(13);
+    setActive(1);
 
     const candidateFormData = {
       username,
@@ -50,6 +51,7 @@ export default function RecruitmentRegistrationForm() {
       categoryId,
       locationId,
       roleId: roleId,
+      active: active,
     };
 
     request("POST", "/register", candidateFormData)

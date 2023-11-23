@@ -121,9 +121,15 @@ const UserDetailManagement = () => {
         onCancel={() => setIsEditModalVisible(false)}
         width={1200}
         footer={[
-          <Button key="back" onClick={() => setIsEditModalVisible(false)}>
-            Close
-          </Button>,
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button key="back" onClick={() => setIsEditModalVisible(false)}>
+              Close
+            </Button>
+            ,
+          </div>,
         ]}
       >
         {
@@ -137,9 +143,15 @@ const UserDetailManagement = () => {
         visible={isChangePwModalVisible}
         onCancel={() => setIsChangePwModalVisible(false)}
         footer={[
-          <Button key="back" onClick={() => setIsChangePwModalVisible(false)}>
-            Close
-          </Button>,
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button key="back" onClick={() => setIsChangePwModalVisible(false)}>
+              Close
+            </Button>
+            ,
+          </div>,
         ]}
       >
         {<ChangePassword />}

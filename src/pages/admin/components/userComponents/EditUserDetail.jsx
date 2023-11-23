@@ -33,7 +33,8 @@ const { Option } = Select;
 
 const EditUserDetail = (props) => {
   const selectedUserId = props.selectedUserId;
-
+  const selectedPersonalDetailId = props.selectedPersonalDetailId;
+  // console.log(props);
   const [form] = Form.useForm();
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -98,23 +99,29 @@ const EditUserDetail = (props) => {
         console.error("Error loading locations:", error);
       });
 
-    loadPersonalDetail(selectedUserId)
-      .then((data) => {
-        setPersonalDetail(data);
-      })
-      .catch((error) => {
-        console.error("Error loading Personal Detail By User Id:", error);
-      });
   }, [selectedUserId, isEditModalVisible]);
 
-  const [selectedDay, setSelectedDay] = useState( personalDetail.dayOfBirth ? moment(personalDetail.dayOfBirth) : null );
+  useEffect(()=> {
+    loadPersonalDetailById(selectedPersonalDetailId)
+    .then((data) => {
+      setPersonalDetail(data);
+    })
+    .catch((error) => {
+      console.error("Error loading categories:", error);
+    });
+  }, [selectedPersonalDetailId])
+
+  const [selectedDay, setSelectedDay] = useState(
+    personalDetail.dayOfBirth ? moment(personalDetail.dayOfBirth) : null
+  );
 
   const onFinish = () => {
     form
       .validateFields()
       .then(() => {
-       
-        const formattedDayOfBirth = selectedDay ? selectedDay.format("YYYY-MM-DD") : null;
+        const formattedDayOfBirth = selectedDay
+          ? selectedDay.format("YYYY-MM-DD")
+          : null;
 
         const formData = {
           avatar,
@@ -271,7 +278,7 @@ const EditUserDetail = (props) => {
                       ]}
                     >
                       <Select
-                        value={personalDetail.location.name} 
+                        value={personalDetail.location.name}
                         onChange={(value) => {
                           const selectedLocation = locations.find(
                             (location) => location.name === value
@@ -279,10 +286,9 @@ const EditUserDetail = (props) => {
                           if (selectedLocation) {
                             setPersonalDetail({
                               ...personalDetail,
-                              location: selectedLocation, 
+                              location: selectedLocation,
                             });
                           }
-                          
                         }}
                         placeholder=""
                       >
@@ -369,7 +375,7 @@ const EditUserDetail = (props) => {
                   }}
                 >
                   <Form.Item label="Ngày sinh">
-                  <DatePicker
+                    <DatePicker
                       value={selectedDay}
                       onChange={(values) => {
                         setSelectedDay(values);
@@ -454,13 +460,18 @@ const EditUserDetail = (props) => {
                 }
               </Descriptions.Item>
             </Descriptions>
-            <div style={{ marginTop: 16 }}>
+            <div
+              style={{
+                marginTop: 16,
+                display: "flex",
+                justifyContent: "flex-end",
+              }}
+            >
               <Button
                 className="ant-btn-primary"
                 onClick={() => handleEditClick()}
               >
-                {" "}
-                Lưu{" "}
+                Lưu
               </Button>
             </div>
           </Form>

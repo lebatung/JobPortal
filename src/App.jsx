@@ -18,7 +18,7 @@ import Jobs from "./components/NavbarComponents/jobs/Jobs";
 import LandingPage from "./pages/LandingPage";
 import BlogList from "./pages/BlogList";
 import SearchResult from "./pages/SearchResult";
-
+import LandingAdminDashboard from "./pages/admin/LandingAdminDashboard";
 // COMPANIES - NAVIGATION BAR
 import ViewCompanyDetail from "./components/NavbarComponents/companies/ViewCompanyDetail";
 
@@ -54,6 +54,8 @@ import Cvs from "./pages/users/components/candidateComponents/cvsManagement/CvsM
 import Favorites from "./pages/users/components/candidateComponents/favoritesManagement/FavoritesManagement";
 import CandidateMessagesManagement from "./pages/users/components/candidateComponents/messagesManagement/MessagesManagement";
 
+import Template1 from "./pages/users/components/candidateComponents/cvsManagement/Templates/Template1";
+
 //FORBIDDEN PAGE
 import ForbiddenPage from "./errorpages/ForbiddenPage";
 
@@ -84,6 +86,17 @@ function App() {
               
             </Route>
 
+
+            <Route 
+              path="/adminDashboard"              
+              element={
+                <ProtectedRoute
+                  element={<LandingAdminDashboard />}
+                  roles={['ROLE_ADMIN']} 
+                />
+              }>    
+              
+            </Route>
             <Route
               path="/adminDashboard"
               element={
@@ -141,6 +154,8 @@ function App() {
               <Route path="/candidateDashboard/applied" element={<BlogsApplied/>}></Route>
               <Route path="/candidateDashboard/favorites" element={<Favorites/>}></Route>
               <Route path="/candidateDashboard/messages" element={<CandidateMessagesManagement />}></Route>
+
+              <Route path="/candidateDashboard/template/fill-details" element={<Template1 />}></Route>
 
             </Route>
 

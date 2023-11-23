@@ -1,7 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Table, Button, Space, Modal, Select } from "antd";
-import { loadUsers } from "../../../../helpers/axios_helper";
+import {
+  Table,
+  Button,
+  Space,
+  Modal,
+  Select,
+  Input,
+  Col,
+  Card,
+  Row,
+} from "antd";
+import {
+  loadUsersByActive,
+  loadUsersNPD,
+} from "../../../../helpers/axios_helper";
 import axios from "axios";
 
 import ViewUserDetail from "./ViewUserDetail";
@@ -10,6 +23,7 @@ import AddUser from "./AddUser";
 import SearchComponents from "../SearchComponent";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
+import Icon from "@ant-design/icons/lib/components/Icon";
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -20,8 +34,19 @@ function UserManagement() {
   const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
 
   const [selectedRole, setSelectedRole] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedUserActive, setSelectedUserActive] = useState(null);
+
+  const [disableReason, setDisableReason] = useState("");
+  const [isMessageInputVisible, setIsMessageInputVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(false);
+  const [selectedPersonalDetailId, setSelectedPersonalDetailId] =
+    useState(null);
+
+  const handleDisableReasonChange = (event) => {
+    setDisableReason(event.target.value);
+  };
 
   const [searchResults, setSearchResults] = useState([]);
   const performSearch = (searchTerm) => {
@@ -31,10 +56,14 @@ function UserManagement() {
     setSearchResults(filteredUsers);
   };
 
+  const [activeUsersData, setActiveUsersData] = useState([]);
+  const [pendingUsersData, setPendingUsersData] = useState([]);
+  const [inactiveUsersData, setInactiveUsersData] = useState([]);
+
   const { id } = useParams();
 
   useEffect(() => {
-    loadUsers()
+    loadUsersNPD()
       .then((data) => {
         setUsers(data);
         //console.log(users.personalDetailId.id)
@@ -49,6 +78,23 @@ function UserManagement() {
     isEditModalVisible,
   ]);
 
+  useEffect(() => {
+    loadUsersByActive()
+      .then((response) => {
+        console.log("users Active Response:", response);
+        if (response) {
+          setActiveUsersData(response.activeUsers || []);
+          setPendingUsersData(response.pendingUsers || []);
+          setInactiveUsersData(response.inactiveUsers || []);
+        } else {
+          console.error("No data in loadUsersByActive response.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error loading loadUsersByActive:", error);
+      });
+  }, []);
+
   const columns = [
     {
       title: "STT",
@@ -57,34 +103,33 @@ function UserManagement() {
       render: (text, record, index) => index + 1,
     },
     {
-      title: "Username",
+      title: "Tên người dùng",
       dataIndex: "username",
       key: "username",
     },
     {
-      title: "Active",
+      title: "Trạng thái",
       dataIndex: "active",
       key: "active",
       render: (active) => (
-        <span style={{ color: active ? "green" : "red" }}>
-          {active ? "Active" : "Inactive"}
+        <span
+          style={{
+            color: active === 1 ? "green" : active === 2 ? "orange" : "red",
+          }}
+        >
+          {active === 1 ? "Hoạt động" : active === 2 ? "Chờ duyệt" : "Ngừng"}
         </span>
       ),
     },
 
     {
-      title: "Actions",
+      title: "Hoạt động",
       key: "actions",
       render: (text, record) => (
         <Space size="middle">
           <Button type="primary" onClick={() => handleEditClick(record)}>
             {" "}
             Edit
-            {/* <Link
-              to={`/adminDashboard/users/edit-user-detail/${record.personalDetailId}`}
-            >
-              Edit
-            </Link> */}
           </Button>
 
           <Button
@@ -98,11 +143,19 @@ function UserManagement() {
 
           <Button
             className={
-              record.active === 1 ? "ant-btn-danger" : "ant-btn-primary"
+              record.active === 1
+                ? "ant-btn-danger"
+                : record.active === 2
+                ? "ant-btn-warning"
+                : "ant-btn-primary"
             }
             onClick={() => handleDisableClick(record)}
           >
-            {record.active === 1 ? "Disable" : "Enable"}
+            {record.active === 1
+              ? "Disable"
+              : record.active === 2
+              ? "Activate"
+              : "Enable"}
           </Button>
         </Space>
       ),
@@ -110,13 +163,12 @@ function UserManagement() {
   ];
 
   const handleDisable = () => {
+    console.log("selectedUser", selectedUser);
     if (selectedUserId !== null && selectedUserActive !== null) {
       const userUpdateDTO = {
         id: selectedUserId,
         active: selectedUserActive === 1 ? 0 : 1,
       };
-
-      //console.log("UserUpdateDTO:", userUpdateDTO);
 
       axios
         .put(`/api/users/disable`, userUpdateDTO)
@@ -127,21 +179,40 @@ function UserManagement() {
             } user with ID ${selectedUserId}`
           );
           setIsActiveModalVisible(false);
-          toast.success(`${
-            selectedUserActive === 1 ? "Disabled" : "Enabled"
-          } thành công`);
+          toast.success(
+            `${selectedUserActive === 1 ? "Disabled" : "Enabled"} thành công`
+          );
         })
         .catch((error) => {
           console.error("Error disabling/enabling user:", error);
           setIsActiveModalVisible(false);
-          toast.error(`${
-            selectedUserActive === 1 ? "Disabled" : "Enabled"
-          } thành công`);
+          toast.error(
+            `${selectedUserActive === 1 ? "Disabled" : "Enabled"} thành công`
+          );
         });
+      console.log("userUpdateDTO", userUpdateDTO);
     } else {
       console.error(
         "Record is invalid or does not contain an ID or active value."
       );
+    }
+
+    if (selectedUserActive === 1) {
+      const sendMailData = {
+        subject: "Tạm khóa tài khoản",
+        message: disableReason, // Sử dụng giá trị từ state disableReason
+      };
+
+      axios
+        .post(`/mail/send/${selectedUser.personalDetail.email}`, sendMailData)
+        .then((mailResponse) => {
+          console.log("Email sent successfully");
+        })
+        .catch((mailError) => {
+          console.error("Error sending email:", mailError);
+        });
+
+      console.log("sendMailData", sendMailData);
     }
   };
 
@@ -161,10 +232,17 @@ function UserManagement() {
   };
 
   const handleDisableClick = (record) => {
+    setSelectedUser(record);
     setSelectedUserId(record.id);
-    setSelectedUserActive(record.active); // Lưu giá trị active vào state
+    setSelectedUserActive(record.active);
+    if (record.active === 1) {
+      setIsMessageInputVisible(true); // Hiển thị Input khi Active là 1
+    } else {
+      setIsMessageInputVisible(false);
+    }
     setIsActiveModalVisible(true);
   };
+
   const handleDeleteClick = (record) => {
     setSelectedUserId(record.id);
     setIsDeleteModalVisible(true);
@@ -177,6 +255,7 @@ function UserManagement() {
 
   const handleEditClick = (record) => {
     setSelectedUserId(record.id);
+    setSelectedPersonalDetailId(record.personalDetail.id);
     //console.log(selectedUserId);
     setIsEditModalVisible(true);
   };
@@ -187,22 +266,124 @@ function UserManagement() {
   const handleRoleChange = (value) => {
     setSelectedRole(value);
   };
+  const handleStatusChange = (value) => {
+    setSelectedStatus(value);
+  };
   const handleFilterByRole = () => {
     console.log(selectedRole);
     if (selectedRole) {
-      // Lọc người dùng dựa trên vai trò đã chọn
       const filteredUsers = users.filter((user) =>
         user.roles.includes(selectedRole)
       );
       setSearchResults(filteredUsers);
     } else {
-      // Nếu không có vai trò được chọn, hiển thị tất cả người dùng
       setSearchResults(users);
     }
   };
+
+  const handleFilterByStatus = () => {
+    if (selectedStatus !== null) {
+      const filteredUsers = users.filter(
+        (user) => user.active === selectedStatus
+      );
+      setSearchResults(filteredUsers);
+    } else {
+      setSearchResults(users);
+    }
+  };
+
+  const handleFilter = () => {
+    if (selectedRole || selectedStatus !== null) {
+      if (selectedRole && selectedStatus !== null) {
+        const filteredUsers = users.filter(
+          (user) =>
+            user.roles.includes(selectedRole) && user.active === selectedStatus
+        );
+        setSearchResults(filteredUsers);
+      } else {
+        const filteredUsers = users.filter((user) =>
+          selectedRole
+            ? user.roles.includes(selectedRole)
+            : true || selectedStatus !== null
+            ? user.active === selectedStatus
+            : true
+        );
+        setSearchResults(filteredUsers);
+      }
+    } else {
+      setSearchResults(users);
+    }
+  };
+
+  const cardData = [
+    {
+      status: "Tổng cộng",
+      iconType: "info-circle",
+      imageSrc: `http://localhost:8080/api/files/peopleTotal.png`,
+      data: users.length,
+      color: "#000000"
+    },
+    {
+      status: "Đang hoạt động",
+      iconType: "play-circle",
+      imageSrc: `http://localhost:8080/api/files/peopleActive.png`,
+      data: activeUsersData.length,
+      textColor: "#3587A4",
+    },
+    {
+      status: "Ngừng hoạt động",
+      iconType: "pause-circle",
+      imageSrc: `http://localhost:8080/api/files/peopleInactive.png`,
+      data: inactiveUsersData.length,
+      textColor: "#2D898B",
+    },
+    {
+      status: "Chờ duyệt",
+      iconType: "clock-circle",
+      imageSrc: `http://localhost:8080/api/files/peoplePending.png`,
+      data: pendingUsersData.length,
+      textColor: "#C1DFF0",
+    },
+  ];
+
   return (
     <>
       <ToastContainer />
+      <div>
+        <Row gutter={16}>
+          {cardData.map((data, index) => (
+            <Col span={6} key={index}>
+              <Card style={{margin: "5px", borderRadius: "5px", border: "1px solid grey"}}>
+                <Row>
+                  <Col span={12}>
+                    <div style={{ flex: 1 }}>
+                      <img
+                        src={data.imageSrc}
+                        alt={data.status}
+                        style={{
+                          width: "70px",
+                          height: "70px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                  </Col>
+                  <Col span={12}>
+                    <div style={{ textAlign: "center", marginLeft: "10px" }}>
+                      <Icon
+                        type={data.iconType}
+                        style={{ fontSize: "24px", marginRight: "8px"}}
+                      />
+                      <h3 style={{ display: "inline" }}>{data.status}</h3>
+                      <h4>{data.data}</h4>
+                    </div>
+                  </Col>
+                </Row>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </div>
       <div
         style={{
           marginBottom: 10,
@@ -214,27 +395,37 @@ function UserManagement() {
           alignItems: "center",
         }}
       >
-        <SearchComponents onSearch={performSearch} />
+        <SearchComponents onSearch={performSearch} style={{ border: '2px solid #000', borderRadius: '5px',}}/>
         <div>
           <Select
-            style={{ width: 200, marginRight: 10 }}
+            style={{ width: 200, marginRight: 10, border: '0.5px solid grey', borderRadius: '5px', }}
+            placeholder="Lọc người dùng theo trạng thái"
+            onChange={handleStatusChange}
+            
+          >
+            <Select.Option value={null}>Tất cả</Select.Option>
+            <Select.Option value={1}>Hoạt động</Select.Option>
+            <Select.Option value={0}>Ngừng</Select.Option>
+          </Select>
+          <Select
+            style={{ width: 200, marginRight: 10, border: '0.5px solid grey', borderRadius: '5px', }}
             placeholder="Lọc người dùng theo vai trò"
             onChange={handleRoleChange}
           >
-            <Select.Option value="">All</Select.Option>
+            <Select.Option value="">Tất cả</Select.Option>
             <Select.Option value="ROLE_RECRUITMENT">
               Recruitment
             </Select.Option>{" "}
             <Select.Option value="ROLE_CANDIDATE">Candidate</Select.Option>{" "}
           </Select>
 
-          <Button type="primary" onClick={handleFilterByRole}>
+          <Button type="primary" onClick={handleFilter}>
             Lọc
           </Button>
         </div>
 
         <Button type="primary" onClick={() => handleCreateClick()}>
-          Add New User
+          Thêm người dùng
         </Button>
       </div>
       <hr />
@@ -242,15 +433,26 @@ function UserManagement() {
         columns={columns}
         dataSource={searchResults.length > 0 ? searchResults : users}
       />
+
       <Modal
         title={selectedUserActive === 1 ? "Confirm Disable" : "Confirm Enable"}
         visible={isActiveModalVisible}
         onOk={handleDisable}
         onCancel={() => setIsActiveModalVisible(false)}
       >
-        Are you sure you want to{" "}
-        {selectedUserActive === 1 ? "disable" : "enable"} this user's account?
+        {selectedUserActive === 1 ? (
+          <>
+            <p>Are you sure you want to disable this user's account?</p>
+            <Input
+              placeholder="Enter reason for disabling"
+              onChange={(e) => setDisableReason(e.target.value)}
+            />
+          </>
+        ) : (
+          <p>Are you sure you want to enable this user's account?</p>
+        )}
       </Modal>
+
       <Modal
         title={"Confirm Deleting"}
         visible={isDeleteModalVisible}
@@ -277,12 +479,27 @@ function UserManagement() {
         onCancel={() => setIsEditModalVisible(false)}
         width={1200}
         footer={[
-          <Button key="back" onClick={() => setIsEditModalVisible(false)}>
-            Close
-          </Button>,
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button
+              key="back"
+              onClick={() => setIsEditModalVisible(false)}
+              style={{ marginRight: "auto", marginLeft: 0 }}
+            >
+              Close
+            </Button>
+            ,
+          </div>,
         ]}
       >
-        {selectedUserId && <EditUserDetail selectedUserId={selectedUserId} />}
+        {selectedUserId && (
+          <EditUserDetail
+            selectedUserId={selectedUserId}
+            selectedPersonalDetailId={selectedPersonalDetailId}
+          />
+        )}
       </Modal>
       <Modal
         title="Create User"

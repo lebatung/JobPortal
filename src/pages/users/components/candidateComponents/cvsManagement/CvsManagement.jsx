@@ -1,41 +1,65 @@
-import React from 'react'
-import { Form, Input, Button, Space } from "antd";
+import React from 'react';
+import { Card, Button } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { templates } from '../cvsManagement/data/templates';
 
 export default function CvsManagement() {
-  const [form] = Form.useForm();
+  const navigate = useNavigate();
 
-  const onFinish = (values) => {
-    console.log("Submitted values:", values);
+  const navigateToFillDetails = (id) => {
+    navigate(`/candidateDashboard/template/fill-details`);
   };
+
   return (
-    <>
-       <Form form={form} name="cv_form" onFinish={onFinish} layout="vertical">
-      <Form.Item name="education" label="Education">
-        <Input.TextArea rows={4} />
-      </Form.Item>
-      <Form.Item name="exp" label="Experience">
-        <Input.TextArea rows={4} />
-      </Form.Item>
-      <Form.Item name="skill" label="Skills">
-        <Input.TextArea rows={4} />
-      </Form.Item>
-      <Form.Item name="intro" label="Introduction">
-        <Input.TextArea rows={4} />
-      </Form.Item>
-      <Form.Item name="detail" label="Details">
-        <Input.TextArea rows={4} />
-      </Form.Item>
-      <Form.Item>
-        <Space>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-          <Button type="default" onClick={form.resetFields}>
-            Reset
-          </Button>
-        </Space>
-      </Form.Item>
-    </Form>
-    </>
-  )
+    <div className="home">
+      <div className="home-templates-cont">
+        <h2 className="template-header-title">Templates</h2>
+        <p className="template-select-text">Select a template to get started</p>
+
+        <div
+          style={{
+            display: 'flex',
+            gap: '20px',
+            flexWrap: 'wrap',
+          
+          }}>
+          {templates.map((template) => (
+            <Card
+              key={template.id}
+              hoverable
+              style={{ width: 300, marginBottom: 20 }}
+              cover={
+                <div style={{ position: 'relative', overflow: 'hidden' }}>
+                  <img
+                    alt={template.template_name}
+                    src={template.template_img}
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      transition: 'transform 0.3s',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.1)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                  />
+                </div>
+              }>
+              <div style={{ textAlign: 'center' }}>
+                <Button
+                  className="use-template-btn"
+                  onClick={() => navigateToFillDetails()}
+                  size="medium"
+                  type="primary">
+                  Use Template
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }

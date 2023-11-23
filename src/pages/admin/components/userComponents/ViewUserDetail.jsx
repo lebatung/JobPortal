@@ -139,7 +139,11 @@ export default function ViewUserDetail(props) {
         onCancel={() => setIsEditModalVisible(false)}
         width={1200}
         footer={[
-          <Button key="back" onClick={() => setIsEditModalVisible(false)}>
+          <Button
+            key="back"
+            onClick={() => setIsEditModalVisible(false)}
+            style={{ marginLeft: 0 }}
+          >
             Close
           </Button>,
         ]}

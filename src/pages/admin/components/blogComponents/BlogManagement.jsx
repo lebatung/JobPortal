@@ -11,7 +11,6 @@ import SearchComponents from "../SearchComponent";
 
 import ViewBlog from "./ViewBlog";
 
-
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 
@@ -30,7 +29,6 @@ function BlogsManagement() {
   const [selectedBlogId, setSelectedBlogId] = useState(null);
   const [selectedBlogEnable, setSelectedBlogEnable] = useState(null);
 
-
   const handleViewClick = (record) => {
     // Xử lý logic xem blog
     setSelectedBlogId(record.id);
@@ -46,16 +44,15 @@ function BlogsManagement() {
   const handleEnable = () => {
     console.log("Disable/Enable!");
     setIsEnableModalVisible(false);
-  }
+  };
   const handleCreateClick = () => {
     setIsCreateModalVisible(true);
-    
-  }
+  };
 
   const [searchResults, setSearchResults] = useState([]);
   const performSearch = (searchTerm) => {
     const filteredUsers = blogs.filter((blog) =>
-    blog.title.toLowerCase().includes(searchTerm.toLowerCase())
+      blog.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setSearchResults(filteredUsers);
   };
@@ -93,7 +90,6 @@ function BlogsManagement() {
       key: "actions",
       render: (text, record) => (
         <Space size="middle">
-          
           <Button onClick={() => handleViewClick(record)}>View</Button>
           {record.enable === 0 || record.enable === 1 ? (
             <Button
@@ -112,8 +108,6 @@ function BlogsManagement() {
 
   const { username } = useAuth();
 
-
-
   useEffect(() => {
     loadUserByUsername(username)
       .then((data) => {
@@ -124,7 +118,7 @@ function BlogsManagement() {
         console.error("Error loading categories:", error);
       });
 
-      loadPendingBlogs()
+    loadPendingBlogs()
       .then((data) => {
         setBlogs(data);
       })
@@ -145,13 +139,13 @@ function BlogsManagement() {
         }}
       >
         <SearchComponents onSearch={performSearch} />
-        
       </div>
       <hr />
       <div className="App">
-        <Table 
-         dataSource={searchResults.length > 0 ? searchResults : blogs}
-         columns={columns} />
+        <Table
+          dataSource={searchResults.length > 0 ? searchResults : blogs}
+          columns={columns}
+        />
       </div>
       <Modal
         title="Tin Tuyển Dụng"
@@ -159,18 +153,19 @@ function BlogsManagement() {
         onCancel={() => setIsViewModalVisible(false)}
         width={1400}
         footer={[
-          <Button key="back" onClick={() => setIsViewModalVisible(false)}>
-            Close
-          </Button>,
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button key="back" onClick={() => setIsViewModalVisible(false)}>
+              Close
+            </Button>
+            ,
+          </div>,
         ]}
       >
-        {selectedBlogId && (
-          <ViewBlog selectedBlogId={selectedBlogId}/>
-
-        )}
+        {selectedBlogId && <ViewBlog selectedBlogId={selectedBlogId} />}
       </Modal>
-      
-    
     </>
   );
 }

@@ -179,11 +179,11 @@ export default function CandidatesManagement() {
     });
   }, [blogs]);
 
-  const [numPage, setNumpages] = useState(null);
+  const [numPages, setNumpages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
 
-  function onDocumentLoadSuccess({ numPage }) {
-    setNumpages(numPage);
+  function onDocumentLoadSuccess({ numPages }) {
+    setNumpages(numPages);
     setPageNumber(1);
   }
 
@@ -369,7 +369,9 @@ export default function CandidatesManagement() {
         ) : (
           pdfSrc && (
             <Document file={pdfSrc} onLoadSuccess={onDocumentLoadSuccess}>
-              <Page pageNumber={pageNumber} />
+              {Array.from(new Array(numPages), (el, index) => (
+                <Page key={`page_${index + 1}`} pageNumber={index + 1} />
+              ))}
             </Document>
           )
         )}
@@ -381,11 +383,11 @@ export default function CandidatesManagement() {
         footer={[
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Button key="back" onClick={() => setIsProcessVisible(false)}>
-              Close
+              Đóng
             </Button>
             <div>
               <Button key="confirm" type="primary" onClick={handleConfirm}>
-                Confirm
+                Xác nhận
               </Button>
             </div>
           </div>,

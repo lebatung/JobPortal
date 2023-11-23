@@ -24,6 +24,7 @@ export default function RecruitmentRegistrationForm() {
   const [categoryId, setCattegoryId] = useState("");
   const [locationId, setLocationId] = useState("");
   const [roleId, setRoleId] = useState(12);
+  const [active, setActive] = useState(2);
 
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -39,7 +40,7 @@ export default function RecruitmentRegistrationForm() {
     setName(values.name);
     setCattegoryId(values.category);
     setLocationId(values.location);
-
+    setActive(2);
     const recruitmentFormData = {
       username,
       email,
@@ -48,13 +49,14 @@ export default function RecruitmentRegistrationForm() {
       categoryId,
       locationId,
       roleId: roleId,
+      active: active,
     };
 
     request("POST", "/register", recruitmentFormData)
       .then((response) => {
-        toast.success("Đăng ký thành công");
+        toast.success("Yêu cầu đăng ký tài khoản thành công! Xin hãy chờ phản hồi từ admin");
         console.log("response:", response.data);
-        setAuthHeader(response.data.token);
+        //setAuthHeader(response.data.token);
       })
       .catch((error) => {
         console.error("Register Error:", error);

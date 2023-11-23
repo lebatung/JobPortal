@@ -1,5 +1,5 @@
 import { SendOutlined, WechatOutlined } from "@ant-design/icons";
-import { Button, Card, Input, Layout, List } from "antd";
+import { Button, Card, Image, Input, Layout, List } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import React, { useEffect, useInsertionEffect, useState } from "react";
@@ -8,6 +8,7 @@ import {
   request,
   loadConversationByUserId,
   loadUserByUsername,
+  loadPersonalDetailByUserId,
 } from "../../../../../helpers/axios_helper";
 
 const MessagesManagement = () => {
@@ -15,6 +16,9 @@ const MessagesManagement = () => {
   const [user, setUser] = useState({
     id: "",
   });
+  const [recipient, setRecipient] = useState("");
+  const [personalDetail, setPersonalDetail] = useState("");
+
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messageInput, setMessageInput] = useState("");
@@ -167,6 +171,13 @@ const MessagesManagement = () => {
     color: "#777",
   };
 
+  const avatarStyle = {
+    borderRadius: "50%",
+    width: "60px",
+    height: "60px",
+    margin: "0 10px",
+  };
+
   useEffect(() => {
     loadUserByUsername(username)
       .then((data) => {
@@ -184,6 +195,25 @@ const MessagesManagement = () => {
         console.error("Error loading categories:", error);
       });
   }, [user.id, username]);
+
+  useEffect(() => {
+    if (selectedConversation) {
+      // Lấy thông tin người nhận từ selectedConversation
+      const recipientId = selectedConversation.messages[0].recipientId;
+      console.log(
+        "selectedConversation.messages[0].recipientId",
+        selectedConversation.messages[0].recipientId
+      );
+
+      loadPersonalDetailByUserId(recipientId)
+        .then((data) => {
+          setPersonalDetail(data);
+        })
+        .catch((error) => {
+          console.error("Error loading recipient information:", error);
+        });
+    }
+  }, [selectedConversation]);
 
   return (
     <>
@@ -215,6 +245,24 @@ const MessagesManagement = () => {
         </Sider>
         <Content style={{ contentStyle }}>
           <div className="chat-box">
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "10px",
+              }}
+            >
+              {personalDetail && (
+                <>
+                  <img
+                    style={avatarStyle}
+                    src={`http://localhost:8080/api/files/${personalDetail.avatar}`}
+                    alt={personalDetail.name}
+                  />
+                  <h3>{personalDetail.name}</h3>
+                </>
+              )}
+            </div>
             <div style={messageListStyle} className="message-list">
               {selectedConversation ? (
                 selectedConversation.messages.map((message, index) => (
@@ -227,7 +275,6 @@ const MessagesManagement = () => {
                     }
                   >
                     <div style={messageContentStyle}>{message.content}</div>
-                    
                   </div>
                 ))
               ) : (
@@ -237,7 +284,6 @@ const MessagesManagement = () => {
               )}
             </div>
             <div style={lastMessageTimeStyle}>
-              
               {lastMessageTime ? lastMessageTime.toLocaleTimeString() : ""}
             </div>
             <div className="message-input" style={messageInputContainerStyle}>

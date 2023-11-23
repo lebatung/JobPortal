@@ -1,5 +1,5 @@
-import React, { useEffect, useState  } from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 import ViewLandingBlog from "./ViewLandingBlog";
@@ -30,6 +30,7 @@ import {
   loadNewestBlogs,
   loadListCategoriesNBlogsRelated,
   loadHighSalaryBlogs,
+  loadOutStandingRecruitments,
 } from "../helpers/axios_helper";
 import styled from "styled-components";
 import {
@@ -119,6 +120,7 @@ const HoverableCard = styled(Card)`
   margin: 8px;
   border: 1px solid #ccc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
   &:hover {
     background-color: #f0f0f0;
     border: 1px solid #ff6f4e;
@@ -134,6 +136,7 @@ export default function LandingPage() {
 
   const [hotJobs, setHotJobs] = useState([]);
   const [categoriesNBlogs, setCategoriesNBlogs] = useState([]);
+  const [outStandingRecruitment, setOutStandingRecruitment] = useState([]);
 
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState("");
@@ -152,7 +155,7 @@ export default function LandingPage() {
   //func
   const navigate = useNavigate();
   const [searchData, setSearchData] = useState(null);
-  
+
   const handleSearch = () => {
     // console.log("Tên công việc:", jobTitle);
     // console.log("Ngành nghề:", industry);
@@ -163,13 +166,13 @@ export default function LandingPage() {
       province: province,
     };
     console.log(searchData);
-    request('POST', 'http://localhost:8080/api/search', searchData)
-      .then(response => {
+    request("POST", "http://localhost:8080/api/search", searchData)
+      .then((response) => {
         console.log(response.data);
-        navigate('/search-result', { state: { searchResult: response.data } });
+        navigate("/search-result", { state: { searchResult: response.data } });
       })
-      .catch(error => {
-        console.error('Error searching:', error);
+      .catch((error) => {
+        console.error("Error searching:", error);
       });
   };
 
@@ -356,6 +359,15 @@ export default function LandingPage() {
       .catch((error) => {
         console.error("Error loading hotJobs:", error);
       });
+
+    loadOutStandingRecruitments()
+      .then((data) => {
+        setOutStandingRecruitment(data);
+        //console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error loading hotJobs:", error);
+      });
   }, []);
 
   const groupedBlogs = hotJobs.reduce((result, blog, index) => {
@@ -379,26 +391,42 @@ export default function LandingPage() {
     []
   );
 
- 
+  const groupedOutStandingRecruitments = outStandingRecruitment.reduce(
+    (result, category, index) => {
+      const chunkIndex = Math.floor(index / 6);
+      if (!result[chunkIndex]) {
+        result[chunkIndex] = [];
+      }
+      result[chunkIndex].push(category);
+      return result;
+    },
+    []
+  );
 
   // NewestBlogs
-   const handleNewestBlogsChangePage = (page) => {
+  const handleNewestBlogsChangePage = (page) => {
     setCurrentNewestPage(page);
   };
   const [currentNewestPage, setCurrentNewestPage] = useState(1);
   const pageSize = 12;
   const startNewestBlogsIndex = (currentNewestPage - 1) * pageSize;
   const endNewestBlogsIndex = startNewestBlogsIndex + pageSize;
-  const currentNewBlogs = newestBlogs.slice(startNewestBlogsIndex, endNewestBlogsIndex);
+  const currentNewBlogs = newestBlogs.slice(
+    startNewestBlogsIndex,
+    endNewestBlogsIndex
+  );
 
-  // HighSalary  
+  // HighSalary
   const handleHighSalaryBlogsChangePage = (page) => {
     setCurrentHighlaryPage(page);
   };
   const [currentHighSalaryPage, setCurrentHighlaryPage] = useState(1);
   const startNHighSalaryIndex = (currentHighSalaryPage - 1) * pageSize;
   const endHighSalaryIndex = startNHighSalaryIndex + pageSize;
-  const currentHighSalaryBlogs = highSalaryBlogs.slice(startNHighSalaryIndex, endHighSalaryIndex);
+  const currentHighSalaryBlogs = highSalaryBlogs.slice(
+    startNHighSalaryIndex,
+    endHighSalaryIndex
+  );
 
   return (
     <>
@@ -524,7 +552,6 @@ export default function LandingPage() {
 
                             <div style={{ flex: 1 }}>
                               <h3>{blog.title}</h3>
-                              <p>{blog.name}</p>
                               <div
                                 style={{
                                   display: "flex",
@@ -579,7 +606,52 @@ export default function LandingPage() {
           </div>
           <div style={newestBlogsContainer}>
             <Card
-              title={<span style={{ color: "#100b64" }}>NEW JOBS HIRING</span>}
+              title={
+                <span style={{ color: "#100b64" }}>NHÀ TUYỂN DỤNG NỔI BẬT</span>
+              }
+            >
+              <Carousel autoplay dots={true} arrows={true} autoplaySpeed={5000}>
+                {groupedOutStandingRecruitments.map(
+                  (recruitmentGroup, index) => (
+                    <div key={index}>
+                      <Row gutter={16}>
+                        {recruitmentGroup.map((recruitment) => (
+                          <Col span={4} key={recruitment.id}>
+                            <Link
+                              to={{
+                                pathname: `/companies/${recruitment.slug}`,
+                              }}
+                            >
+                              <HoverableCard style={{height: "216px"}}>
+                                <Image
+                                   style={{
+                                    width: "80px",
+                                    height: "60px",
+                                    objectFit: "cover",
+                                  }}
+                                  src={`http://localhost:8080/api/files/${recruitment.avatar}`}
+                                  alt={recruitment.name}
+                                />
+                                <div>
+                                  <strong>{recruitment.name}</strong>
+                                  <p>
+                                    Số tin tuyển dụng: {recruitment.blogsCount}
+                                  </p>
+                                </div>
+                              </HoverableCard>
+                            </Link>
+                          </Col>
+                        ))}
+                      </Row>
+                    </div>
+                  )
+                )}
+              </Carousel>
+            </Card>
+          </div>
+          <div style={newestBlogsContainer}>
+            <Card
+              title={<span style={{ color: "#100b64" }}>VIỆC LÀM MỚI ĐANG TUYỂN</span>}
             >
               <Row gutter={16}>
                 {currentNewBlogs.map((blog) => (
@@ -654,7 +726,7 @@ export default function LandingPage() {
           </div>
           <div style={newestBlogsContainer}>
             <Card
-              title={<span style={{ color: "#100b64" }}>HIGH SALARY JOBS</span>}
+              title={<span style={{ color: "#100b64" }}>CÔNG VIỆC LƯƠNG CAO</span>}
             >
               <Row gutter={16}>
                 {currentHighSalaryBlogs.map((blog) => (

@@ -109,12 +109,16 @@ export default function EditPersonalDetail(props) {
       });
   }, [selectedPersonalDetailId]);
 
-  const [selectedDay, setSelectedDay] = useState( personalDetail.dayOfBirth ? moment(personalDetail.dayOfBirth) : null );
+  const [selectedDay, setSelectedDay] = useState(
+    personalDetail.dayOfBirth ? moment(personalDetail.dayOfBirth) : null
+  );
   const onFinish = () => {
     form
       .validateFields()
       .then(() => {
-        const formattedDayOfBirth = selectedDay ? selectedDay.format("YYYY-MM-DD") : null;
+        const formattedDayOfBirth = selectedDay
+          ? selectedDay.format("YYYY-MM-DD")
+          : null;
         const formData = {
           avatar,
           name,
@@ -422,14 +426,24 @@ export default function EditPersonalDetail(props) {
               </Descriptions.Item>
             </Descriptions>
             <div style={{ marginTop: 16 }}>
-              <Button
-                className="ant-btn-primary"
-                onClick={() => handleEditClick()}
-                style={{ narginRight: 16 }}
+              <div
+                style={{
+                  marginTop: 16,
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
               >
-                {" "}
-                Lưu{" "}
-              </Button>
+                <Button
+                  className="ant-btn-primary"
+                  onClick={() => handleEditClick()}
+                  style={{
+                    narginRight: 16,
+                  }}
+                >
+                  {" "}
+                  Lưu{" "}
+                </Button>
+              </div>
             </div>
           </Form>
         </div>

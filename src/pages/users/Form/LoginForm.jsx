@@ -1,8 +1,7 @@
-
 import { useNavigate } from "react-router-dom";
-import { toast } from 'react-toastify';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { Form, Input, Button, Tabs } from "antd";
 import { Link } from "react-router-dom";
@@ -10,14 +9,10 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import TabPane from "antd/es/tabs/TabPane";
 
 import { request, setAuthHeader } from "../../../helpers/axios_helper";
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth } from "../../../contexts/AuthContext";
 
-
-function LoginForm( {updateIsAuthenticated, updateIsLoginFormVisible }) {
-
-
+function LoginForm({ updateIsAuthenticated, updateIsLoginFormVisible }) {
   const navigate = useNavigate();
-
 
   const onFinish = (values) => {
     const loginData = {
@@ -25,29 +20,31 @@ function LoginForm( {updateIsAuthenticated, updateIsLoginFormVisible }) {
       password: values.password,
     };
 
-    // console.log("Received values:", values);
-     request(
-      "POST",
-      "/login",
-      loginData)
+    request("POST", "/login", loginData)
       .then((response) => {
         toast.success("Đăng nhập thành công");
         setAuthHeader(response.data.token);
         updateIsAuthenticated(true);
         updateIsLoginFormVisible(false);
 
-        window.location.reload()
+        window.location.reload();
         console.log(response.data.token);
       })
       .catch((error) => {
-        if (error.response || error.response.status === 404 || error.response.status === 401 ) {         
-          toast.error("Tài khoản hoặc mật khẩu không đúng.");     
+        if (error.response) {
+          if (error.response.status === 404) {
+            toast.error("Tài khoản không tồn tại.");
+          } else if (error.response.status === 401) {
+            toast.error("Sai tài khoản hoặc mật khẩu.");
+          } else if (error.response.status === 403) {
+            toast.error("Tài khoản của bạn đã bị khóa. Liên hệ admin để tìm giải pháp");
+          } else {
+            toast.error("Đã xảy ra lỗi."); // Thông báo lỗi chung cho trường hợp khác
+          }
+        } else {
+          toast.error("Đã xảy ra lỗi."); // Thông báo lỗi chung cho trường hợp khác
         }
-          
-        //setAuthHeader(null);
       });
-      
-      
   };
 
   const loginButton = {
@@ -61,7 +58,7 @@ function LoginForm( {updateIsAuthenticated, updateIsLoginFormVisible }) {
 
   return (
     <div>
-    <ToastContainer />
+   
       <Tabs>
         <TabPane>
           <Form

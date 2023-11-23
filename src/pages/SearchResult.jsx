@@ -8,7 +8,17 @@ import {
   MoneyCollectOutlined,
 } from "@ant-design/icons";
 import { toast, ToastContainer } from "react-toastify";
-import { Card, Col, Row, Image, Pagination, Modal, Button, Select, Input } from "antd";
+import {
+  Card,
+  Col,
+  Row,
+  Image,
+  Pagination,
+  Modal,
+  Button,
+  Select,
+  Input,
+} from "antd";
 import {
   request,
   loadLocations,
@@ -23,8 +33,8 @@ const SearchResult = () => {
   const location = useLocation();
   const { isAuthenticated, username, userId } = useAuth();
   const { Option } = Select;
-  const { searchResult: initialSearchResult } = location.state;
-  const [searchResult, setSearchResult] = useState(initialSearchResult);
+  const { searchResult: initialSearchResult } = location.state || {};
+  const [searchResult, setSearchResult] = useState(initialSearchResult || []);
 
   const [jobTitle, setJobTitle] = useState("");
   const [industry, setIndustry] = useState("");
@@ -51,6 +61,9 @@ const SearchResult = () => {
   const pageSize = 12;
 
   const filterBlogs = () => {
+    if (!searchResult) {
+      return [];
+    }
     return searchResult.filter((blog) => {
       const selectedSalaryRange =
         selectedSalary === "all"
@@ -109,13 +122,13 @@ const SearchResult = () => {
       province: province,
     };
     console.log(searchData);
-    request('POST', 'http://localhost:8080/api/search', searchData)
-      .then(response => {
+    request("POST", "http://localhost:8080/api/search", searchData)
+      .then((response) => {
         console.log(response.data);
         setSearchResult(response.data);
       })
-      .catch(error => {
-        console.error('Error searching:', error);
+      .catch((error) => {
+        console.error("Error searching:", error);
       });
   };
 
@@ -240,13 +253,12 @@ const SearchResult = () => {
     width: "100%",
     alignItems: "center",
   };
-  
+
   const inputStyle = {
     flex: 1, // Thẻ input chiếm phần lớn chiều rộng còn lại
     marginRight: "10px",
-
   };
-  
+
   const selectStyle = {
     width: "200px", // Đặt chiều rộng cho các Select
     marginRight: "10px",
@@ -375,7 +387,7 @@ const SearchResult = () => {
           </Button>
         </div>
       </div>
-      {searchResult.length > 0 ? (
+      {searchResult && searchResult.length > 0 ? (
         <>
           <div style={searchResultContainer}>
             <Card

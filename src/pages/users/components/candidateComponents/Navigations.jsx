@@ -30,12 +30,6 @@ export const DASHBOARD_SIDEBAR_LINKS = [
     to: "/candidateDashboard/personalDetail",
   },
   {
-    key: "cvs",
-    icon: <AuditOutlined />,
-    label: "Quản lý CV",
-    to: "/candidateDashboard/cvs",
-  },
-  {
     key: "applied",
     icon: <FileProtectOutlined />,
     label: "Tin tuyển dụng",
@@ -52,6 +46,12 @@ export const DASHBOARD_SIDEBAR_LINKS = [
     icon: <MessageOutlined />,
     label: "Tin nhắn",
     to: "/candidateDashboard/messages",
+  },
+  {
+    key: "cvs",
+    icon: <AuditOutlined />,
+    label: "Tạo CV",
+    to: "/candidateDashboard/cvs",
   },
   
 ];

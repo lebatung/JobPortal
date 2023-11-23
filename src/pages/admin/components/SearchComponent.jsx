@@ -22,7 +22,8 @@ function SearchComponents({ onSearch }) {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         onKeyPress={handleKeyPress}
-        style={{ marginRight: "10px" }}
+        style={{ width: 200, marginRight: 10, border: '0.5px solid grey', borderRadius: '5px', }}
+        
       />
       <Button type='primary' onClick={handleSearch}>Tìm kiếm</Button>
     </div>

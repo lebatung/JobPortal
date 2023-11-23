@@ -20,38 +20,35 @@ const ChangePassword = () => {
 
   const { currentPassword, newPassword } = requestPassword;
 
-
   const onFinish = async (values) => {
     const requestData = {
       username,
       currentPassword: values.currentPassword,
-      passwnewPasswordord: values.newPassword,
+      newPassword: values.newPassword, // Sửa chính tả ở đây
     };
-    // try {
-    //
-    //   }
-    //   request("PUT", `/changePassword`, requestData)
-    //   .then((response) => {
-    //     toast.success("Đổi mật khẩu thành công");
-    //     console.log("response:", response.data);
-
-    //   })
-    //   .catch((error) => {
-    //     console.error("Đổi mật khẩu thất bại", error);
-    //     toast.error("Đổi mật khẩu thất bại");
-
-    //   });
-    // } catch (error) {
-
-    //   console.error("Error:", error);
-    // }
+  
+    try {
+      await request("PUT", `/changePassword`, requestData) // Sử dụng await
+        .then((response) => {
+          toast.success("Đổi mật khẩu thành công");
+          console.log("response:", response.data);
+        })
+        .catch((error) => {
+          console.error("Đổi mật khẩu thất bại", error);
+          toast.error("Mật khẩu cũ không chính xác");
+        });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  
     console.log(requestData);
   };
+  
 
   return (
     <>
       <ToastContainer />
-      <Card >
+      <Card>
         <Form
           form={form}
           name="changePassword"
@@ -83,15 +80,21 @@ const ChangePassword = () => {
               </Form.Item>
             </Descriptions.Item>
           </Descriptions>
-          <Button
-            type="primary"
-            htmlType="submit"
-            style={{
-              marginTop: 16,
-            }}
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "flex-end" }}
           >
-            Thay Đổi Mật Khẩu
-          </Button>
+            <div style={{ flex: 1 }}></div> {/* Phần tử trống */}
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{
+                marginTop: 16,
+              }}
+            >
+              Thay Đổi Mật Khẩu
+            </Button>
+          </div>
         </Form>
       </Card>
     </>

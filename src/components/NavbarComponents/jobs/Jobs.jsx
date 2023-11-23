@@ -482,7 +482,7 @@ export default function Jobs() {
         </div>
       </div>
       <div style={newestBlogsContainer}>
-        <Card title={<span style={{ color: "#100b64", fontSize: "20px" }}>HOT JOBS</span>}>
+        <Card title={<span style={{ color: "#100b64", fontSize: "20px" }}>VIỆC LÀM NỔI BẬT</span>}>
           <Carousel
             showArrows={true}
             showThumbs={false}
@@ -591,7 +591,7 @@ export default function Jobs() {
         </Carousel>
       </div>
       <div style={newestBlogsContainer}>
-        <Card title={<span style={{ color: "#100b64", fontSize: "20px"  }}>NEW JOBS HIRING</span>}>
+        <Card title={<span style={{ color: "#100b64", fontSize: "20px"  }}>VIỆC LÀM MỚI ĐANG TUYỂN</span>}>
           <Row gutter={16}>
             {currentNewBlogs.map((blog) => (
               <Col span={6} key={blog.id}>
@@ -663,7 +663,7 @@ export default function Jobs() {
       </div>
       <div style={newestBlogsContainer}>
         <Card
-          title={<span style={{ color: "#100b64", fontSize: "20px"  }}>HIGH SALARY JOBS</span>}
+          title={<span style={{ color: "#100b64", fontSize: "20px"  }}>VIỆC LÀM LƯƠNG CAO</span>}
         >
           <Row gutter={16}>
             {currentHighSalaryBlogs.map((blog) => (
