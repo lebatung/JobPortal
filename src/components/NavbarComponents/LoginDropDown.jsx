@@ -62,10 +62,10 @@ const LoginDropDown = () => {
         targetUrl = "/adminDashboard";
         break;
       case "ROLE_RECRUITMENT":
-        targetUrl = "/recruitmentDashboard";
+        targetUrl = "/recruitmentDashboard/personalDetail";
         break;
       case "ROLE_CANDIDATE":
-        targetUrl = "/candidateDashboard";
+        targetUrl = "/candidateDashboard/personalDetail";
         break;
       default:
         break;

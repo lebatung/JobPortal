@@ -117,13 +117,17 @@ function UserManagement() {
             color: active === 1 ? "green" : active === 2 ? "orange" : "red",
           }}
         >
-          {active === 1 ? "Hoạt động" : active === 2 ? "Chờ duyệt" : "Ngừng"}
+          {active === 1
+            ? "Đang hoạt động"
+            : active === 2
+            ? "Chờ duyệt"
+            : "Ngừng hoạt động"}
         </span>
       ),
     },
 
     {
-      title: "Hoạt động",
+      title: "Hành động",
       key: "actions",
       render: (text, record) => (
         <Space size="middle">
@@ -180,7 +184,9 @@ function UserManagement() {
           );
           setIsActiveModalVisible(false);
           toast.success(
-            `${selectedUserActive === 1 ? "Disabled" : "Enabled"} thành công`
+            `${
+              selectedUserActive === 1 ? "Vô hiệu hóa" : "Kích hoạt"
+            } tài khoản thành công`
           );
         })
         .catch((error) => {
@@ -321,7 +327,7 @@ function UserManagement() {
       iconType: "info-circle",
       imageSrc: `http://localhost:8080/api/files/peopleTotal.png`,
       data: users.length,
-      color: "#000000"
+      color: "#000000",
     },
     {
       status: "Đang hoạt động",
@@ -353,7 +359,14 @@ function UserManagement() {
         <Row gutter={16}>
           {cardData.map((data, index) => (
             <Col span={6} key={index}>
-              <Card style={{margin: "5px", borderRadius: "5px", border: "1px solid grey"}}>
+              <Card
+                style={{
+                  margin: "5px",
+                  borderRadius: "5px",
+                  border: "1px solid grey",
+                  height: "120px",
+                }}
+              >
                 <Row>
                   <Col span={12}>
                     <div style={{ flex: 1 }}>
@@ -372,7 +385,7 @@ function UserManagement() {
                     <div style={{ textAlign: "center", marginLeft: "10px" }}>
                       <Icon
                         type={data.iconType}
-                        style={{ fontSize: "24px", marginRight: "8px"}}
+                        style={{ fontSize: "24px", marginRight: "8px" }}
                       />
                       <h3 style={{ display: "inline" }}>{data.status}</h3>
                       <h4>{data.data}</h4>
@@ -395,28 +408,41 @@ function UserManagement() {
           alignItems: "center",
         }}
       >
-        <SearchComponents onSearch={performSearch} style={{ border: '2px solid #000', borderRadius: '5px',}}/>
+        <SearchComponents
+          onSearch={performSearch}
+          style={{ border: "2px solid #000", borderRadius: "5px" }}
+        />
         <div>
           <Select
-            style={{ width: 200, marginRight: 10, border: '0.5px solid grey', borderRadius: '5px', }}
+            style={{
+              width: 200,
+              marginRight: 10,
+              border: "0.5px solid grey",
+              borderRadius: "5px",
+            }}
             placeholder="Lọc người dùng theo trạng thái"
             onChange={handleStatusChange}
-            
           >
             <Select.Option value={null}>Tất cả</Select.Option>
-            <Select.Option value={1}>Hoạt động</Select.Option>
-            <Select.Option value={0}>Ngừng</Select.Option>
+            <Select.Option value={1}>Đang hoạt động</Select.Option>
+            <Select.Option value={0}>Ngừng hoạt động</Select.Option>
+            <Select.Option value={2}>Chờ duyệt</Select.Option>
           </Select>
           <Select
-            style={{ width: 200, marginRight: 10, border: '0.5px solid grey', borderRadius: '5px', }}
+            style={{
+              width: 200,
+              marginRight: 10,
+              border: "0.5px solid grey",
+              borderRadius: "5px",
+            }}
             placeholder="Lọc người dùng theo vai trò"
             onChange={handleRoleChange}
           >
             <Select.Option value="">Tất cả</Select.Option>
             <Select.Option value="ROLE_RECRUITMENT">
-              Recruitment
+              Nhà tuyển dụng
             </Select.Option>{" "}
-            <Select.Option value="ROLE_CANDIDATE">Candidate</Select.Option>{" "}
+            <Select.Option value="ROLE_CANDIDATE">Người tìm việc</Select.Option>{" "}
           </Select>
 
           <Button type="primary" onClick={handleFilter}>
@@ -442,7 +468,7 @@ function UserManagement() {
       >
         {selectedUserActive === 1 ? (
           <>
-            <p>Are you sure you want to disable this user's account?</p>
+            <p>Nhập vào lí do khóa tài khoản:</p>
             <Input
               placeholder="Enter reason for disabling"
               onChange={(e) => setDisableReason(e.target.value)}
@@ -462,19 +488,26 @@ function UserManagement() {
         Are you sure you want to {"delete"} this user's account?
       </Modal>
       <Modal
-        title="View User Detail"
+        title="Thông tin tài khoản"
         visible={isViewModalVisible}
         onCancel={() => setIsViewModalVisible(false)}
         footer={[
-          <Button key="back" onClick={() => setIsViewModalVisible(false)}>
-            Close
-          </Button>,
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            {" "}
+            <Button key="back" onClick={() => setIsViewModalVisible(false)}>
+              Close
+            </Button>
+            ,
+          </div>,
         ]}
       >
         {selectedUserId && <ViewUserDetail selectedUserId={selectedUserId} />}
       </Modal>
       <Modal
-        title="Edit User Detail"
+        title="Cập nhật thông tin tài khoản"
         visible={isEditModalVisible}
         onCancel={() => setIsEditModalVisible(false)}
         width={1200}
@@ -502,7 +535,7 @@ function UserManagement() {
         )}
       </Modal>
       <Modal
-        title="Create User"
+        title="Thêm tài khoản người dùng"
         visible={isCreateModalVisible}
         onCancel={() => setIsCreateModalVisible(false)}
         width={1200}

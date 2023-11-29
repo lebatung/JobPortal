@@ -482,7 +482,7 @@ export default function Jobs() {
         </div>
       </div>
       <div style={newestBlogsContainer}>
-        <Card title={<span style={{ color: "#100b64", fontSize: "20px" }}>VIỆC LÀM NỔI BẬT</span>}>
+        <Card title={<span style={{ color: "#E14D2A", fontSize: "24px" }}>VIỆC LÀM NỔI BẬT</span>}> 
           <Carousel
             showArrows={true}
             showThumbs={false}
@@ -535,7 +535,7 @@ export default function Jobs() {
                         </div>
 
                         <div style={{ flex: 1 }}>
-                          <h3>{blog.title}</h3>
+                          <h3 style={{ color: "#100a63", marginRight: 4 }}>{blog.title}</h3>
                           <p>{blog.name}</p>
                           <div
                             style={{
@@ -544,11 +544,17 @@ export default function Jobs() {
                             }}
                           >
                             <p>
-                              <EnvironmentOutlined />{" "}
+                              <EnvironmentOutlined  style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }} />{" "}
                               {blog.location ? blog.location.name : ""}
                             </p>
                             <p>
-                              <DollarOutlined /> {blog.salaryMin} -{" "}
+                              <DollarOutlined   style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/> {blog.salaryMin} -{" "}
                               {blog.salaryMax} {"Triệu đồng"}
                             </p>
                           </div>
@@ -576,7 +582,10 @@ export default function Jobs() {
                       }}
                     >
                       <HoverableCard>
-                        <strong>{category.name}</strong>
+                        <strong  style={{
+                                    color: "#100a63",
+                                    marginRight: "4",
+                                  }}>{category.name}</strong>
                         <p>
                           Số tin tuyển dụng:{" "}
                           {category.blogIncludedPersonalDetailDTOs.length}
@@ -591,7 +600,7 @@ export default function Jobs() {
         </Carousel>
       </div>
       <div style={newestBlogsContainer}>
-        <Card title={<span style={{ color: "#100b64", fontSize: "20px"  }}>VIỆC LÀM MỚI ĐANG TUYỂN</span>}>
+        <Card title={<span style={{ color: "#E14D2A", fontSize: "24px"  }}>VIỆC LÀM MỚI ĐANG TUYỂN</span>}>
           <Row gutter={16}>
             {currentNewBlogs.map((blog) => (
               <Col span={6} key={blog.id}>
@@ -631,7 +640,7 @@ export default function Jobs() {
                   </div>
 
                   <div style={{ flex: 1 }}>
-                    <h3>{blog.title}</h3>
+                    <h3 style={{ color: "#100a63", marginRight: 4 }}>{blog.title}</h3>
                     <p>{blog.name}</p>
                     <div
                       style={{
@@ -640,11 +649,17 @@ export default function Jobs() {
                       }}
                     >
                       <p>
-                        <EnvironmentOutlined />{" "}
+                        <EnvironmentOutlined  style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }} />{" "}
                         {blog.location ? blog.location.name : ""}
                       </p>
                       <p>
-                        <DollarOutlined /> {blog.salaryMin} - {blog.salaryMax}{" "}
+                        <DollarOutlined   style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/> {blog.salaryMin} - {blog.salaryMax}{" "}
                         {"Triệu đồng"}
                       </p>
                     </div>
@@ -663,7 +678,7 @@ export default function Jobs() {
       </div>
       <div style={newestBlogsContainer}>
         <Card
-          title={<span style={{ color: "#100b64", fontSize: "20px"  }}>VIỆC LÀM LƯƠNG CAO</span>}
+          title={<span style={{ color: "#E14D2A", fontSize: "24px"  }}>VIỆC LÀM LƯƠNG CAO</span>}
         >
           <Row gutter={16}>
             {currentHighSalaryBlogs.map((blog) => (
@@ -704,7 +719,7 @@ export default function Jobs() {
                   </div>
 
                   <div style={{ flex: 1 }}>
-                    <h3>{blog.title}</h3>
+                    <h3 style={{ color: "#100a63", marginRight: 4 }}>{blog.title}</h3>
                     <p>{blog.name}</p>
                     <div
                       style={{
@@ -713,11 +728,17 @@ export default function Jobs() {
                       }}
                     >
                       <p>
-                        <EnvironmentOutlined />{" "}
+                        <EnvironmentOutlined  style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/>{" "}
                         {blog.location ? blog.location.name : ""}
                       </p>
                       <p>
-                        <DollarOutlined /> {blog.salaryMin} - {blog.salaryMax}{" "}
+                        <DollarOutlined  style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/> {blog.salaryMin} - {blog.salaryMax}{" "}
                         {"Triệu đồng"}
                       </p>
                     </div>

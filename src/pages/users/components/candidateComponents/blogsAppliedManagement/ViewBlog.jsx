@@ -37,7 +37,7 @@ const { Header, Content, Sider } = Layout;
 const { Title, Paragraph } = Typography;
 
 export default function ViewBlog(props) {
-  console.log(props);
+  console.log("props, props", props);
   const { isAuthenticated, username } = useAuth();
 
   const handleViewClick = props.handleViewClick;
@@ -191,7 +191,7 @@ export default function ViewBlog(props) {
                   }}
                   width={100}
                   height={100}
-                  src={`http://localhost:8080/api/files/${blogOwnerDetail.avatar}`}
+                  src={`http://localhost:8080/api/files/${selectedBlogId.personalDetail.avatar}`}
                   alt="Avatar"
                 />
               </Card>
@@ -213,23 +213,23 @@ export default function ViewBlog(props) {
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Công ty:
                       </strong>{" "}
-                      {blogOwnerDetail.name}
+                      {selectedBlogId.personalDetail.name}
                     </Paragraph>
                     <Paragraph>
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Địa chỉ:
                       </strong>{" "}
-                      {blogOwnerDetail.address}
+                      {selectedBlogId.personalDetail.address}
                     </Paragraph>
                     <Paragraph>
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Mức lương:{" "}
                       </strong>
-                      {blog.salaryMin} - {blog.salaryMax} Triệu đồng |{" "}
+                      {selectedBlogId.salaryMin} - {selectedBlogId.salaryMax} Triệu đồng |{" "}
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Hạn nộp hồ sơ:
                       </strong>{" "}
-                      {formatDateString(blog.deadLine)}
+                      {formatDateString(selectedBlogId.deadLine)}
                     </Paragraph>
                   </div>
 
@@ -252,7 +252,7 @@ export default function ViewBlog(props) {
                       <strong style={paragraphTitle}>Kinh Nghiệm:</strong>{" "}
                       {parseInt(blog.exp) === 0
                         ? "Không yêu cầu kinh nghiệm"
-                        : `${blog.exp} năm kinh nghiệm`}
+                        : `${selectedBlogId.exp} năm kinh nghiệm`}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
@@ -261,35 +261,35 @@ export default function ViewBlog(props) {
                       <strong style={paragraphTitle}>
                         Trình độ chuyên môn:
                       </strong>
-                      {blog.education}
+                      {selectedBlogId.education}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
                     <Paragraph>
                       <MenuOutlined style={paragraphTitle} />
                       <strong style={paragraphTitle}>Ngành, nghề:</strong>{" "}
-                      {blog.category.name}
+                      {selectedBlogId.category.name}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
                     <Paragraph>
                       <AuditOutlined style={paragraphTitle} />
                       <strong style={paragraphTitle}>Chức vụ:</strong>
-                      {blog.position}
+                      {selectedBlogId.position}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
                     <Paragraph>
                       <TeamOutlined style={paragraphTitle} />
                       <strong style={paragraphTitle}>Số lượng:</strong>{" "}
-                      {blog.quantity}
+                      {selectedBlogId.quantity}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
                     <Paragraph>
                       <DeploymentUnitOutlined style={paragraphTitle} />
                       <strong style={paragraphTitle}>Giới tính:</strong>{" "}
-                      {blog.gender}
+                      {selectedBlogId.gender}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
@@ -298,7 +298,7 @@ export default function ViewBlog(props) {
                       <strong style={paragraphTitle}>
                         Thời gian làm việc:
                       </strong>{" "}
-                      {blog.workingTime}
+                      {selectedBlogId.workingTime}
                     </Paragraph>
                   </Col>
                   <Col span={12}>
@@ -307,7 +307,7 @@ export default function ViewBlog(props) {
                       <strong style={paragraphTitle}>
                         Địa điểm làm việc:
                       </strong>{" "}
-                      {blog.location.name}
+                      {selectedBlogId.location.name}
                     </Paragraph>
                   </Col>
                 </Row>
@@ -318,9 +318,7 @@ export default function ViewBlog(props) {
                 }
               >
                 <Paragraph>
-                  {blog.detail.split("\n").map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                  ))}
+                <div dangerouslySetInnerHTML={{ __html: selectedBlogId.detail }} />
                 </Paragraph>
               </Card>
               <Card
@@ -352,7 +350,7 @@ export default function ViewBlog(props) {
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Nhóm ngành, nghề:
                       </strong>{" "}
-                      {blogOwnerDetail.category.name}
+                      {selectedBlogId.personalDetail.category.name}
                     </Paragraph>
                     <Paragraph>
                       <EnvironmentOutlined
@@ -361,7 +359,7 @@ export default function ViewBlog(props) {
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Địa điểm:
                       </strong>{" "}
-                      {blogOwnerDetail.location.name}
+                      {selectedBlogId.personalDetail.location.name}
                     </Paragraph>
                     <Paragraph>
                       <BarcodeOutlined
@@ -370,7 +368,7 @@ export default function ViewBlog(props) {
                       <strong style={{ color: "#001253", marginRight: 6 }}>
                         Mã số thuế:
                       </strong>{" "}
-                      {blogOwnerDetail.taxCode}
+                      {selectedBlogId.personalDetail.taxCode}
                     </Paragraph>
                   </Card>
                 </Col>
@@ -388,7 +386,7 @@ export default function ViewBlog(props) {
                       <EnvironmentOutlined
                         style={{ color: "#001253", marginRight: 6 }}
                       />
-                      {blogOwnerDetail.address}
+                      {selectedBlogId.personalDetail.address}
                     </Paragraph>
                     <strong style={{ color: "#001253", marginRight: 6 }}>
                       Website:
@@ -397,7 +395,7 @@ export default function ViewBlog(props) {
                       <GlobalOutlined
                         style={{ color: "#001253", marginRight: 6 }}
                       />
-                      <a>{blogOwnerDetail.linkWebsite} </a>
+                      <a>{selectedBlogId.personalDetail.linkWebsite} </a>
                     </Paragraph>
                     <strong style={{ color: "#001253", marginRight: 6 }}>
                       Số điện thoại liên hệ:
@@ -406,7 +404,7 @@ export default function ViewBlog(props) {
                       <PhoneOutlined
                         style={{ color: "#001253", marginRight: 6 }}
                       />
-                      <a>{blogOwnerDetail.phoneNumber}</a>
+                      <a>{selectedBlogId.personalDetail.phoneNumber}</a>
                     </Paragraph>
                     <strong style={{ color: "#001253", marginRight: 6 }}>
                       Email:
@@ -415,7 +413,7 @@ export default function ViewBlog(props) {
                       <MailFilled
                         style={{ color: "#001253", marginRight: 6 }}
                       />
-                      <a>{blogOwnerDetail.email}</a>
+                      <a>{selectedBlogId.personalDetail.email}</a>
                     </Paragraph>
                   </Card>
                 </Col>

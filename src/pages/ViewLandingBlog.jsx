@@ -57,7 +57,7 @@ const { Header, Content, Sider } = Layout;
 const { Title, Paragraph } = Typography;
 
 export default function ViewBlog(props) {
-  console.log(props);
+  //console.log(props);
   const { isAuthenticated, username } = useAuth();
 
   const selectedBlog = props.selectedBlog;
@@ -266,7 +266,10 @@ export default function ViewBlog(props) {
                 >
                   <div>
                     <Paragraph style={headingStyle}>
-                      <strong>{selectedBlog.title}</strong>
+                      <strong  style={{
+                                    color: "#E14D2A",
+                                    
+                                  }}>{selectedBlog.title}</strong>
                     </Paragraph>
                     <Paragraph>
                       <strong style={{ color: "#001253", marginRight: 6 }}>
@@ -447,9 +450,8 @@ export default function ViewBlog(props) {
                 }
               >
                 <Paragraph>
-                  {selectedBlog.detail.split("\n").map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                  ))}
+                
+                  <div dangerouslySetInnerHTML={{ __html: selectedBlog.detail }} />
                 </Paragraph>
               </Card>
               <Card
@@ -564,7 +566,7 @@ export default function ViewBlog(props) {
                   <Card>
                     {" "}
                     <Paragraph style={paragraphStyleHeading}>
-                      <span style={{ color: "#002347" }}>
+                      <span style={{ color: "#E14D2A" }}>
                         Công việc tương tự
                       </span>
                     </Paragraph>
@@ -651,14 +653,14 @@ export default function ViewBlog(props) {
             </Button>
             <div>
               <Button key="confirm" type="primary" onClick={handleConfirm}>
-                Confirm
+                Gửi
               </Button>
             </div>
           </div>,
         ]}
       >
         <>
-          <Descriptions title="Message" column={1}>
+          <Descriptions column={1}>
             <Descriptions.Item
               label="Tiêu đề"
               labelStyle={{ color: "black" }}

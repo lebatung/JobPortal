@@ -216,25 +216,38 @@ export default function Companies() {
                       <Row gutter={16}>
                         <Col span={8}>
                           <Image
-                            style={{ width: "80%" }}
+                            style={{ width: "80%"}}
                             src={`http://localhost:8080/api/files/${company.avatar}`}
                             alt={company.name}
                           />
                         </Col>
                         <Col span={16}>
                           <Card.Meta
-                            title={company.name}
+                            title={
+                              <span style={{ color: "#100a63", marginRight: 4 }}>
+                                {company.name}
+                              </span>
+                            }
                             description={
                               <div style={{ textAlign: "left" }}>
                                 <p>
-                                  <ApiOutlined /> {company.category.name}
+                                  <ApiOutlined  style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }} /> {company.category.name}
                                 </p>
                                 <p>
-                                  <EnvironmentOutlined />{" "}
+                                  <EnvironmentOutlined  style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/>{" "}
                                   {company.location.name}
                                 </p>
                                 <p>
-                                  <WalletOutlined /> {company.blogs.length} Công
+                                  <WalletOutlined  style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }} /> {company.blogs.length} Công
                                   việc
                                 </p>
                               </div>

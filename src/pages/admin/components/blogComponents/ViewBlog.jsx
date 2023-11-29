@@ -342,20 +342,23 @@ export default function ViewBlog(props) {
           </Row>
         </Content>
       </Layout>
-      <div
-        style={{ marginTop: 16, display: "flex", justifyContent: "flex-end" }}
-      >
-        <Button style={{ marginRight: 10 }} className="ant-btn-danger" onClick={() => handleRejectClick()}>
-          Reject
-        </Button>
-        <Button
-          type="primary"
-          onClick={() => handleApproveClick()}
-          
+      {blog.enable === 2 ? (
+        <div
+          style={{ marginTop: 16, display: "flex", justifyContent: "flex-end" }}
         >
-          Approve
-        </Button>
-      </div>
+          <Button
+            style={{ marginRight: 10 }}
+            className="ant-btn-danger"
+            onClick={() => handleRejectClick()}
+          >
+            Reject
+          </Button>
+          <Button type="primary" onClick={() => handleApproveClick()}>
+            Approve
+          </Button>
+        </div>
+      ) : null}
+
       <Modal
         visible={isApproveModalVisible}
         onOk={onApproved}

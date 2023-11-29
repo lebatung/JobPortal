@@ -24,7 +24,7 @@ export default function SendMessage() {
   }, [username]);
   return (
     <div>
-      <Descriptions title="Message" column={1}>
+      <Descriptions column={1}>
         <Descriptions.Item
           label="Tiêu đề"
           labelStyle={{ color: "black" }}

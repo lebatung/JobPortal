@@ -36,7 +36,7 @@ const AddCategory = () => {
       .catch((error) => {
         console.error("Error loading category:", error);
       });
-  }, [id, form]);
+  }, [id, form, isCreateVisible]);
 
   const handleCreateClick = (id) => {
     setIsCreateModalVisible(true);
@@ -69,13 +69,13 @@ const AddCategory = () => {
     <>
       <ToastContainer />
       <hr />
-      <Card title="Edit Category">
+      <Card >
         <div>
           <Form form={form} onFinish={onFinish} layout="vertical">
             <Descriptions bordered column={1} size="small">
-              <Descriptions.Item label="Tên nhóm ngành, nghề">
+              <Descriptions.Item label="Tên">
                 <Form.Item
-                  label="Tên nhóm nghành:"
+                  label="Tên nhóm ngành, nghề:"
                   name="name" // Tên của trường
                   rules={[
                     {
@@ -92,7 +92,7 @@ const AddCategory = () => {
               </Descriptions.Item>
               <Descriptions.Item label="Trạng thái">
                 <Form.Item
-                  label="Trạng thái"
+                  label="Trạng thái hoạt động"
                   name="enable" // Tên của trường
                   rules={[
                     {
@@ -106,8 +106,8 @@ const AddCategory = () => {
                       setCategory({ ...category, enable: value })
                     }
                   >
-                    <Option value={1}>Enable</Option>
-                    <Option value={0}>Disable</Option>
+                    <Option value={1}>Hoạt động</Option>
+                    <Option value={0}>Ngừng hoạt động</Option>
                   </Select>
                 </Form.Item>
               </Descriptions.Item>

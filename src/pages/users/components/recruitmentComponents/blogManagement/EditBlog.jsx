@@ -229,7 +229,7 @@ const EditBlog = (props) => {
         <div>
           <Form name="EditBlog" onFinish={onFinish} layout="vertical">
             <Descriptions bordered column={1} size="small">
-              <Descriptions.Item label="Tiêu đề">
+              <Descriptions.Item label="Title">
                 {
                   <div
                     style={{
@@ -237,7 +237,7 @@ const EditBlog = (props) => {
                     }}
                   >
                     <Form.Item
-                      label="Tiêu đề"
+                      label="Tên công việc"
                       rules={[
                         {
                           required: true,
@@ -281,7 +281,7 @@ const EditBlog = (props) => {
                 }
               </Descriptions.Item> */}
 
-              <Descriptions.Item label="Mô tả công việc">
+              <Descriptions.Item label="Detail">
                 <div style={{ alignItems: "center" }}>
                   <Form.Item
                     label="Mô tả nội dung công việc"

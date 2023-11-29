@@ -84,7 +84,7 @@ const selectedCategoryId = props.selectedCategoryId;
     <>
       <ToastContainer />
       <hr />
-      <Card title="Edit Category">
+      <Card >
         <div>
           <Form form={form} onFinish={onFinish} layout="vertical">
             <Descriptions bordered column={1} size="small">
@@ -112,22 +112,23 @@ const selectedCategoryId = props.selectedCategoryId;
               <Descriptions.Item label="Trạng thái">
                 {
                   <>
-                    <Form.Item label="enable">
+                    <Form.Item label="Trạng thái hoạt động">
                       <Select
                         value={enable}
                         onChange={(value) =>
                           setCategory({ ...category, enable: value })
                         }
                       >
-                        <Option value={1}>Enable</Option>
-                        <Option value={0}>Disable</Option>
+                        <Option value={1}>Hoạt động</Option>
+                        <Option value={0}>Ngừng hoạt động</Option>
                       </Select>
                     </Form.Item>
                   </>
                 }
               </Descriptions.Item>
             </Descriptions>
-            <div style={{ marginTop: 16 }}>
+            <div style={{ marginTop: 16, display: "flex",
+                justifyContent: "flex-end",}}>
               <Button
                 className="ant-btn-primary"
                 onClick={() => handleEditClick()}

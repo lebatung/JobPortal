@@ -472,9 +472,7 @@ export default function ViewBlog(props) {
                 }
               >
                 <Paragraph>
-                  {blog.detail.split("\n").map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                  ))}
+                <div dangerouslySetInnerHTML={{ __html: blog.detail }} />
                 </Paragraph>
               </Card>
               <Card

@@ -63,7 +63,7 @@ export default function ViewUserDetail(props) {
   return (
     <>
       <hr />
-      <Card title="Thông Tin Người dùng">
+      <Card>
         <Descriptions bordered column={1} size="small">
           <Descriptions.Item label="Ảnh đại diện">
             {
@@ -121,16 +121,21 @@ export default function ViewUserDetail(props) {
             </a>
           </Descriptions.Item>
         </Descriptions>
-        <div style={{ marginTop: 16 }}>
-          <Button type="primary" onClick={() => handleEditClick()}>
-            Edit
-            {/* <Link
-              to={`/adminDashboard/users/edit-user-detail/${personalDetail.id}`}
-            >
+        <div
+          style={{
+            marginTop: 16,
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          {/* <div>
+            <Button type="danger" style={{ marginRight: 16 }}>
+              Delete
+            </Button>
+            <Button type="primary" onClick={() => handleEditClick()}>
               Edit
-            </Link> */}
-          </Button>
-          <Button type="danger">Delete</Button>
+            </Button>
+          </div> */}
         </div>
       </Card>
       <Modal

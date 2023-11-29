@@ -51,6 +51,7 @@ export default function Apply(props) {
   const handleUpload = async () => {
     if (files.length === 0) {
       console.log("Vui lòng chọn ít nhất một tệp.");
+      toast.error("Vui lòng chọn ít nhất một tệp dính kèm!");
       return;
     }
 
@@ -96,7 +97,7 @@ export default function Apply(props) {
       <div style={bodyContainer}>
         <Divider orientation="left"></Divider>
         <Paragraph style={{ margin: "20px" }}>
-          <strong>Tải lên các tệp.</strong>
+          <strong>Tải CV, các tệp liên quan.</strong>
         </Paragraph>
         <Paragraph style={{ margin: "20px" }}>
           <input type="file" multiple onChange={handleFileChange} />
@@ -106,7 +107,7 @@ export default function Apply(props) {
           <Button 
           style={{ marginTop: "20px" }} 
           onClick={handleUpload}
-
+          type="primary"
           >
             Xác nhận
           </Button>

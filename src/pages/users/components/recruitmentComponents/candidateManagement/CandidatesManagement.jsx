@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Document, Page } from "react-pdf";
-
+import { format } from 'date-fns';
 import SearchComponent from "../SearchComponent";
 import {
   Button,
@@ -52,6 +52,9 @@ export default function CandidatesManagement() {
   const [recipientId, setRecipientId] = useState({
     id: "",
   });
+
+  const [filterOption, setFilterOption] = useState(null);
+
   const columns = [
     {
       title: "STT",
@@ -76,11 +79,23 @@ export default function CandidatesManagement() {
   ];
 
   const [searchResults, setSearchResults] = useState([]);
+  // const performSearch = (searchTerm) => {
+  //   const filteredUsers = blogs.filter((blog) =>
+  //     blog.title.toLowerCase().includes(searchTerm.toLowerCase())
+  //   );
+  //   setSearchResults(filteredUsers);
+  // };
   const performSearch = (searchTerm) => {
-    const filteredUsers = blogs.filter((blog) =>
-      blog.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setSearchResults(filteredUsers);
+    if (!filterOption) {
+      // Nếu không có lọc, thực hiện tìm kiếm bình thường
+      const filteredUsers = blogs.filter((blog) =>
+        blog.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setSearchResults(filteredUsers);
+    } else {
+      // Nếu có lọc, sử dụng phương thức handleFilter để lọc dữ liệu
+      handleFilter();
+    }
   };
 
   const handleExpand = (record) => {
@@ -163,14 +178,17 @@ export default function CandidatesManagement() {
     blogs.forEach((blog) => {
       loadAppliesByBlogId(blog.id)
         .then((data) => {
+          // Đảo ngược mảng trả về từ hàm loadAppliesByBlogId
+          const reversedData = [...data].reverse();
+  
           setApplyData((prevData) => ({
             ...prevData,
-            [blog.id]: data,
+            [blog.id]: reversedData,
           }));
-
+  
           setAppliesCount((prevCount) => ({
             ...prevCount,
-            [blog.id]: data.length,
+            [blog.id]: reversedData.length,
           }));
         })
         .catch((error) => {
@@ -178,6 +196,25 @@ export default function CandidatesManagement() {
         });
     });
   }, [blogs]);
+  
+
+  const handleFilter = () => {
+    if (filterOption === "all") {
+      // Hiển thị tất cả blogs
+      setSearchResults(blogs);
+    } else if (filterOption === "hasCandidates") {
+      const filteredBlogs = blogs.filter((blog) => appliesCount[blog.id] > 0);
+      setSearchResults(filteredBlogs);
+    } else if (filterOption === "noCandidates") {
+      const filteredBlogs = blogs.filter(
+        (blog) => !appliesCount[blog.id] || appliesCount[blog.id] === 0
+      );
+      setSearchResults(filteredBlogs);
+    } else {
+      // Nếu không có lọc, hiển thị tất cả blogs
+      setSearchResults([]);
+    }
+  };
 
   const [numPages, setNumpages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -200,6 +237,13 @@ export default function CandidatesManagement() {
     // console.log("messageTitle",messageTitle);
     // console.log("messageContent",messageContent);
     // Tạo form data chứa selectedApplyId và selectedOption
+
+    if (!messageTitle || !messageContent) {
+      toast.error("Vui lòng nhập tiêu đề và nội dung tin nhắn phản hồi!");
+      console.log("Vui lòng nhập tiêu đề và nội dung!");
+      return;
+    }
+
     const formDataApply = {
       id: selectedApplyId,
       status: selectedOption,
@@ -233,6 +277,7 @@ export default function CandidatesManagement() {
       })
       .then((response) => {
         toast.success("Phản hồi đến người dùng thành công!");
+        setIsProcessVisible(true);
       })
       .catch((error) => {
         toast.error("Phản hồi thất bại!");
@@ -244,15 +289,43 @@ export default function CandidatesManagement() {
       <div
         style={{
           marginBottom: 10,
-          marginTop: 10,
+          marginTop: 5,
           marginLeft: 5,
           marginRight: 5,
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
         }}
       >
         <SearchComponent onSearch={performSearch} />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginLeft: "350px",
+          }}
+        >
+          <div>
+            <Select
+              value={filterOption}
+              style={{
+                width: 200,
+                marginRight: 10,
+                border: "1px solid grey",
+                borderRadius: "5px",
+              }}
+              onChange={(value) => setFilterOption(value)}
+              placeholder="Chọn loại tin tuyển dụng"
+            >
+              <Option value="all">Tất cả</Option>
+              <Option value="hasCandidates">Có ứng viên ứng tuyển</Option>
+              <Option value="noCandidates">Không có ứng viên ứng tuyển</Option>
+            </Select>
+            <Button type="primary" onClick={handleFilter}>
+              Lọc
+            </Button>
+          </div>
+        </div>
       </div>
       <Table
         dataSource={searchResults.length > 0 ? searchResults : blogs}
@@ -285,6 +358,12 @@ export default function CandidatesManagement() {
                         title: "Thời điểm ứng tuyển",
                         dataIndex: "appliedAt",
                         key: "appliedAt",
+                        render: (text) => {
+                          // Định dạng lại ngày tháng
+                          const formattedDate = text ? format(new Date(text), 'dd/MM/yyyy HH:mm:ss') : 'Chưa cập nhật';
+                          
+                          return <span>{formattedDate}</span>;
+                        },
                       },
                       {
                         title: "Trạng thái",
@@ -301,10 +380,10 @@ export default function CandidatesManagement() {
                             }
                           >
                             {status === 0
-                              ? "Applied"
+                              ? "Ứng tuyển"
                               : status === 1
-                              ? "Interviewing"
-                              : "Rejected"}
+                              ? "Phỏng vấn"
+                              : "Từ chối"}
                           </Tag>
                         ),
                       },
@@ -377,7 +456,7 @@ export default function CandidatesManagement() {
         )}
       </Modal>
       <Modal
-        title="Phản hồi người ứng tuyển"
+        title={<span style={{fontSize: '20px'}}>Phản hồi người ứng tuyển</span>}
         visible={isProcessvisible}
         onCancel={handleCloseModal}
         footer={[
@@ -395,7 +474,7 @@ export default function CandidatesManagement() {
       >
         <Row gutter={[16, 16]}>
           <Col span={24}>
-            <Descriptions title="Select Option" column={1}>
+            <Descriptions column={1}>
               <Descriptions.Item
                 label="Trạng thái ứng tuyển"
                 labelStyle={{ color: "black" }}
@@ -405,8 +484,8 @@ export default function CandidatesManagement() {
                   style={{ width: "100%" }}
                   onChange={(value) => setSelectedOption(value)}
                 >
-                  <Option value={1}>Interviewing</Option>
-                  <Option value={2}>Rejected</Option>
+                  <Option value={1}>Phỏng vấn</Option>
+                  <Option value={2}>Từ chối</Option>
                 </Select>
               </Descriptions.Item>
             </Descriptions>

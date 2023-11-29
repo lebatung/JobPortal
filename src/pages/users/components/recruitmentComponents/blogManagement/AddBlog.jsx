@@ -189,9 +189,9 @@ export default function AddBlog() {
     <>
       <ToastContainer />
       <hr />
-      <Card title="Edit User Profile">
+      <Card >
         <div>
-          <Form name="EditUserDetail" onFinish={onFinish} layout="vertical">
+          <Form name="AddnewBlog" onFinish={onFinish} layout="vertical">
             <Descriptions bordered column={1} size="small">
               {/* <Descriptions.Item label="Hình ảnh">
                 {
@@ -222,7 +222,7 @@ export default function AddBlog() {
                 }
               </Descriptions.Item> */}
 
-              <Descriptions.Item label="Tiêu đề">
+              <Descriptions.Item label="Title">
                 {
                   <div
                     style={{
@@ -230,7 +230,7 @@ export default function AddBlog() {
                     }}
                   >
                     <Form.Item
-                      label="Tiêu đề"
+                      label="Tên công việc"
                       name="title"
                       rules={[
                         {
@@ -276,10 +276,10 @@ export default function AddBlog() {
                 }
               </Descriptions.Item> */}
 
-              <Descriptions.Item label="Mô tả công việc">
+              <Descriptions.Item label="Detail">
                 <div style={{ alignItems: "center" }}>
                   <Form.Item
-                    label="Mô tả ngắn gọn về nội dung công việc"
+                    label="Mô tả nội dung công việc"
                     name="detail"
                     rules={[
                       {
@@ -293,7 +293,7 @@ export default function AddBlog() {
                       onChange={(value) =>
                         onInputChange({ target: { name: "detail", value } })
                       }
-                      style={{ height: '300px', width: '100%' }}
+                      style={{ height: '300px', width: '100%', paddingBottom: "20px" }}
                     />
                   </Form.Item>
                 </div>
@@ -302,7 +302,7 @@ export default function AddBlog() {
               <Descriptions.Item label="Deadline">
                 <div style={{ alignItems: "center" }}>
                   <Form.Item
-                    label="Thời hạn ứng tuyển(YYYY/MM/DD)"
+                    label="Thời hạn ứng tuyển"
                     name="deadLine"
                     rules={[
                       {
@@ -370,7 +370,7 @@ export default function AddBlog() {
                   </div>
                 }
               </Descriptions.Item>
-              <Descriptions.Item label="Địa điểm">
+              <Descriptions.Item label="Location">
                 {
                   <div
                     style={{
@@ -378,12 +378,12 @@ export default function AddBlog() {
                     }}
                   >
                     <Form.Item
-                      label="Địa điểm"
+                      label="Địa điểm làm việc"
                       name="location"
                       rules={[
                         {
                           required: true,
-                          message: "Vui lòng chọn địa điểm!",
+                          message: "Vui lòng chọn địa điểm làm việc!",
                         },
                       ]}
                     >
@@ -468,7 +468,7 @@ export default function AddBlog() {
                 }
               </Descriptions.Item>
 
-              <Descriptions.Item label="Giới tính">
+              <Descriptions.Item label="Gender">
                 <Form.Item
                   label="Giới tính"
                   name="gender"
@@ -493,7 +493,7 @@ export default function AddBlog() {
                 </Form.Item>
               </Descriptions.Item>
 
-              <Descriptions.Item label="Kinh nghiệm làm việc">
+              <Descriptions.Item label="Exp">
                 <Form.Item
                   label="Kinh nghiệm làm việc"
                   name="exp"

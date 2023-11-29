@@ -3,7 +3,7 @@ import { UserOutlined, MailOutlined, LockOutlined } from "@ant-design/icons";
 
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
-import { Input, Form, Checkbox, Button, Select } from "antd";
+import { Input, Form, Checkbox, Button, Select, Divider } from "antd";
 import {
   request,
   loadCategories,
@@ -29,45 +29,60 @@ export default function RecruitmentRegistrationForm() {
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
 
+  const [usernameExists, setUsernameExists] = useState(false);
+  const [usernameCheckCompleted, setUsernameCheckCompleted] = useState(false);
+
   const onFinishRecruitmentRegistration = (values) => {
-    setUsername(values.username);
-    setEmail(values.email);
-    setPassword(values.password);
-    setShowDetailedForm(true);
-  };
-
-  const onFinishCandidateDetailRegistration = (values) => {
-    setName(values.name);
-    setCattegoryId(values.category);
-    setLocationId(values.location);
-    setRoleId(13);
-    setActive(1);
-
-    const candidateFormData = {
-      username,
-      email,
-      password,
-      name,
-      categoryId,
-      locationId,
-      roleId: roleId,
-      active: active,
-    };
-
-    request("POST", "/register", candidateFormData)
+    // Gọi API hoặc hàm kiểm tra trên máy chủ
+    request("GET", `/check-username/${values.username}`)
       .then((response) => {
-        toast.success("Đăng ký thành công");
-        console.log("response:", response.data);
-        setAuthHeader(response.data.token);
+        // Xử lý kết quả, response.data có thể là true hoặc false
+        setUsernameExists(response.data);
+        setUsernameCheckCompleted(true);
+  
+        // Nếu username không tồn tại, hiển thị Form thứ 2 và thực hiện đăng ký chi tiết
+        if (!response.data) {
+          setName(values.name);
+          setCattegoryId(values.category);
+          setLocationId(values.location);
+          setRoleId(13);
+          setActive(1);
+  
+          const candidateFormData = {
+            username: values.username,
+            email: values.email,
+            password: values.password,
+            name,
+            categoryId,
+            locationId,
+            roleId: roleId,
+            active: active,
+          };
+  
+          // request("POST", "/register", candidateFormData)
+          //   .then((response) => {
+          //     toast.success("Đăng ký thành công");
+          //     console.log("response:", response.data);
+          //     setAuthHeader(response.data.token);
+          //   })
+          //   .catch((error) => {
+          //     console.error("Register Error:", error);
+          //     window.localStorage.removeItem("au_token");
+          //   });
+  
+          // In thông tin đã lưu lên console
+          console.log("Thông tin đăng ký:", candidateFormData);
+        } else {
+          // Hiển thị thông báo cho người dùng rằng username đã tồn tại
+          toast.error("Tên người dùng đã tồn tại, vui lòng chọn tên khác.");
+        }
       })
       .catch((error) => {
-        console.error("Register Error:", error);
-        window.localStorage.removeItem("au_token");
+        console.error("Error checking username:", error);
       });
-
-    // In thông tin đã lưu lên console
-    console.log("Thông tin đăng ký:", candidateFormData);
   };
+  
+
 
   useEffect(() => {
     loadCategories()
@@ -95,80 +110,32 @@ export default function RecruitmentRegistrationForm() {
     width: "100%",
   };
 
+  const checkUsernameAvailability = () => {
+    // Gọi API hoặc hàm kiểm tra trên máy chủ
+    request("GET", `/check-username/${username}`)
+      .then((response) => {
+        // Xử lý kết quả, response.data có thể là true hoặc false
+        setUsernameExists(response.data);
+        setUsernameCheckCompleted(true);
+
+        // Nếu username không tồn tại, hiển thị Form thứ 2
+        if (!response.data) {
+          setShowDetailedForm(true);
+        } else {
+          // Hiển thị thông báo cho người dùng rằng username đã tồn tại
+          toast.error("Tên người dùng đã tồn tại, vui lòng chọn tên khác.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error checking username:", error);
+      });
+  };
+
   return (
     <div>
       <ToastContainer />
       <div>
-        {showDetailedForm ? (
-          <Form
-            name="recruitmentDetailRegistration"
-            onFinish={onFinishCandidateDetailRegistration}
-          >
-            <Form.Item
-              name="name"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập tên công ty!",
-                },
-              ]}
-            >
-              <Input
-                prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="Họ và tên ứng viên"
-                onChange={(e) => setName(e.target.value)}
-              />
-            </Form.Item>
-
-            <Form.Item
-              name="category"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng chọn ngành nghề!",
-                },
-              ]}
-            >
-              <Select
-                placeholder="Chọn ngành nghề"
-                onChange={(value) => setCattegoryId(value)}
-              >
-                {categories.map((categories) => (
-                  <Option key={categories.id} value={categories.id}>
-                    {categories.name}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              name="location"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng chọn địa chỉ!",
-                },
-              ]}
-            >
-              <Select
-                placeholder="Chọn địa chỉ"
-                onChange={(value) => setLocationId(value)}
-              >
-                {locations.map((locations) => (
-                  <Option key={locations.id} value={locations.id}>
-                    {locations.name}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-
-            <Form.Item>
-              <Button type="primary" htmlType="submit" style={registerButton}>
-                Đăng ký
-              </Button>
-            </Form.Item>
-          </Form>
-        ) : (
+        
           <Form
             name="recruitmentRegistration"
             onFinish={onFinishRecruitmentRegistration}
@@ -253,24 +220,70 @@ export default function RecruitmentRegistrationForm() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </Form.Item>
-
-            <Form.Item>
-              <Form.Item name="agreement" valuePropName="checked" noStyle>
-                <Checkbox>
-                  Tôi đã đọc và đồng ý với các điều khoản và điều kiện
-                </Checkbox>
-              </Form.Item>
-
-              <a href="/">Điều khoản</a>
+            <Form.Item
+              name="name"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập họ và tên!",
+                },
+              ]}
+            >
+              <Input
+                prefix={<UserOutlined className="site-form-item-icon" />}
+                placeholder="Họ và tên ứng viên"
+                onChange={(e) => setName(e.target.value)}
+              />
             </Form.Item>
 
+            <Form.Item
+              name="category"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn ngành nghề!",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Chọn ngành nghề"
+                onChange={(value) => setCattegoryId(value)}
+              >
+                {categories.map((categories) => (
+                  <Option key={categories.id} value={categories.id}>
+                    {categories.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="location"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn địa chỉ!",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Chọn địa chỉ"
+                onChange={(value) => setLocationId(value)}
+              >
+                {locations.map((locations) => (
+                  <Option key={locations.id} value={locations.id}>
+                    {locations.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
             <Form.Item>
               <Button type="primary" htmlType="submit" style={registerButton}>
-                Tiếp tục
+                Đăng ký
               </Button>
             </Form.Item>
           </Form>
-        )}
+        
       </div>
     </div>
   );

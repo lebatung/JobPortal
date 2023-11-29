@@ -697,5 +697,59 @@ export const loadUsersByActive = async () => {
   }
 };
 
+export const loadAllBlogss = async () => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/blogs/listAllBlogss`,
+      { headers }
+    );
+    console.log("loadAllBlogss:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadAllBlogss:", error);
+    throw error;
+  }
+};
+
+export const loadBlogsByUserIdandStatus = async (userId) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/blogs/listBlogsByUserIdandStatus/${userId}`,
+      { headers }
+    );
+    console.log("loadBlogsByUserIdandStatus:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadBlogsByUserIdandStatus:", error);
+    throw error;
+  }
+};
+
+export const loadApplyListByUsernameStatus = async (username) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/apply/by-status/${username}`,
+      { headers }
+    );
+    console.log("loadBlogsByUserIdandStatus:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadBlogsByUserIdandStatus:", error);
+    throw error;
+  }
+};
+
 
 

@@ -8,6 +8,7 @@ import {
   request,
   loadConversationByUserId,
   loadUserByUsername,
+  loadPersonalDetailByUserId,
 } from "../../../../helpers/axios_helper";
 
 const MessagesManagement = () => {
@@ -20,7 +21,7 @@ const MessagesManagement = () => {
   const [messageInput, setMessageInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [lastMessageTime, setLastMessageTime] = useState(null);
-
+  const [personalDetail, setPersonalDetail] = useState("");
   const handleConversationSelect = (conversation) => {
     setSelectedConversation(conversation);
     // Đặt các tin nhắn của cuộc trò chuyện ở đây dựa vào conversation.id
@@ -166,7 +167,12 @@ const MessagesManagement = () => {
     fontSize: "12px",
     color: "#777",
   };
-
+  const avatarStyle = {
+    borderRadius: "50%",
+    width: "60px",
+    height: "60px",
+    margin: "0 10px",
+  };
   useEffect(() => {
     loadUserByUsername(username)
       .then((data) => {
@@ -184,6 +190,26 @@ const MessagesManagement = () => {
         console.error("Error loading categories:", error);
       });
   }, [user.id, username]);
+  useEffect(() => {
+    if (selectedConversation) {
+      // Lấy thông tin người nhận từ selectedConversation
+      const recipientId = selectedConversation.messages[0].recipientId;
+      console.log(
+        "selectedConversation.messages[0].recipientId",
+        selectedConversation.messages[0].userID
+      );
+
+      loadPersonalDetailByUserId(recipientId)
+        .then((data) => {
+          setPersonalDetail(data);
+        })
+        .catch((error) => {
+          console.error("Error loading recipient information:", error);
+        });
+    }
+  }, [selectedConversation]);
+
+
 
   return (
     <>
@@ -215,6 +241,24 @@ const MessagesManagement = () => {
         </Sider>
         <Content style={{ contentStyle }}>
           <div className="chat-box">
+          <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "10px",
+              }}
+            >
+              {personalDetail && (
+                <>
+                  <img
+                    style={avatarStyle}
+                    src={`http://localhost:8080/api/files/${personalDetail.avatar}`}
+                    alt={personalDetail.name}
+                  />
+                  <h3>{personalDetail.name}</h3>
+                </>
+              )}
+            </div>
             <div style={messageListStyle} className="message-list">
               {selectedConversation ? (
                 selectedConversation.messages.map((message, index) => (

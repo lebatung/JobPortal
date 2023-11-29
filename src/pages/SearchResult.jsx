@@ -533,7 +533,7 @@ const SearchResult = () => {
                       </div>
 
                       <div style={{ flex: 1 }}>
-                        <h3>{blog.title}</h3>
+                        <h3 style={{ color: "#100b64" }}>{blog.title}</h3>
                         <p>{blog.name}</p>
                         <div
                           style={{

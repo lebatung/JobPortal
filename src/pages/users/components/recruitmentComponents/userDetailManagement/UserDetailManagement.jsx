@@ -142,7 +142,7 @@ const UserDetailManagement = () => {
         </div>
       </Card>
       <Modal
-        title="Edit User Detail"
+        title="Cập nhật thông tin tài khoản"
         visible={isEditModalVisible}
         onCancel={() => setIsEditModalVisible(false)}
         width={1200}

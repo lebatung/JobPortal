@@ -150,7 +150,7 @@ export default function EditPersonalDetail(props) {
     <>
       <ToastContainer />
       <hr />
-      <Card title="Edit User Profile">
+      <Card>
         <div>
           <Form name="EditUserDetail" onFinish={onFinish} layout="vertical">
             <Descriptions bordered column={1} size="small">

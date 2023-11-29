@@ -79,29 +79,45 @@ const UserDetailManagement = () => {
             }
           </Descriptions.Item>
           <Descriptions.Item label="Tên ứng viên">
-            {personalDetail.name}
+            {personalDetail.name || "Chưa cập nhật"}
           </Descriptions.Item>
+
           <Descriptions.Item label="Email">
-            {personalDetail.email}
+            {personalDetail.email || "Chưa cập nhật"}
           </Descriptions.Item>
+
           <Descriptions.Item label="Ngày sinh">
-            {personalDetail.dayOfBirth}
+            {personalDetail.dayOfBirth
+              ? formatDateString(personalDetail.dayOfBirth)
+              : "Chưa cập nhật"}
           </Descriptions.Item>
+
           <Descriptions.Item label="Giới tính">
             {formatGender(personalDetail.gender)}
           </Descriptions.Item>
+
           <Descriptions.Item label="Địa chỉ">
-            {personalDetail.address}
+            {personalDetail.address || "Chưa cập nhật"}
           </Descriptions.Item>
+
           <Descriptions.Item label="Số liên hệ">
-            {personalDetail.phoneNumber}
+            {personalDetail.phoneNumber || "Chưa cập nhật"}
           </Descriptions.Item>
 
           <Descriptions.Item label="Nhóm ngành, nghề">
-            <Tag color="blue">{personalDetail.category.name}</Tag>
+            {personalDetail.category ? (
+              <Tag color="blue">{personalDetail.category.name}</Tag>
+            ) : (
+              "Chưa cập nhật"
+            )}
           </Descriptions.Item>
+
           <Descriptions.Item label="Địa điểm">
-            <Tag color="green">{personalDetail.location.name}</Tag>
+            {personalDetail.location ? (
+              <Tag color="green">{personalDetail.location.name}</Tag>
+            ) : (
+              "Chưa cập nhật"
+            )}
           </Descriptions.Item>
         </Descriptions>
         <div style={{ marginTop: 16 }}>

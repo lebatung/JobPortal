@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Space, Modal } from "antd";
+import { Table, Button, Space, Modal, Select, Row, Col, Card } from "antd";
 import axios from "axios";
 import {
   loadBlogsByUserId,
+  loadBlogsByUserIdandStatus,
+  loadBlogsSortedByEnable,
   loadUserByUsername,
   request,
 } from "../../../../../helpers/axios_helper";
@@ -16,13 +18,14 @@ import AddBlog from "./AddBlog";
 
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
+import Icon from "@ant-design/icons/lib/components/Icon";
 
 function BlogsManagement() {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState({
     id: "",
     personalDetailId: "",
-  });
+  }); 
 
   const [isEnableModalVisible, setIsEnableModalVisible] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
@@ -32,6 +35,12 @@ function BlogsManagement() {
 
   const [selectedBlogId, setSelectedBlogId] = useState(null);
   const [selectedBlogEnable, setSelectedBlogEnable] = useState(null);
+  const [selectedEnable, setSelectedEnable] = useState(null);
+
+  const [activeBlogsData, setActiveBlogsData] = useState([]);
+  const [inactiveBlogsData, setInactiveBlogsData] = useState([]);
+  const [pendingBlogsData, setPendingBlogsData] = useState([]);
+  const [rejectedBlogsData, setRejectedBlogsData] = useState([]);
 
   const handleDeleteClick = (record) => {
     // Xử lý logic xóa blog
@@ -46,10 +55,10 @@ function BlogsManagement() {
       request("DELETE", `/api/blogs/delete/${selectedBlogId}`)
         .then((response) => {
           console.log("Removed", response);
-          toast.success("Xóa tin tuyển dụng thành công!")
+          toast.success("Xóa tin tuyển dụng thành công!");
         })
         .catch((error) => {
-          toast.error("Xóa tin tuyển dụng thất bại!")
+          toast.error("Xóa tin tuyển dụng thất bại!");
           console.error("Error removal blog:", error);
         });
 
@@ -113,18 +122,37 @@ function BlogsManagement() {
   };
 
   const [searchResults, setSearchResults] = useState([]);
+  const [showNoResults, setShowNoResults] = useState(false);
   const performSearch = (searchTerm) => {
     const filteredUsers = blogs.filter((blog) =>
       blog.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setSearchResults(filteredUsers);
   };
+
+  const handleEnableChange = (value) => {
+    setSelectedEnable(value);
+  };
+
+  const handleFilter = () => {
+    if (selectedEnable !== null) {
+      const filteredBlogs = blogs.filter(
+        (blog) => blog.enable === selectedEnable
+      );
+      setSearchResults(filteredBlogs);
+      setShowNoResults(filteredBlogs.length === 0);
+    } else {
+      setSearchResults(blogs);
+      setShowNoResults(false);
+    }
+  };
+
   const renderEnableColumn = (enable) => {
     const statusMap = {
-      0: { text: "Enable", color: "green" },
-      1: { text: "Disable", color: "red" },
-      2: { text: "Pending", color: "blue" },
-      3: { text: "Rejected", color: "orange" },
+      0: { text: "Đang hoạt động", color: "green" },
+      1: { text: "Ngừng hoạt động", color: "red" },
+      2: { text: "Chờ duyệt", color: "blue" },
+      3: { text: "Từ chối", color: "orange" },
     };
     const statusInfo = statusMap[enable] || { text: "Unknown", color: "black" };
 
@@ -138,7 +166,7 @@ function BlogsManagement() {
       render: (text, record, index) => index + 1,
     },
     {
-      title: "Title",
+      title: "Tên công việc",
       dataIndex: "title",
       key: "title",
     },
@@ -149,7 +177,7 @@ function BlogsManagement() {
       render: renderEnableColumn,
     },
     {
-      title: "Actions",
+      title: "Hành động",
       key: "actions",
       render: (text, record) => (
         <Space size="middle">
@@ -184,7 +212,7 @@ function BlogsManagement() {
     },
   ];
 
-  const { username } = useAuth();
+  const { username, userId } = useAuth();
 
   useEffect(() => {
     loadUserByUsername(username)
@@ -195,35 +223,116 @@ function BlogsManagement() {
       .catch((error) => {
         console.error("Error loading categories:", error);
       });
-
-    loadBlogsByUserId(user.id)
-      .then((data) => {
-        setBlogs(data);
-      })
-      .catch((error) => {
-        console.error("Error loading users:", error);
-      });
-  }, [user.id, username]);
+  }, [username]);
 
   useEffect(() => {
-    loadBlogsByUserId(user.id)
+
+    loadBlogsByUserId(userId)
       .then((data) => {
-        setBlogs(data);
+        setBlogs(data.reverse());
       })
       .catch((error) => {
         console.error("Error loading users:", error);
       });
-  }, [user.id, username, isEnableModalVisible, isCreateModalVisible, isDeleteModalVisible, isEditModalVisible]);
 
+      loadBlogsByUserIdandStatus(userId)
+      .then((response) => {
+        console.log("blogs Response:", response);
+        if (response) {
+          setActiveBlogsData(response.activeBlogs || []);
+          setInactiveBlogsData(response.inactiveBlogs || []);
+          setPendingBlogsData(response.pendingBlogs || []);
+          setRejectedBlogsData(response.rejectedBlogs || []);
+        } else {
+          console.error("No data in loadBlogsSortedByEnable response.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error loading loadBlogsSortedByEnable:", error);
+      });
+  }, []);
 
+  const cardData = [
+    {
+      status: "Đang hoạt động",
+      iconType: "play-circle",
+      imageSrc: `http://localhost:8080/api/files/blogsActive.png`,
+      data: activeBlogsData.length,
+      textColor: "#3587A4",
+    },
+    {
+      status: "Ngừng hoạt động",
+      iconType: "pause-circle",
+      imageSrc: `http://localhost:8080/api/files/blogsInactive.png`,
+      data: inactiveBlogsData.length,
+      textColor: "#2D898B",
+    },
+    {
+      status: "Chờ duyệt",
+      iconType: "clock-circle",
+      imageSrc: `http://localhost:8080/api/files/blogsPending.png`,
+      data: pendingBlogsData.length,
+      textColor: "#C1DFF0",
+    },
+    {
+      status: "Từ chối",
+      iconType: "clock-circle",
+      imageSrc: `http://localhost:8080/api/files/blogsRejected.png`,
+      data: rejectedBlogsData.length,
+      textColor: "#C1DFF0",
+    },
+  ];
 
   return (
     <>
       <ToastContainer />
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Row gutter={1}>
+          {cardData.map((data, index) => (
+            <Col span={6} key={index}>
+              <Card
+                style={{
+                  margin: "5px",
+                  borderRadius: "5px",
+                  border: "1px solid grey",
+                  height: "135px",
+                  width: "270px",
+                }}
+              >
+                <Row>
+                  <Col span={12}>
+                    <div style={{ flex: 1 }}>
+                      <img
+                        src={data.imageSrc}
+                        alt={data.status}
+                        style={{
+                          width: "70px",
+                          height: "70px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                  </Col>
+                  <Col span={12}>
+                    <div style={{ textAlign: "center", marginLeft: "10px" }}>
+                      <Icon
+                        type={data.iconType}
+                        style={{ fontSize: "24px", marginRight: "8px" }}
+                      />
+                      <h3 style={{ display: "inline" }}>{data.status}</h3>
+                      <h4>{data.data}</h4>
+                    </div>
+                  </Col>
+                </Row>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </div>
       <div
         style={{
           marginBottom: 10,
-          marginTop: 10,
+          marginTop: 5,
           marginLeft: 5,
           marginRight: 5,
           display: "flex",
@@ -231,7 +340,31 @@ function BlogsManagement() {
           alignItems: "center",
         }}
       >
-        <SearchComponents onSearch={performSearch} />
+        <SearchComponents
+          onSearch={performSearch}
+         
+        />
+        <div>
+          <Select
+            style={{
+              width: 200,
+              marginRight: 10,
+              border: "0.5px solid grey",
+              borderRadius: "5px",
+            }}
+            placeholder="Lọc người tin tuyển dụng theo trạng thái"
+            onChange={handleEnableChange}
+          >
+            <Select.Option value={null}>Tất cả</Select.Option>
+            <Select.Option value={0}>Hoạt động</Select.Option>
+            <Select.Option value={1}>Ngừng hoạt động</Select.Option>
+            <Select.Option value={2}>Chờ duyệt</Select.Option>
+            <Select.Option value={3}>Từ chối</Select.Option>
+          </Select>
+          <Button type="primary" onClick={handleFilter}>
+            Lọc
+          </Button>
+        </div>
         <Button type="primary" onClick={() => handleCreateClick()}>
           Đăng tin tuyển dụng
           {/* <Link to={"/adminDashboard/users/add-user"}>Add New User</Link> */}
@@ -240,8 +373,17 @@ function BlogsManagement() {
       <hr />
       <div className="App">
         <Table
-          dataSource={searchResults.length > 0 ? searchResults : blogs}
+          dataSource={
+            showNoResults
+              ? []
+              : searchResults.length > 0
+              ? searchResults
+              : blogs
+          }
           columns={columns}
+          locale={{
+            emptyText: showNoResults ? "Không có kết quả" : "Không có dữ liệu",
+          }}
         />
       </div>
       <Modal
@@ -258,7 +400,7 @@ function BlogsManagement() {
         {selectedBlogId && <ViewBlog selectedBlogId={selectedBlogId} />}
       </Modal>
       <Modal
-        title="Edit User Detail"
+        title="Cập nhật tin tuyển dụng"
         visible={isEditModalVisible}
         onCancel={() => setIsEditModalVisible(false)}
         width={1200}
@@ -277,7 +419,7 @@ function BlogsManagement() {
         {selectedBlogId && <EditBlog selectedBlogId={selectedBlogId} />}
       </Modal>
       <Modal
-        title="Create User"
+        title="Đăng tin tuyển dụng"
         visible={isCreateModalVisible}
         onCancel={() => setIsCreateModalVisible(false)}
         width={1200}
@@ -301,8 +443,8 @@ function BlogsManagement() {
         onOk={handleEnable}
         onCancel={() => setIsEnableModalVisible(false)}
       >
-        Are you sure you want to{" "}
-        {selectedBlogEnable === 1 ? "disable" : "enable"} this blog?
+        Bạn có chắc rằng muốn{" "}
+        {selectedBlogEnable === 1 ? "Kích hoạt" : "Vô hiệu hóa"} tin tuyển dụng này không?
       </Modal>
       <Modal
         title={"Confirm Deleting"}
@@ -310,7 +452,7 @@ function BlogsManagement() {
         onOk={handleDelete}
         onCancel={() => setIsDeleteModalVisible(false)}
       >
-        Are you sure you want to {"delete"} this blog?
+        Bạn có chắc rằng muốn {"Xóa"} tin tuyển dụng này không?
       </Modal>
     </>
   );

@@ -341,7 +341,7 @@ const Template1 = () => {
           </Space>
         </TabPane>
         <TabPane tab="Học vấn" key="2">
-          <Space direction="vertical">
+         
             {educationList.map((education, index) => (
               <Space
                 key={index}
@@ -386,8 +386,9 @@ const Template1 = () => {
                 + Thêm mới
               </Button>
             </div>
-          </Space>
+     
         </TabPane>
+        
 
         <TabPane tab="Kinh nghiệm làm việc" key="3">
           <Space direction="vertical">
@@ -491,6 +492,14 @@ const Template1 = () => {
             </div>
           </Space>
         </TabPane>
+        <TabPane tab="Tải về" key="5">
+        <div>
+          <Button type="primary" block onClick={handleGeneratePDF}>
+            Tải về
+          </Button>
+        </div>
+      </TabPane>
+        
         {/* Add more tabs as needed */}
       </Tabs>
 
@@ -789,11 +798,7 @@ const Template1 = () => {
             </Row>
           </ul>
         </Card>
-        <div>
-          <Button type="primary" block onClick={handleGeneratePDF}>
-            Tải về
-          </Button>
-        </div>
+        
       </div>
       
     </div>

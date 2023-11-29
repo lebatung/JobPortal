@@ -193,22 +193,25 @@ const MessagesManagement = () => {
 
   useEffect(() => {
     if (selectedConversation) {
-      // Lấy thông tin người nhận từ selectedConversation
-      const recipientId = selectedConversation.messages[0].userID;
-      console.log(
-        "selectedConversation.messages[0].recipientId",
-        selectedConversation.messages[0].userID
-      );
-
-      loadPersonalDetailByUserId(recipientId)
-        .then((data) => {
-          setPersonalDetail(data);
-        })
-        .catch((error) => {
-          console.error("Error loading recipient information:", error);
-        });
+      // Kiểm tra xem recipientId có khác với user.id không
+      if (selectedConversation.messages[0].recipientId !== user.id) {
+        const recipientId = selectedConversation.messages[0].recipientId;
+        console.log(
+          "selectedConversation.messages[0].recipientId",
+          selectedConversation.messages[0].userID
+        );
+  
+        loadPersonalDetailByUserId(recipientId)
+          .then((data) => {
+            setPersonalDetail(data);
+          })
+          .catch((error) => {
+            console.error("Error loading recipient information:", error);
+          });
+      }
     }
-  }, [selectedConversation]);
+  }, [selectedConversation, user.id]);
+  
 
   return (
     <>
@@ -240,7 +243,7 @@ const MessagesManagement = () => {
         </Sider>
         <Content style={{ contentStyle }}>
           <div className="chat-box">
-          <div
+            <div
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -270,7 +273,6 @@ const MessagesManagement = () => {
                     }
                   >
                     <div style={messageContentStyle}>{message.content}</div>
-                    
                   </div>
                 ))
               ) : (
@@ -280,7 +282,6 @@ const MessagesManagement = () => {
               )}
             </div>
             <div style={lastMessageTimeStyle}>
-              
               {lastMessageTime ? lastMessageTime.toLocaleTimeString() : ""}
             </div>
             <div className="message-input" style={messageInputContainerStyle}>

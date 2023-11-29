@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Table, Button, Space, Input, Modal } from "antd";
+import { Table, Button, Space, Input, Modal, Select } from "antd";
 import { loadCategories } from "../../../../helpers/axios_helper";
 import axios from "axios";
 import SearchComponents from "../SearchComponent";
@@ -8,6 +8,7 @@ import SearchComponents from "../SearchComponent";
 import ViewCategory from "./ViewCategory";
 import AddCategory from "./AddCategory";
 import EditCategory from "./EditCategory";
+import { ToastContainer } from "react-toastify";
 
 function CategoriesManagement() {
   const [categories, setCategories] = useState([]);
@@ -20,12 +21,39 @@ function CategoriesManagement() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
   const [searchResults, setSearchResults] = useState([]);
+  const [filterOption, setFilterOption] = useState(null);
+  const [selectedEnable, setSelectedEnable] = useState(null);
+  const [showNoResults, setShowNoResults] = useState(false);
 
   const performSearch = (searchTerm) => {
-    const filteredCategories = categories.filter((category) =>
+    let filteredCategories = categories.filter((category) =>
       category.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    // Filter by enable status if an option is selected
+    if (filterOption !== null) {
+      filteredCategories = filteredCategories.filter(
+        (category) => category.enable === filterOption
+      );
+    }
+
     setSearchResults(filteredCategories);
+  };
+
+  const handleFilter = () => {
+    if (selectedEnable !== null) {
+      const filteredCategories = categories.filter(
+        (category) => category.enable === selectedEnable
+      );
+      setSearchResults(filteredCategories);
+      setShowNoResults(filteredCategories.length === 0);
+    } else {
+      setSearchResults(categories);
+      setShowNoResults(false);
+    }
+  };
+  const handleEnableChange = (value) => {
+    setSelectedEnable(value);
   };
 
   const { id } = useParams();
@@ -48,22 +76,22 @@ function CategoriesManagement() {
       render: (text, record, index) => index + 1,
     },
     {
-      title: "Tên",
+      title: "Tên nhóm ngành, nghề",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Enable",
+      title: "Trạng thái",
       dataIndex: "enable",
       key: "enable",
       render: (enable) => (
         <span style={{ color: enable ? "green" : "red" }}>
-          {enable ? "enable" : "Disable"}
+          {enable ? "Đang hoạt động" : "Ngừng hoạt động"}
         </span>
       ),
     },
     {
-      title: "Actions",
+      title: "Hành động",
       key: "actions",
       render: (text, record) => (
         <Space size="middle">
@@ -119,6 +147,8 @@ function CategoriesManagement() {
 
   return (
     <>
+      {" "}
+      <ToastContainer />
       <div
         style={{
           marginBottom: 10,
@@ -131,16 +161,45 @@ function CategoriesManagement() {
         }}
       >
         <SearchComponents onSearch={performSearch} />
+
+        <div>
+          <Select
+            style={{
+              width: 200,
+              marginRight: 10,
+              border: "0.5px solid grey",
+              borderRadius: "5px",
+            }}
+            placeholder="Lọc theo trạng thái enable"
+            onChange={handleEnableChange}
+          >
+            <Select.Option value={null}>Tất cả</Select.Option>
+            <Select.Option value={1}>Hoạt động</Select.Option>
+            <Select.Option value={0}>Ngừng hoạt động</Select.Option>
+          </Select>
+          <Button type="primary" onClick={handleFilter}>
+            Lọc
+          </Button>
+        </div>
+
         <Button type="primary" onClick={() => handleCreateClick()}>
           {" "}
           Thêm nhóm ngành, nghề
         </Button>
       </div>
-
       <hr />
       <Table
         columns={columns}
-        dataSource={searchResults.length > 0 ? searchResults : categories}
+        dataSource={
+          showNoResults
+            ? []
+            : searchResults.length > 0
+            ? searchResults
+            : categories
+        }
+        locale={{
+          emptyText: showNoResults ? "Không có kết quả" : "Không có dữ liệu",
+        }}
       />
       <Modal
         title={"Confirm Deleting"}
@@ -151,17 +210,23 @@ function CategoriesManagement() {
         Are you sure you want to {"delete"} this category?
       </Modal>
       <Modal
-        title="View category"
+        title="Nhóm ngành, nghề"
         visible={isViewModalVisible}
         onCancel={() => setIsViewModalVisible(false)}
         footer={[
-          <Button
-            key="back"
-            onClick={() => setIsViewModalVisible(false)}
-            style={{ textAlign: "left" }}
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
           >
-            Close
-          </Button>,
+            <Button
+              key="back"
+              onClick={() => setIsViewModalVisible(false)}
+              style={{ textAlign: "left" }}
+            >
+              Close
+            </Button>
+            ,
+          </div>,
         ]}
       >
         {selectedCategoryId && (
@@ -173,9 +238,15 @@ function CategoriesManagement() {
         visible={isEditModalVisible}
         onCancel={() => setIsEditModalVisible(false)}
         footer={[
-          <Button key="back" onClick={() => setIsEditModalVisible(false)}>
-            Close
-          </Button>,
+          <div
+            key="custom-footer"
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <Button key="back" onClick={() => setIsEditModalVisible(false)}>
+              Close
+            </Button>
+            ,
+          </div>,
         ]}
       >
         {selectedCategoryId && (
@@ -183,7 +254,7 @@ function CategoriesManagement() {
         )}
       </Modal>
       <Modal
-        title="Add new category"
+        title="Thêm nhóm ngành, nghề"
         visible={isCreateModalVisible}
         onCancel={() => setIsCreateModalVisible(false)}
         footer={[
@@ -191,7 +262,9 @@ function CategoriesManagement() {
             key="custom-footer"
             style={{ display: "flex", justifyContent: "space-between" }}
           >
-            <Button onClick={() => setIsViewModalVisible(false)}>Close</Button>
+            <Button onClick={() => setIsCreateModalVisible(false)}>
+              Close
+            </Button>
           </div>,
         ]}
       >
