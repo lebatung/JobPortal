@@ -184,7 +184,7 @@ const MessagesManagement = () => {
       });
     loadConversationByUserId(user.id)
       .then((data) => {
-        setConversations(data);
+        setConversations(data.reverse());
       })
       .catch((error) => {
         console.error("Error loading categories:", error);

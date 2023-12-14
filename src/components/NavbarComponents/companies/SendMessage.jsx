@@ -31,7 +31,7 @@ export default function SendMessage() {
           labelCol={{ span: 8 }}
         >
           <Input
-            placeholder="Message Title"
+            placeholder="Tiêu đề tin nhắn"
             value={messageTitle}
             onChange={(e) => setMessageTitle(e.target.value)}
           />
@@ -42,7 +42,7 @@ export default function SendMessage() {
           labelCol={{ span: 8 }}
         >
           <Input.TextArea
-            placeholder="Message Content"
+            placeholder="Nội dung tin nhắn"
             value={messageContent}
             onChange={(e) => setMessageContent(e.target.value)}
           />

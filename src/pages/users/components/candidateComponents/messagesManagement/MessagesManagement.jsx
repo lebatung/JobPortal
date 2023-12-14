@@ -12,7 +12,7 @@ import {
 } from "../../../../../helpers/axios_helper";
 
 const MessagesManagement = () => {
-  const { username } = useAuth();
+  const { username, userId } = useAuth();
   const [user, setUser] = useState({
     id: "",
   });
@@ -27,7 +27,7 @@ const MessagesManagement = () => {
 
   const handleConversationSelect = (conversation) => {
     setSelectedConversation(conversation);
-    // Đặt các tin nhắn của cuộc trò chuyện ở đây dựa vào conversation.id
+    console.log("selectedConversation", conversation);
   };
 
   const handleSendMessage = () => {
@@ -189,7 +189,7 @@ const MessagesManagement = () => {
       });
     loadConversationByUserId(user.id)
       .then((data) => {
-        setConversations(data);
+        setConversations(data.reverse());
       })
       .catch((error) => {
         console.error("Error loading categories:", error);
@@ -198,22 +198,36 @@ const MessagesManagement = () => {
 
   useEffect(() => {
     if (selectedConversation) {
-      // Lấy thông tin người nhận từ selectedConversation
-      const recipientId = selectedConversation.messages[0].recipientId;
-      console.log(
-        "selectedConversation.messages[0].recipientId",
-        selectedConversation.messages[0].recipientId
-      );
+      // Kiểm tra xem recipientId có khác với user.id không
+      if (selectedConversation.messages[0].recipientId !== user.id) {
+        const recipientId = selectedConversation.messages[0].recipientId;
+        console.log(
+          "selectedConversation.messages[0].recipientId",
+          selectedConversation.messages[0].userID
+        );
+  
+        loadPersonalDetailByUserId(recipientId)
+          .then((data) => {
+            setPersonalDetail(data);
 
-      loadPersonalDetailByUserId(recipientId)
-        .then((data) => {
-          setPersonalDetail(data);
-        })
-        .catch((error) => {
-          console.error("Error loading recipient information:", error);
-        });
+          })
+          .catch((error) => {
+            console.error("Error loading recipient information:", error);
+          });
+      } else{
+        const recipientId = selectedConversation.messages[0].userID;
+
+        loadPersonalDetailByUserId(recipientId)
+          .then((data) => {
+            setPersonalDetail(data);
+
+          })
+          .catch((error) => {
+            console.error("Error loading recipient information:", error);
+          });
+      }
     }
-  }, [selectedConversation]);
+  }, [selectedConversation, user.id]);
 
   return (
     <>
@@ -269,7 +283,7 @@ const MessagesManagement = () => {
                   <div
                     key={index}
                     style={
-                      message.userID === user.id
+                      message.userID === userId
                         ? sentMessageStyle
                         : receivedMessageStyle
                     }

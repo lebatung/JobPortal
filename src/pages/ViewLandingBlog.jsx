@@ -228,7 +228,7 @@ export default function ViewBlog(props) {
     handleViewClick(relatedBlog);
   };
   return (
-    <> <ToastContainer/>
+    <> 
       <Layout style={{ padding: "0px" }}>
         <Content>
           <Row align="stretch">
@@ -667,7 +667,7 @@ export default function ViewBlog(props) {
               labelCol={{ span: 8 }}
             >
               <Input
-                placeholder="Message Title"
+                placeholder="Tiêu đề"
                 value={messageTitle}
                 onChange={(e) => setMessageTitle(e.target.value)}
               />
@@ -678,7 +678,7 @@ export default function ViewBlog(props) {
               labelCol={{ span: 8 }}
             >
               <Input.TextArea
-                placeholder="Message Content"
+                placeholder="Nội dung"
                 value={messageContent}
                 onChange={(e) => setMessageContent(e.target.value)}
               />

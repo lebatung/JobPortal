@@ -223,6 +223,7 @@ export default function LandingPage() {
   };
 
   const handleUnFavoriteClick = (favoriteId) => {
+    console.log(favoriteId);
     request("DELETE", `http://localhost:8080/api/favorites/${favoriteId}`)
       .then((response) => {
         console.log("Removed", favoriteId);
@@ -250,7 +251,7 @@ export default function LandingPage() {
           console.log("Error setFavoriteBlogsList on Catch");
         });
 
-      saveUserInteractionFav(selectedBlog.id);
+      //saveUserInteractionFav(selectedBlog.id);
     } else {
       toast.error("Bạn cần đăng nhập để sử dụng chức năng này!", {
         position: "top-center",
@@ -531,7 +532,12 @@ export default function LandingPage() {
                                     height: "40px",
                                     objectFit: "cover",
                                   }}
-                                  src={`http://localhost:8080/api/files/${blog.personalDetail.avatar}`}
+                                  src={
+                                    blog.personalDetail &&
+                                    blog.personalDetail.avatar
+                                      ? `http://localhost:8080/api/files/${blog.personalDetail.avatar}`
+                                      : `http://localhost:8080/api/files/none.jpg` // Thay thế bằng URL mặc định nếu không có avatar
+                                  }
                                   alt={blog.title}
                                 />
                               </div>
@@ -551,7 +557,9 @@ export default function LandingPage() {
                             </div>
 
                             <div style={{ flex: 1 }}>
-                              <h3>{blog.title}</h3>
+                              <h3 style={{ color: "#100a63", marginRight: 4 }}>
+                                {blog.title}
+                              </h3>
                               <div
                                 style={{
                                   display: "flex",
@@ -590,7 +598,14 @@ export default function LandingPage() {
                           }}
                         >
                           <HoverableCard>
-                            <strong>{category.name}</strong>
+                            <strong
+                              style={{ color: "#100a63", marginRight: 4 }}
+                            >
+                              {category && category.name
+                                ? category.name
+                                : "Unknown"}
+                            </strong>
+
                             <p>
                               Số tin tuyển dụng:{" "}
                               {category.blogIncludedPersonalDetailDTOs.length}
@@ -607,7 +622,9 @@ export default function LandingPage() {
           <div style={newestBlogsContainer}>
             <Card
               title={
-                <span style={{ color: "#100b64" }}>NHÀ TUYỂN DỤNG NỔI BẬT</span>
+                <span style={{ color: "#E14D2A", fontSize: "24px" }}>
+                  NHÀ TUYỂN DỤNG NỔI BẬT
+                </span>
               }
             >
               <Carousel autoplay dots={true} arrows={true} autoplaySpeed={5000}>
@@ -622,18 +639,25 @@ export default function LandingPage() {
                                 pathname: `/companies/${recruitment.slug}`,
                               }}
                             >
-                              <HoverableCard style={{height: "216px"}}>
+                              <HoverableCard style={{ height: "216px" }}>
                                 <Image
-                                   style={{
+                                  style={{
                                     width: "80px",
                                     height: "60px",
                                     objectFit: "cover",
                                   }}
-                                  src={`http://localhost:8080/api/files/${recruitment.avatar}`}
+                                  src={
+                                    recruitment && recruitment.avatar
+                                      ? `http://localhost:8080/api/files/${recruitment.avatar}`
+                                      : `http://localhost:8080/api/files/none.jpg` // Thay thế bằng URL mặc định nếu không có avatar
+                                  }
                                   alt={recruitment.name}
                                 />
                                 <div>
-                                  <strong>{recruitment.name}</strong>
+                                  <strong>
+                                    {recruitment && recruitment.name}
+                                  </strong>
+
                                   <p>
                                     Số tin tuyển dụng: {recruitment.blogsCount}
                                   </p>
@@ -651,7 +675,11 @@ export default function LandingPage() {
           </div>
           <div style={newestBlogsContainer}>
             <Card
-              title={<span style={{ color: "#100b64" }}>VIỆC LÀM MỚI ĐANG TUYỂN</span>}
+              title={
+                <span style={{ color: "#E14D2A", fontSize: "24px" }}>
+                  VIỆC LÀM MỚI ĐANG TUYỂN
+                </span>
+              }
             >
               <Row gutter={16}>
                 {currentNewBlogs.map((blog) => (
@@ -675,7 +703,11 @@ export default function LandingPage() {
                               height: "60px",
                               objectFit: "cover",
                             }}
-                            src={`http://localhost:8080/api/files/${blog.personalDetail.avatar}`}
+                            src={
+                              blog.personalDetail && blog.personalDetail.avatar
+                                ? `http://localhost:8080/api/files/${blog.personalDetail.avatar}`
+                                : `http://localhost:8080/api/files/none.jpg` // Thay thế bằng URL mặc định nếu không có avatar
+                            }
                             alt={blog.title}
                           />
                         </div>
@@ -688,14 +720,16 @@ export default function LandingPage() {
                         >
                           {/* Thẻ p */}
                           <h4 style={{ margin: 0 }}>
-                            {blog.personalDetail.name}
+                            {blog.personalDetail && blog.personalDetail.name}
                           </h4>
                         </div>
                       </div>
 
                       <div style={{ flex: 1 }}>
-                        <h3>{blog.title}</h3>
-                        <p>{blog.name}</p>
+                        <h3 style={{ color: "#100a63", marginRight: 4 }}>
+                          {blog.title}
+                        </h3>
+                        <p>{blog && blog.name}</p>
                         <div
                           style={{
                             display: "flex",
@@ -726,7 +760,11 @@ export default function LandingPage() {
           </div>
           <div style={newestBlogsContainer}>
             <Card
-              title={<span style={{ color: "#100b64" }}>CÔNG VIỆC LƯƠNG CAO</span>}
+              title={
+                <span style={{ color: "#E14D2A", fontSize: "24px" }}>
+                  CÔNG VIỆC LƯƠNG CAO
+                </span>
+              }
             >
               <Row gutter={16}>
                 {currentHighSalaryBlogs.map((blog) => (
@@ -750,7 +788,11 @@ export default function LandingPage() {
                               height: "60px",
                               objectFit: "cover",
                             }}
-                            src={`http://localhost:8080/api/files/${blog.personalDetail.avatar}`}
+                            src={
+                              blog.personalDetail?.avatar
+                                ? `http://localhost:8080/api/files/${blog.personalDetail.avatar}`
+                                : `http://localhost:8080/api/files/none.jpg`
+                            }
                             alt={blog.title}
                           />
                         </div>
@@ -763,7 +805,7 @@ export default function LandingPage() {
                         >
                           {/* Thẻ p */}
                           <h4 style={{ margin: 0 }}>
-                            {blog.personalDetail.name}
+                            {blog.personalDetail?.name}
                           </h4>
                         </div>
                       </div>

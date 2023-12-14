@@ -352,7 +352,7 @@ function BlogsManagement() {
               border: "0.5px solid grey",
               borderRadius: "5px",
             }}
-            placeholder="Lọc người tin tuyển dụng theo trạng thái"
+            placeholder="Lọc tin tuyển dụng theo trạng thái"
             onChange={handleEnableChange}
           >
             <Select.Option value={null}>Tất cả</Select.Option>

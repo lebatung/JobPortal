@@ -150,7 +150,7 @@ function UserManagement() {
               record.active === 1
                 ? "ant-btn-danger"
                 : record.active === 2
-                ? "ant-btn-warning"
+                ? "ant-btn-primary"
                 : "ant-btn-primary"
             }
             onClick={() => handleDisableClick(record)}

@@ -171,6 +171,17 @@ export default function AddBlog() {
       enable: 2, // 0: Active, 1: Inactive, 2: Pending, 3: Rejected
     };
 
+    const intSalaryMax = parseInt(salaryMax, 10);
+    const intSalaryMin = parseInt(salaryMin, 10);
+
+    console.log("intSalaryMin:", intSalaryMin);
+    console.log("intSalaryMax:", intSalaryMax);
+
+    if (intSalaryMin > intSalaryMax) {
+      toast.error("Mức lương từ phải nhỏ hơn hoặc bằng Mức lương đến");
+      return; // Stop further execution
+    }
+
     request("POST", `/api/blogs/create`, formData)
       .then((response) => {
         toast.success("Thêm tin tuyển dụng thành công.");
@@ -183,13 +194,13 @@ export default function AddBlog() {
         setIsCreateModalVisible(false);
       });
 
-    console.log("Thông tin tin tuyển dụng:", formData);
+    console.log("Thông tin đăng tuyển dụng:", formData);
   };
   return (
     <>
-      <ToastContainer />
+      
       <hr />
-      <Card >
+      <Card>
         <div>
           <Form name="AddnewBlog" onFinish={onFinish} layout="vertical">
             <Descriptions bordered column={1} size="small">
@@ -293,7 +304,11 @@ export default function AddBlog() {
                       onChange={(value) =>
                         onInputChange({ target: { name: "detail", value } })
                       }
-                      style={{ height: '300px', width: '100%', paddingBottom: "20px" }}
+                      style={{
+                        height: "300px",
+                        width: "100%",
+                        paddingBottom: "20px",
+                      }}
                     />
                   </Form.Item>
                 </div>
@@ -327,7 +342,7 @@ export default function AddBlog() {
                     }}
                   >
                     <Form.Item
-                      label="Yêu cầu chuyên môn"
+                      label="Nhập yêu cầu chuyên môn"
                       name="education"
                       rules={[
                         {
@@ -357,7 +372,10 @@ export default function AddBlog() {
                       label="Thời gian làm việc"
                       name="workingTime"
                       rules={[
-                        { required: true, message: "Vui lòng nhập họ và tên" },
+                        {
+                          required: true,
+                          message: "Vui lòng nhập thời gian làm việc",
+                        },
                       ]}
                       validateTrigger="onBlur"
                     >
@@ -608,7 +626,7 @@ export default function AddBlog() {
           </Form>
         </div>
       </Card>
-      
+
       <Modal
         title={"Confirm Creating"}
         visible={isCreateVisible}

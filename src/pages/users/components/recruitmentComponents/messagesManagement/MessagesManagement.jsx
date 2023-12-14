@@ -24,7 +24,7 @@ const MessagesManagement = () => {
   const [personalDetail, setPersonalDetail] = useState("");
   const handleConversationSelect = (conversation) => {
     setSelectedConversation(conversation);
-    // Đặt các tin nhắn của cuộc trò chuyện ở đây dựa vào conversation.id
+    console.log(conversation);
   };
 
   const handleSendMessage = () => {
@@ -184,7 +184,7 @@ const MessagesManagement = () => {
       });
     loadConversationByUserId(user.id)
       .then((data) => {
-        setConversations(data);
+        setConversations(data.reverse());
       })
       .catch((error) => {
         console.error("Error loading categories:", error);
@@ -204,6 +204,18 @@ const MessagesManagement = () => {
         loadPersonalDetailByUserId(recipientId)
           .then((data) => {
             setPersonalDetail(data);
+
+          })
+          .catch((error) => {
+            console.error("Error loading recipient information:", error);
+          });
+      } else{
+        const recipientId = selectedConversation.messages[0].userID;
+
+        loadPersonalDetailByUserId(recipientId)
+          .then((data) => {
+            setPersonalDetail(data);
+
           })
           .catch((error) => {
             console.error("Error loading recipient information:", error);

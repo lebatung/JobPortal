@@ -301,6 +301,24 @@ export const loadBlogsByUserId = async (userId) => {
   }
 };
 
+export const loadBlogsByUserIdNEnable = async (userId) => {
+  try {
+    let headers = {};
+    if (getAuthToken() !== null && getAuthToken() !== "null") {
+      headers = { Authorization: `Bearer ${getAuthToken()}` };
+    }
+    const response = await axios.get(
+      `http://localhost:8080/api/blogs/listAllBlogsByUserIdNEnable/${userId}`,
+      { headers }
+    );
+    console.log("loadBlogsByUserIdNEnable:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error loading loadBlogsByUserIdNEnable:", error);
+    throw error;
+  }
+};
+
 export const loadBlogById = async (id) => {
   try {
     let headers = {};

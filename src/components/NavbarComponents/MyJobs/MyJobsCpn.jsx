@@ -545,7 +545,7 @@ export default function MyJobsCpn() {
       <div style={newestBlogsContainer}>
         <Card
           title={
-            <span style={{ color: "#100b64", fontSize: "20px" }}>
+            <span style={{ color: "#E14D2A", fontSize: "24px" }}>
               VIỆC LÀM NỔI BẬT
             </span>
           }
@@ -602,7 +602,7 @@ export default function MyJobsCpn() {
                         </div>
 
                         <div style={{ flex: 1 }}>
-                          <h3>{blog.title}</h3>
+                          <h3 style={{ color: "#100a63", marginRight: 4 }}>{blog.title}</h3>
                           <p>{blog.name}</p>
                           <div
                             style={{
@@ -611,11 +611,17 @@ export default function MyJobsCpn() {
                             }}
                           >
                             <p>
-                              <EnvironmentOutlined />{" "}
+                              <EnvironmentOutlined style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/>{" "}
                               {blog.location ? blog.location.name : ""}
                             </p>
                             <p>
-                              <DollarOutlined /> {blog.salaryMin} -{" "}
+                              <DollarOutlined style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/> {blog.salaryMin} -{" "}
                               {blog.salaryMax} {"Triệu đồng"}
                             </p>
                           </div>
@@ -642,7 +648,7 @@ export default function MyJobsCpn() {
                       }}
                     >
                       <HoverableCard>
-                        <strong>{category.name}</strong>
+                        <strong style={{ color: "#100a63", marginRight: 4 }}>{category.name}</strong>
                         <p>
                           Số tin tuyển dụng:{" "}
                           {category.blogIncludedPersonalDetailDTOs.length}
@@ -659,7 +665,7 @@ export default function MyJobsCpn() {
       <div style={newestBlogsContainer}>
         <Card
           title={
-            <span style={{ color: "#100b64", fontSize: "20px" }}>
+            <span style={{ color: "#E14D2A", fontSize: "24px" }}>
               VIỆC LÀM PHÙ HỢP
             </span>
           }
@@ -703,7 +709,7 @@ export default function MyJobsCpn() {
                   </div>
 
                   <div style={{ flex: 1 }}>
-                    <h3>{blog.title}</h3>
+                    <h3 style={{ color: "#100a63", marginRight: 4 }}>{blog.title}</h3>
                     <p>{blog.name}</p>
                     <div
                       style={{
@@ -712,11 +718,17 @@ export default function MyJobsCpn() {
                       }}
                     >
                       <p>
-                        <EnvironmentOutlined />{" "}
+                        <EnvironmentOutlined style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/>{" "}
                         {blog.location ? blog.location.name : ""}
                       </p>
                       <p>
-                        <DollarOutlined /> {blog.salaryMin} - {blog.salaryMax}{" "}
+                        <DollarOutlined style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/> {blog.salaryMin} - {blog.salaryMax}{" "}
                         {"Triệu đồng"}
                       </p>
                     </div>
@@ -739,7 +751,7 @@ export default function MyJobsCpn() {
           <Col span={12}>
             <Card
               title={
-                <span style={{ color: "#100b64", fontSize: "20px" }}>
+                <span style={{ color: "#E14D2A", fontSize: "24px" }}>
                   VIỆC LÀM ĐÃ LƯU
                 </span>
               }
@@ -794,11 +806,17 @@ export default function MyJobsCpn() {
                           }}
                         >
                           <p>
-                            <EnvironmentOutlined />{" "}
+                            <EnvironmentOutlined style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/>{" "}
                             {blog.location ? blog.location.name : ""}
                           </p>
                           <p>
-                            <DollarOutlined /> {blog.salaryMin} -{" "}
+                            <DollarOutlined style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/> {blog.salaryMin} -{" "}
                             {blog.salaryMax} {"Triệu đồng"}
                           </p>
                         </div>
@@ -818,7 +836,7 @@ export default function MyJobsCpn() {
           <Col span={12}>
             <Card
               title={
-                <span style={{ color: "#100b64", fontSize: "20px" }}>
+                <span style={{ color: "#E14D2A", fontSize: "24px" }}>
                   VIỆC LÀM THEO NHÓM NGÀNH, NGHỀ
                 </span>
               }
@@ -864,7 +882,7 @@ export default function MyJobsCpn() {
                       </div>
 
                       <div style={{ flex: 1 }}>
-                        <h3>{blog.title}</h3>
+                        <h3 style={{ color: "#100a63", marginRight: 4 }}>{blog.title}</h3>
                         <p>{blog.name}</p>
                         <div
                           style={{
@@ -873,11 +891,17 @@ export default function MyJobsCpn() {
                           }}
                         >
                           <p>
-                            <EnvironmentOutlined />{" "}
+                            <EnvironmentOutlined style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/>{" "}
                             {blog.location ? blog.location.name : ""}
                           </p>
                           <p>
-                            <DollarOutlined /> {blog.salaryMin} -{" "}
+                            <DollarOutlined style={{
+                                    color: "#E14D2A",
+                                    marginRight: "4",
+                                  }}/> {blog.salaryMin} -{" "}
                             {blog.salaryMax} {"Triệu đồng"}
                           </p>
                         </div>

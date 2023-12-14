@@ -216,7 +216,12 @@ function Footer() {
             <p style={titleStyle}>THÔNG TIN LIÊN HỆ</p>
             <Paragraph style={paragraphStyle}>
               <p style={paragraphStyle}>
-                SĐT liên hệ: <a>0907870489</a>
+                SĐT liên hệ: <a  style={{color: "#FFFF00"}}>0907870489</a>
+              </p>
+            </Paragraph>
+            <Paragraph style={paragraphStyle}>
+              <p style={paragraphStyle}>
+                Địa chỉ: <a style={{color: "#FFFF00"}}>Ninh Kiều, Cần Thơ</a>
               </p>
             </Paragraph>
             <Paragraph style={paragraphStyle}>

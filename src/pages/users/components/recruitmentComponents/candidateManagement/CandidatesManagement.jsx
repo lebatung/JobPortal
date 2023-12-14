@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Document, Page } from "react-pdf";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import SearchComponent from "../SearchComponent";
 import {
   Button,
@@ -23,13 +23,14 @@ import {
   loadUserByUsername,
   loadBlogsByUserId,
   loadAppliesByBlogId,
+  loadBlogsByUserIdNEnable,
 } from "../../../../../helpers/axios_helper";
 import { CaretRightOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 const { Panel } = Collapse;
 export default function CandidatesManagement() {
-  const { username } = useAuth();
+  const { username, userId } = useAuth();
   const [blogs, setBlogs] = useState([]);
   const [applyData, setApplyData] = useState({});
   const [appliesCount, setAppliesCount] = useState({});
@@ -166,7 +167,8 @@ export default function CandidatesManagement() {
       .catch((error) => {
         console.error("Error loading categories:", error);
       });
-    loadBlogsByUserId(user.id)
+
+    loadBlogsByUserIdNEnable(userId)
       .then((data) => {
         setBlogs(data);
       })
@@ -180,12 +182,12 @@ export default function CandidatesManagement() {
         .then((data) => {
           // Đảo ngược mảng trả về từ hàm loadAppliesByBlogId
           const reversedData = [...data].reverse();
-  
+
           setApplyData((prevData) => ({
             ...prevData,
             [blog.id]: reversedData,
           }));
-  
+
           setAppliesCount((prevCount) => ({
             ...prevCount,
             [blog.id]: reversedData.length,
@@ -196,7 +198,6 @@ export default function CandidatesManagement() {
         });
     });
   }, [blogs]);
-  
 
   const handleFilter = () => {
     if (filterOption === "all") {
@@ -360,8 +361,10 @@ export default function CandidatesManagement() {
                         key: "appliedAt",
                         render: (text) => {
                           // Định dạng lại ngày tháng
-                          const formattedDate = text ? format(new Date(text), 'dd/MM/yyyy HH:mm:ss') : 'Chưa cập nhật';
-                          
+                          const formattedDate = text
+                            ? format(new Date(text), "dd/MM/yyyy HH:mm:ss")
+                            : "Chưa cập nhật";
+
                           return <span>{formattedDate}</span>;
                         },
                       },
@@ -456,7 +459,9 @@ export default function CandidatesManagement() {
         )}
       </Modal>
       <Modal
-        title={<span style={{fontSize: '20px'}}>Phản hồi người ứng tuyển</span>}
+        title={
+          <span style={{ fontSize: "20px" }}>Phản hồi người ứng tuyển</span>
+        }
         visible={isProcessvisible}
         onCancel={handleCloseModal}
         footer={[

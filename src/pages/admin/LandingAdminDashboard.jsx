@@ -145,15 +145,6 @@ export default function AdminDashboard() {
                   />
                 </Card>
               </Col>
-              <Col span={16}>
-                <Card title=" " bordered={false}>
-                  
-                </Card>
-              </Col>
-            </Row>
-
-            {/* Hàng cho quản lý Tin tuyển dụng */}
-            <Row gutter={4}>
               <Col span={8}>
                 <Card title="Quản lý Trạng thái người dùng" bordered={false}>
                   <Doughnut
@@ -168,14 +159,6 @@ export default function AdminDashboard() {
                   />
                 </Card>
               </Col>
-              <Col span={16}>
-                <Card title=" " bordered={false}>
-                 
-                  
-                </Card>
-              </Col>
-            </Row>
-            <Row gutter={4}>
               <Col span={8}>
                 <Card title="Quản lý Tin tuyển dụng" bordered={false}>
                   <Doughnut
@@ -190,13 +173,10 @@ export default function AdminDashboard() {
                   />
                 </Card>
               </Col>
-              <Col span={16}>
-                <Card title=" " bordered={false}>
-                 
-                  
-                </Card>
-              </Col>
             </Row>
+
+            {/* Hàng cho quản lý Tin tuyển dụng */}
+            
           </div>
         </div>
       </div>
